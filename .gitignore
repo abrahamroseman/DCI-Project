@@ -1,0 +1,5 @@
+# Ignore macOS junk
+.DS_Store
+
+# Ignore Python junk
+.ipynb_checkpoints
