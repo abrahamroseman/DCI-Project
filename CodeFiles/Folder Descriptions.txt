@@ -1,24 +1,60 @@
-1. _/Project_Algorithms/_
-Code for tracking Lagrangian parcels in updrafts and cloudy updrafts.
+INITIAL PLOTTING
 
-Code for tracking eulerian updrafts and cloudy updrafts.
+1. _/Figures/_
+	Some code for creating initial figures for the project.
 
-Code for calculating parcel entrainment and detrainment into cloudy updrafts located in /Entrainment.
+	(a) _/Figures/_
+		Main code for creating initial figures
+	(b) _/Campaign_Data/_
+		Code for working with and plotting campaign data for the simulation
 
-2. _/cold_pool_tracking/_
-Code for tracking Lagrangian parcels interaction with cold pools / gust fronts.
+2. _/Animations/_
+	Makes initial animations for surface values of QV, TH, TH_e, QV_flux, and TH_flux
 
-3. _/Figures/_
-Some code for creating figures for the project.
+	(a) _/Animations/_
+		Code for making animations
 
-4. _/invert_laplacian/_
-Test code for inverting laplacian lap(f)=g to solve for f.
 
-5. _/Animations/_
-Makes animation for surface values of QV, TH, TH_e, QV_flux, and TH_flux
+MAIN DIRECTORIES
 
-6. /_Variable_Calculations_/
-Creates Variables Not Included in Model Output
-	a. Equivalent_Potential_Temperature.ipynb
-	b. Virtual_Potential_Temperature
-	c. Moist_Static_Energy
+1. _/Variable_Calculations/_
+	Makes calculations for variables/data_files not including in model output
+
+	(a) _/CalculateMoreVariables/_
+		Creates Variables Not Included in Model Output
+		Including 2D_Moisture_Convergence, Buoyancy, Convergence, 
+		Equivalent_Potential_temperature, Eulerian_Binary_Array, 
+		Eulerian_VMF, Moist_Static_Energy, and Virtual_Potential_Temperature
+	(b) _/TimeSplitModelVariables/_
+		Splits variables into individual files for each timestep
+	(c) _/EntrainmentCalculation/_
+		Calculates Entrainment using Lagrangian Particles
+	(d) _/LagrangianArrays/_
+		Makes calculations of variables from both model and _/CalculateMoreVariables/_ into Lagrangian form based on Lagrangian 
+		particles
+
+2. _/Project_Algorithms/_
+	(a) _/Domain_Profiles/_
+		Makes "binned" vertical profiles for select variables from model data
+	Code for tracking eulerian updrafts and cloudy updrafts.
+	(b) _/Tracking_Algorithms/_
+		Code for tracking convergence lines (Eulerian)
+		Code for tracking updrafts and cloudy updrafts from CL to LFC (using Lagrangian particles).
+		Code for subsetting tracked parcels into CL/nonCL/SBF and All/Shallow/Deep parcels.
+	(b) _/Tracked_Profiles/_
+		Makes "binned" vertical profiles for select variables from tracked parcel data
+
+
+ADDITIONAL DIRECTORIES
+
+1. _/Functions/_
+	Stores Python function files for use in the above code.
+
+2. _/sbatch_scripts/_
+	sbatch files for running Python on slurm system (UH Manoa Koa supercomputer in this case)
+
+3. _/Other/_
+	Other code files not used in project
+
+
+
