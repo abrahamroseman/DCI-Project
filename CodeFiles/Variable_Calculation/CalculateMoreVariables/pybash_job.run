@@ -1,5 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=python
+#SBATCH --array=1-20 #%+number after to limit number of of runs at a time
 ##SBATCH --account=torri
 ##SBATCH --partition=torri
 
@@ -35,13 +36,13 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 # --- RUNNING PYTHON ---
 
 # ONE
-mkdir -p job_out/pybash1
-jupyter nbconvert --to script pybash1.ipynb
-python -u pybash1.py $SLURM_ARRAY_TASK_ID \
-     > job_out/pybash1/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+#mkdir -p job_out/Eulerian_Binary_Array
+#jupyter nbconvert --to script Eulerian_Binary_Array.ipynb
+#python -u Eulerian_Binary_Array.py $SLURM_ARRAY_TASK_ID \
+#    > job_out/Eulerian_Binary_Array/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # TWO
-#mkdir -p job_out/pybash2
-#jupyter nbconvert --to script pybash2.ipynb
-#python -u pybash2.py $SLURM_ARRAY_TASK_ID \
-#    > job_out/pybash2/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+mkdir -p job_out/Eulerian_VMF
+jupyter nbconvert --to script Eulerian_VMF.ipynb
+python -u Eulerian_VMF.py $SLURM_ARRAY_TASK_ID \
+    > job_out/Eulerian_VMF/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
