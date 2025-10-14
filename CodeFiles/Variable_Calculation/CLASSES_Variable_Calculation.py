@@ -89,22 +89,46 @@ class ModelData_Class:
     # ========== On-demand Variable Access ==========
     # ============================================================
 
-    def OpenDataset(self, decode_timedelta=True):
-        #EXAMPLE: ds = ModelData.OpenDataset()
+    def OpenData(self, decode_timedelta=True):
+        #EXAMPLE: ds = ModelData.OpenData()
         #         ...
         #         del ds
-        """
-        Permanently open the NetCDF dataset (kept open until manually closed).
-
-        Use this when you need persistent access for multiple operations.
-        """
-        if hasattr(self, "ds") and self.ds is not None:
-            print("Dataset already open.")
-            return self.ds
-
-        self.ds = xr.open_dataset(self.dataDirectory, decode_timedelta=decode_timedelta)
+        data = xr.open_dataset(self.dataDirectory, decode_timedelta=decode_timedelta)
         print(f"Opened dataset: {self.dataDirectory}")
-        return self.ds
+        return data
+
+    def OpenParcel(self, decode_timedelta=True):
+        #EXAMPLE: ds = ModelData.OpenParcel()
+        #         ...
+        #         del ds
+        parcel = xr.open_dataset(self.parcelDirectory, decode_timedelta=decode_timedelta)
+        print(f"Opened dataset: {self.parcelDirectory}")
+        return parcel
+
+    def SubsetDataVars(self, data):
+        varList = ["thflux", "qvflux", "tsk", "cape", 
+                   "cin", "lcl", "lfc", "th",
+                   "prs", "rho", "qv", "qc",
+                   "qr", "qi", "qs","qg", 
+                   "buoyancy", "uinterp", "vinterp", "winterp",]
+        
+        varList += ["ptb_hadv", "ptb_vadv", "ptb_hidiff", "ptb_vidiff",
+                    "ptb_hturb", "ptb_vturb", "ptb_mp", "ptb_rdamp", 
+                    "ptb_rad", "ptb_div", "ptb_diss",]
+        
+        varList += ["qvb_hadv", "qvb_vadv", "qvb_hidiff", "qvb_vidiff", 
+                    "qvb_hturb", "qvb_vturb", "qvb_mp",]
+        
+        varList += ["wb_hadv", "wb_vadv", "wb_hidiff", "wb_vidiff",
+                    "wb_hturb", "wb_vturb", "wb_pgrad", "wb_rdamp", "wb_buoy",]
+    
+        # Filter only available variables in the dataset
+        available_vars = [v for v in varList if v in data.variables]
+    
+        if not available_vars:
+            raise ValueError("None of the requested variables were found in the dataset.")
+    
+        return data[available_vars]
 
     def GetVariable(self, varName, isel=None):
         #EXAMPLE: w = ModelData.GetVariable('winterp', isel={'time': slice(0,2), 'zh': 0, 'yh': 0, 'xh': 0}) #example getting a variable
