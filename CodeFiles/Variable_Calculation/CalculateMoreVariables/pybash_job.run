@@ -42,7 +42,44 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 #    > job_out/Eulerian_Binary_Array/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # TWO
-mkdir -p job_out/Eulerian_VMF
-jupyter nbconvert --to script Eulerian_VMF.ipynb
-python -u Eulerian_VMF.py $SLURM_ARRAY_TASK_ID \
-    > job_out/Eulerian_VMF/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+#mkdir -p job_out/Eulerian_VMF
+#jupyter nbconvert --to script Eulerian_VMF.ipynb
+#python -u Eulerian_VMF.py $SLURM_ARRAY_TASK_ID \
+#    > job_out/Eulerian_VMF/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+
+# THREE
+#mkdir -p job_out/Virtual_Potential_Temperature
+#jupyter nbconvert --to script Virtual_Potential_Temperature.ipynb
+#python -u Virtual_Potential_Temperature.py $SLURM_ARRAY_TASK_ID \
+#    > job_out/Virtual_Potential_Temperature/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+
+# FOUR
+#mkdir -p job_out/Equivalent_Potential_Temperature
+#jupyter nbconvert --to script Equivalent_Potential_Temperature.ipynb
+#python -u Equivalent_Potential_Temperature.py $SLURM_ARRAY_TASK_ID \
+#    > job_out/Equivalent_Potential_Temperature/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+
+# FIVE
+#mkdir -p job_out/Moist_Static_Energy
+#jupyter nbconvert --to script Moist_Static_Energy.ipynb
+#python -u Moist_Static_Energy.py $SLURM_ARRAY_TASK_ID \
+#    > job_out/Moist_Static_Energy/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+
+# SIX
+#mkdir -p job_out/Convergence
+#jupyter nbconvert --to script Convergence.ipynb
+#python -u Convergence.py $SLURM_ARRAY_TASK_ID \
+#    > job_out/Convergence/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+
+# SEVEN
+mkdir -p job_out/MoistureConvergence
+jupyter nbconvert --to script MoistureConvergence.ipynb
+python -u MoistureConvergence.py $SLURM_ARRAY_TASK_ID \
+    > job_out/MoistureConvergence/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+
+
+
+
+
+
+
