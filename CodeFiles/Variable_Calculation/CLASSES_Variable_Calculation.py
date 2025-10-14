@@ -277,22 +277,22 @@ class DataManager_Class:
         os.makedirs(outputDataDirectory, exist_ok=True)
         return outputDataDirectory
 
-    def GetTimestepData(self, inputDataDirectory, timeString, VariableName):
+    def GetTimestepData(self, inputDataDirectory, timeString, variableName, dataName="cm1out"):
         inputDataFile = os.path.join(
             inputDataDirectory,
-            f"cm1out_{self.res}_{self.t_res}_{self.Nz_str}nz_{timeString}.h5"
+            f"{dataName}_{self.res}_{self.t_res}_{self.Nz_str}nz_{timeString}.h5"
         )
         with h5py.File(inputDataFile, 'r') as f:
-            InputData = f[VariableName][:]
+            InputData = f[variableName][:]
         return InputData
 
-    def GetTimestepParcel(self, inputParcelDirectory, timeString, VariableName):
+    def GetTimestepParcel(self, inputParcelDirectory, timeString, variableName, dataName="cm1out_pdata"):
         inputDataFile = os.path.join(
             inputParcelDirectory,
-            f"cm1out_pdata_{self.res}_{self.t_res}_{self.Np_str}np_{timeString}.h5"
+            f"{dataName}_{self.res}_{self.t_res}_{self.Np_str}np_{timeString}.h5"
         )
         with h5py.File(inputDataFile, 'r') as f:
-            InputData = f[VariableName][:]
+            InputData = f[variableName][:]
         return InputData
 
     def SaveOutputTimestep(self, outputDataDirectory, timeString, outputDictionary):
@@ -303,7 +303,7 @@ class DataManager_Class:
         with h5py.File(out_file, 'w') as f:
             for var_name, arr in outputDictionary.items():
                 f.create_dataset(var_name, data=arr, dtype=self.dtype, compression="gzip")
-        print(f"Saved timestep to output file: {out_file}")
+        print(f"Saved timestep to output file: {out_file}","\n")
 
     def Summary(self):
         """Print a summary of the simulation configuration."""
