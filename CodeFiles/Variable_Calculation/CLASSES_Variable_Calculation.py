@@ -31,6 +31,9 @@ class ModelData_Class:
         self.GetCoordinateData()
         self.timeStrings = self.GetTimeStrings(self.time)
 
+        # Load Variable Names
+        self.varList = self.GetVariableNames()
+
         # Print summary
         self.Summary()
 
@@ -56,7 +59,6 @@ class ModelData_Class:
         parcelDirectory = os.path.join(Directory, f"cm1out_pdata_{res}_{t_res}_{Np_str}np.nc")
         return dataDirectory, parcelDirectory, res, t_res, Np_str, Nz_str
 
-
     def GetCoordinateData(self):
         """
         Extract coordinate arrays (time, zf, zh, yf, yh, xf, xh) 
@@ -73,12 +75,16 @@ class ModelData_Class:
             
         return extracted
 
-
     def GetTimeStrings(self, times):
         """Convert CM1 time array (nanoseconds) to formatted strings."""
         return [str(timedelta(seconds=float(s))).replace(":", "-") for s in times / 1e9]
 
-
+    def GetVariableNames(self):
+        """Get list of variable names available in the CM1 dataset."""
+        with xr.open_dataset(self.dataDirectory, decode_timedelta=True) as ds:
+            varList = list(ds.data_vars)
+        return varList
+    
     # ============================================================
     # ========== On-demand Variable Access ==========
     # ============================================================
@@ -139,7 +145,7 @@ class ModelData_Class:
         print(f" Data file:      {self.dataDirectory}")
         print(f" Parcel file:    {self.parcelDirectory}")
         print(f" Time steps:     {len(self.time)}")
-        print("=========================")
+        print("=========================","\n")
 
 #EXAMPLE: ModelData = ModelData_Class(mainDirectory, scratchDirectory, simulationNumber=1)
 
@@ -171,6 +177,8 @@ class SlurmJobArray_Class:
         
         # Compute job range for this job
         self.start_job, self.end_job = self._get_job_range(self.job_id)
+
+        # Print summary
         self.Summary()
 
     # ------------------------------------------------------------
@@ -200,7 +208,7 @@ class SlurmJobArray_Class:
         print("No zero-length ranges:", np.all(np.array(start) != np.array(end)))
 
     def Summary(self):
-        print(f"Running timesteps from {self.start_job}:{self.end_job}")
+        print(f"Running timesteps from {self.start_job}:{self.end_job}","\n")
 
 
 # In[2]:
@@ -215,47 +223,57 @@ import os
 import h5py
 
 class DataManager_Class:
-    def __init__(self, mainDirectory, scratchDirectory, res, t_res, Nz_str, dataName, dtype):
+    def __init__(self, mainDirectory, scratchDirectory, res, t_res, Nz_str, Np_str, dataType, dataName, dtype):
         self.mainDirectory = mainDirectory
         self.scratchDirectory = scratchDirectory
+        self.dataType = dataType
         self.res = res
         self.t_res = t_res
         self.Nz_str = Nz_str
+        self.Np_str = Np_str
         self.dataName = dataName
         self.dtype = dtype
 
         # Initialize directories on creation
-        self.inputDirectory = self.GetInputDirectory(mainDirectory, scratchDirectory, res)
-        self.outputDirectory = self.GetOutputDirectory(mainDirectory, scratchDirectory, res)
-        self.inputDataDirectory = self.MakeInputDataDirectory(self.inputDirectory, res, t_res, Nz_str)
-        self.outputDataDirectory = self.MakeOutputDataDirectory(self.outputDirectory, res, t_res, Nz_str)
+        self.inputDirectory = self.GetInputDirectory(mainDirectory, scratchDirectory)
+        self.outputDirectory = self.GetOutputDirectory(mainDirectory, scratchDirectory)
+        self.inputDataDirectory = self.MakeInputDataDirectory(self.inputDirectory)
+        self.inputParcelDirectory = self.MakeInputParcelDirectory(self.inputDirectory)
+        self.outputDataDirectory = self.MakeOutputDataDirectory(self.outputDirectory)
+
+        # Print summary
+        self.Summary()
 
     # ============================================================
     # ========== Functions ==========
     # ============================================================
 
-    def GetInputDirectory(self, mainDirectory, scratchDirectory, res):
-        if res == '1km':
+    def GetInputDirectory(self, mainDirectory, scratchDirectory):
+        if self.res == '1km':
             inputDirectory = os.path.join(mainDirectory, 'Code', 'OUTPUT', 'Variable_Calculation', 'TimeSplitModelData')
-        if res == '250m':
+        if self.res == '250m':
             inputDirectory = os.path.join(scratchDirectory, 'OUTPUT', 'Variable_Calculation', 'TimeSplitModelData')
         return inputDirectory
 
-    def GetOutputDirectory(self, mainDirectory, scratchDirectory, res):
-        if res == '1km':
-            outputDirectory = os.path.join(mainDirectory, 'Code', 'OUTPUT', 'Variable_Calculation', 'CalculateMoreVariables')
+    def GetOutputDirectory(self, mainDirectory, scratchDirectory):
+        if self.res == '1km':
+            outputDirectory = os.path.join(mainDirectory, 'Code', 'OUTPUT', 'Variable_Calculation', self.dataType)
             os.makedirs(outputDirectory, exist_ok=True)
-        if res == '250m':
-            outputDirectory = os.path.join(scratchDirectory, 'OUTPUT', 'Variable_Calculation', 'CalculateMoreVariables')
+        if self.res == '250m':
+            outputDirectory = os.path.join(scratchDirectory, 'OUTPUT', 'Variable_Calculation', self.dataType)
             os.makedirs(outputDirectory, exist_ok=True)
         return outputDirectory
 
-    def MakeInputDataDirectory(self, inputDirectory, res, t_res, Nz_str):
-        inputDataDirectory = os.path.join(inputDirectory, f"{res}_{t_res}_{Nz_str}nz", "ModelData")
+    def MakeInputDataDirectory(self, inputDirectory):
+        inputDataDirectory = os.path.join(inputDirectory, f"{self.res}_{self.t_res}_{self.Nz_str}nz", "ModelData")
         return inputDataDirectory
 
-    def MakeOutputDataDirectory(self, outputDirectory, res, t_res, Nz_str):
-        outputDataDirectory = os.path.join(outputDirectory, f"{res}_{t_res}_{Nz_str}nz",self.dataName)
+    def MakeInputParcelDirectory(self, inputDirectory):
+        inputParcelDirectory = os.path.join(inputDirectory, f"{self.res}_{self.t_res}_{self.Nz_str}nz", "ParcelData")
+        return inputParcelDirectory
+
+    def MakeOutputDataDirectory(self, outputDirectory):
+        outputDataDirectory = os.path.join(outputDirectory, f"{self.res}_{self.t_res}_{self.Nz_str}nz",self.dataName)
         os.makedirs(outputDataDirectory, exist_ok=True)
         return outputDataDirectory
 
@@ -268,15 +286,34 @@ class DataManager_Class:
             InputData = f[VariableName][:]
         return InputData
 
-    def SaveOutputTimestep(self, outputDataDirectory, res, t_res, timeString, outputDictionary):
+    def GetTimestepParcel(self, inputParcelDirectory, timeString, VariableName):
+        inputDataFile = os.path.join(
+            inputParcelDirectory,
+            f"cm1out_pdata_{self.res}_{self.t_res}_{self.Np_str}np_{timeString}.h5"
+        )
+        with h5py.File(inputDataFile, 'r') as f:
+            InputData = f[VariableName][:]
+        return InputData
+
+    def SaveOutputTimestep(self, outputDataDirectory, timeString, outputDictionary):
         out_file = os.path.join(
             outputDataDirectory,
-            f"{self.dataName}_{res}_{t_res}_{self.Nz_str}nz_{timeString}.h5"
+            f"{self.dataName}_{self.res}_{self.t_res}_{self.Nz_str}nz_{timeString}.h5"
         )
         with h5py.File(out_file, 'w') as f:
             for var_name, arr in outputDictionary.items():
                 f.create_dataset(var_name, data=arr, dtype=self.dtype, compression="gzip")
         print(f"Saved timestep to output file: {out_file}")
+
+    def Summary(self):
+        """Print a summary of the simulation configuration."""
+        print("=== DataManager Summary ===")
+        print(f" inputDirectory #:   {self.inputDirectory}")
+        print(f" outputDirectory #:   {self.outputDirectory}")
+        print(f" inputDataDirectory #:   {self.inputDataDirectory}")
+        print(f" inputParcelDirectory #:   {self.inputParcelDirectory}")
+        print(f" outputDataDirectory #:   {self.outputDataDirectory}")
+        print("=========================","\n")
 
 # EXAMPLE: DataManager = DataManager_Class(mainDirectory, scratchDirectory, ModelData.res, ModelData.t_res, ModelData.Nz_str, dataName="Eulerian_Binary_Array", dtype='bool')
 
