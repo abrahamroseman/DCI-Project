@@ -295,10 +295,13 @@ class DataManager_Class:
             InputData = f[variableName][:]
         return InputData
 
-    def SaveOutputTimestep(self, outputDataDirectory, timeString, outputDictionary):
+    def SaveOutputTimestep(self, outputDataDirectory, timeString, outputDictionary, dataName=None):
+        if dataName is None: #allows for custom setting of dataName (set dataName to something other than None)
+            dataName = self.dataName
+        
         out_file = os.path.join(
             outputDataDirectory,
-            f"{self.dataName}_{self.res}_{self.t_res}_{self.Nz_str}nz_{timeString}.h5"
+            f"{dataName}_{self.res}_{self.t_res}_{self.Nz_str}nz_{timeString}.h5"
         )
         with h5py.File(out_file, 'w') as f:
             for var_name, arr in outputDictionary.items():
