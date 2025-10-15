@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[4]:
 
 
 # ============================================================
@@ -29,6 +29,7 @@ class ModelData_Class:
 
         # Load coordinate data only (lightweight)
         self.GetCoordinateData()
+        self.Np = self.GetCoordinateParcel()
         self.timeStrings = self.GetTimeStrings(self.time)
 
         # Load Variable Names
@@ -74,6 +75,16 @@ class ModelData_Class:
             setattr(self, f"N{k}", len(v))
             
         return extracted
+
+    def GetCoordinateParcel(self):
+        """
+        Extract coordinate arrays (time, zf, zh, yf, yh, xf, xh) 
+        from the CM1 lagrangian parcel dataset and immediately close the file.
+        """
+        with xr.open_dataset(self.parcelDirectory, decode_timedelta=True) as ds:
+            p = ds['xh'].values
+            Np = len(p)
+        return Np
 
     def GetTimeStrings(self, times):
         """Convert CM1 time array (nanoseconds) to formatted strings."""
