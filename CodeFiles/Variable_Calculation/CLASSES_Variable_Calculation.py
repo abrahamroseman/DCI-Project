@@ -247,7 +247,7 @@ import os
 import h5py
 
 class DataManager_Class:
-    def __init__(self, mainDirectory, scratchDirectory, res, t_res, Nz_str, Np_str, dataType, dataName, dtype):
+    def __init__(self, mainDirectory, scratchDirectory, res, t_res, Nz_str, Np_str, dataType, dataName, dtype, make_dirs=True):
         self.mainDirectory = mainDirectory
         self.scratchDirectory = scratchDirectory
         self.dataType = dataType
@@ -257,6 +257,7 @@ class DataManager_Class:
         self.Np_str = Np_str
         self.dataName = dataName
         self.dtype = dtype
+        self.make_dirs = make_dirs
 
         # Initialize directories on creation
         self.inputDirectory = self.GetInputDirectory(mainDirectory, scratchDirectory)
@@ -282,10 +283,12 @@ class DataManager_Class:
     def GetOutputDirectory(self, mainDirectory, scratchDirectory):
         if self.res == '1km':
             outputDirectory = os.path.join(mainDirectory, 'Code', 'OUTPUT', 'Variable_Calculation', self.dataType)
-            os.makedirs(outputDirectory, exist_ok=True)
+            if self.make_dirs:
+                os.makedirs(outputDirectory, exist_ok=True)
         if self.res == '250m':
             outputDirectory = os.path.join(scratchDirectory, 'OUTPUT', 'Variable_Calculation', self.dataType)
-            os.makedirs(outputDirectory, exist_ok=True)
+            if self.make_dirs:
+                os.makedirs(outputDirectory, exist_ok=True)
         return outputDirectory
 
     def MakeInputDataDirectory(self, inputDirectory):
@@ -298,7 +301,8 @@ class DataManager_Class:
 
     def MakeOutputDataDirectory(self, outputDirectory):
         outputDataDirectory = os.path.join(outputDirectory, f"{self.res}_{self.t_res}_{self.Nz_str}nz",self.dataName)
-        os.makedirs(outputDataDirectory, exist_ok=True)
+        if self.make_dirs:
+            os.makedirs(outputDataDirectory, exist_ok=True)
         return outputDataDirectory
 
     def GetTimestepData(self, inputDataDirectory, timeString, variableName, dataName="cm1out"):
