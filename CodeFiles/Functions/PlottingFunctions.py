@@ -193,9 +193,9 @@ def HorizContour(f, units, ax=None, nx=None, ny=None):
 
 #TIME 00:00:00 Function
 #Gets the realtime for the current timestep
-def get_time(data,t,init):
+def get_time(time,t,init):
     (init_day,init_hour,init_min)=init[0],init[1],init[2]
-    times=data['time'].values/(1e9 * 60); time_inc=times.astype(int)[1]-times.astype(int)[0]
+    times=time/(1e9 * 60); time_inc=times.astype(int)[1]-times.astype(int)[0]
     current_min=init_hour*60+init_min+time_inc*t;
     
     days = init_day + (current_min // (24 * 60))
@@ -317,7 +317,7 @@ def apply_scientific_notation_colorbar(cbars):
         cbar.formatter = formatter
         cbar.update_ticks()
 
-#Makes ticks flush to figure boundaries (recommended)
+# Makes ticks flush to figure boundaries (recommended)
 def SnapLimitsToTicks(axes, dim="x"):
     from matplotlib.ticker import AutoLocator
     """
@@ -351,6 +351,7 @@ def SnapLimitsToTicks(axes, dim="x"):
             lo_tick = ticks[ticks <= lo][-1]
             hi_tick = ticks[ticks >= hi][0]
             ax.set_xlim(lo_tick, hi_tick)
+            ax.set_xticks(ax.get_xticks())  # <== solidifies ticks
 
         else:  # y case
             xmin, xmax = ax.get_xlim()
@@ -376,6 +377,7 @@ def SnapLimitsToTicks(axes, dim="x"):
             lo_tick = ticks[ticks <= lo][-1]
             hi_tick = ticks[ticks >= hi][0]
             ax.set_ylim(lo_tick, hi_tick)
+            ax.set_yticks(ax.get_yticks())  # <== solidifies ticks
 
 # In[3]:
 
