@@ -334,8 +334,11 @@ class DataManager_Class:
             InputData = f[variableName][:]
         return InputData
 
-    def SaveOutputTimestep(self, outputDataDirectory, timeString, outputDictionary, dataName=None):
-        if dataName is None: #allows for custom setting of dataName (set dataName to something other than None)
+    def SaveOutputTimestep(self, outputDataDirectory, timeString, outputDictionary,
+                           dtype=None,dataName=None):
+        if dtype is None:
+            dtype = self.dtype
+        if dataName is None:
             dataName = self.dataName
         
         out_file = os.path.join(
@@ -344,8 +347,42 @@ class DataManager_Class:
         )
         with h5py.File(out_file, 'w') as f:
             for var_name, arr in outputDictionary.items():
-                f.create_dataset(var_name, data=arr, dtype=self.dtype, compression="gzip")
+                f.create_dataset(var_name, data=arr, dtype=dtype, compression="gzip")
         print(f"Saved timestep to output file: {out_file}","\n")
+
+    def Save1DVariable(self, outputDataDirectory, outputDictionary, dtype=None,dataName=None):
+        if dtype is None:
+            dtype = self.dtype
+        if dataName is None:
+            dataName = self.dataName
+        
+        out_file = os.path.join(
+            outputDataDirectory,
+            f"{dataName}_{self.res}_{self.t_res}_{self.Nz_str}nz.h5"
+        )
+        with h5py.File(out_file, 'w') as f:
+            for var_name, arr in outputDictionary.items():
+                print(arr)
+                f.create_dataset(var_name, data=arr, dtype=dtype, compression="gzip")
+        print(f"Saved timestep to output file: {out_file}","\n")
+
+    def Load1DVariable(self, inputDataDirectory, dataName=None):
+            if dataName is None:
+                dataName = self.dataName
+    
+            input_file = os.path.join(
+                inputDataDirectory,
+                f"{dataName}_{self.res}_{self.t_res}_{self.Nz_str}nz.h5"
+            )
+    
+            output_dict = {}
+            with h5py.File(input_file, 'r') as f:
+                for var_name in f.keys():
+                    data = f[var_name][:]
+                    output_dict[var_name] = data
+    
+            print(f"Loaded 1D variable file: {input_file}", "\n")
+            return output_dict
 
     def Summary(self):
         """Print a summary of the simulation configuration."""
