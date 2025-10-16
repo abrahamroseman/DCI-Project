@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
+# In[4]:
 
 
 # ============================================================
@@ -45,7 +45,8 @@ def CallVariable(ModelData, DataManager, timeString, variableName):
             dataFolder = dataName
 
         elif variableName in ['Entrainment_g','Entrainment_c',
-                              'TransferEntrainment_c_to_g','TransferEntrainment_g_to_c']:
+                              'TransferEntrainment_c_to_g',
+                              'TransferEntrainment_g_to_c']:
             dataName = "Entrainment"
             dataType = "EntrainmentCalculation"
             dataFolder = dataType

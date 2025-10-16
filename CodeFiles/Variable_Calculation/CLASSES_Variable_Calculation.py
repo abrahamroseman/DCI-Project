@@ -317,6 +317,9 @@ class DataManager_Class:
         return outputDataDirectory
 
     def GetTimestepData(self, inputDataDirectory, timeString, variableName, dataName="cm1out"):
+        """
+        Return the variable data at a single time, closing the HDF5 file handle immediately after.
+        """
         inputDataFile = os.path.join(
             inputDataDirectory,
             f"{dataName}_{self.res}_{self.t_res}_{self.Nz_str}nz_{timeString}.h5"
@@ -333,6 +336,18 @@ class DataManager_Class:
         with h5py.File(inputDataFile, 'r') as f:
             InputData = f[variableName][:]
         return InputData
+    
+    def GetTimestepData_V2(self, inputDataDirectory, timeString, dataName="cm1out"):
+        """
+        Return an open HDF5 file handle (user must close manually).
+        Allows lazy loading of variables without reading them all into memory.
+        """
+        inputDataFile = os.path.join(
+            inputDataDirectory,
+            f"{dataName}_{self.res}_{self.t_res}_{self.Nz_str}nz_{timeString}.h5"
+        )
+        f = h5py.File(inputDataFile, 'r')  # <── no 'with'
+        return f
 
     def SaveOutputTimestep(self, outputDataDirectory, timeString, outputDictionary,
                            dtype=None,dataName=None):
@@ -350,7 +365,7 @@ class DataManager_Class:
                 f.create_dataset(var_name, data=arr, dtype=dtype, compression="gzip")
         print(f"Saved timestep to output file: {out_file}","\n")
 
-    def Save1DVariable(self, outputDataDirectory, outputDictionary, dtype=None,dataName=None):
+    def SaveCalculations(self, outputDataDirectory, outputDictionary, dtype=None,dataName=None,verbose=True):
         if dtype is None:
             dtype = self.dtype
         if dataName is None:
@@ -362,11 +377,12 @@ class DataManager_Class:
         )
         with h5py.File(out_file, 'w') as f:
             for var_name, arr in outputDictionary.items():
-                print(arr)
                 f.create_dataset(var_name, data=arr, dtype=dtype, compression="gzip")
-        print(f"Saved timestep to output file: {out_file}","\n")
 
-    def Load1DVariable(self, inputDataDirectory, dataName=None):
+        if verbose==True:
+            print(f"Saved calculations to output file: {out_file}","\n")
+
+    def LoadCalculations(self, inputDataDirectory, dataName=None,verbose=True):
             if dataName is None:
                 dataName = self.dataName
     
@@ -380,8 +396,9 @@ class DataManager_Class:
                 for var_name in f.keys():
                     data = f[var_name][:]
                     output_dict[var_name] = data
-    
-            print(f"Loaded 1D variable file: {input_file}", "\n")
+
+            if verbose==True:
+                print(f"Loaded calculations file: {input_file}", "\n")
             return output_dict
 
     def Summary(self):
