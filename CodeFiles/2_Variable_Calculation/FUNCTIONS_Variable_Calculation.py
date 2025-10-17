@@ -15,62 +15,62 @@ def CallVariable(ModelData, DataManager, timeString, variableName):
         var_data = DataManager.GetTimestepData(DataManager.inputDataDirectory, timeString, variableName=variableName)
         
     elif variableName not in ModelData.varList:
-        if variableName in ["A_g","A_c"]:
+        if variableName in ["A_g","A_c","qcqi"]:
             dataType = "CalculateMoreVariables"
-            dataFolder = dataName
             dataName = "Eulerian_Binary_Array"
+            dataFolder = dataName
         elif variableName in ["VMF_g","VMF_c"]:
             dataType = "CalculateMoreVariables"
-            dataFolder = dataName
             dataName = "Eulerian_VMF"
+            dataFolder = dataName
         elif variableName in ["MSE"]:
             dataType = "CalculateMoreVariables"
-            dataFolder = dataName
             dataName = "Moist_Static_Energy"
+            dataFolder = dataName
         elif variableName in ["theta_v"]:
             dataType = "CalculateMoreVariables"
-            dataFolder = dataName
             dataName = "Virtual_Potential_Temperature"
+            dataFolder = dataName
         elif variableName in ["theta_e", "RH_vapor", "RH_ice"]:
             dataType = "CalculateMoreVariables"
-            dataFolder = dataName
             dataName = "Equivalent_Potential_Temperature"
+            dataFolder = dataName
         elif variableName in ["convergence"]:
             dataType = "CalculateMoreVariables"
-            dataFolder = dataName
             dataName = "Convergence"
+            dataFolder = dataName
         elif variableName in ["HMC"]:
             dataType = "CalculateMoreVariables"
-            dataFolder = dataName
             dataName = "MoistureConvergence"
+            dataFolder = dataName
 
         elif variableName in ['Entrainment_g','Entrainment_c',
                               'TransferEntrainment_g',
                               'TransferEntrainment_c']:
             dataType = "EntrainmentCalculation"
-            dataFolder = dataType
             dataName = "Entrainment"
+            dataFolder = dataName
 
         elif variableName in ['Detrainment_g','Detrainment_c',
                               'TransferDetrainment_g',
                               'TransferDetrainment_c']:
             dataType = "EntrainmentCalculation"
-            dataFolder = dataType
             dataName = "Detrainment"
+            dataFolder = dataName
 
         elif variableName in ['PROCESSED_Entrainment_g','PROCESSED_Entrainment_c',
                               'PROCESSED_TransferEntrainment_g',
                               'PROCESSED_TransferEntrainment_c']:
             dataType = "EntrainmentCalculation"
-            dataFolder = dataType
             dataName = "PROCESSED_Entrainment"
+            dataFolder = dataName
     
         elif variableName in ['PROCESSED_Detrainment_g','PROCESSED_Detrainment_c',
                               'PROCESSED_TransferDetrainment_g',
                               'PROCESSED_TransferDetrainment_c']:
             dataType = "EntrainmentCalculation"
-            dataFolder = dataType
             dataName = "PROCESSED_Detrainment"
+            dataFolder = dataName
 
             
         inputDataDirectory = os.path.normpath(
@@ -93,7 +93,7 @@ import os
 
 def CallLagrangianArray(ModelData, DataManager, timeString, variableName):
 
-    if variableName in ["A_g","A_c","z","x","Z","Y","X"]:
+    if variableName in ["A_g","A_c","z","x","Z","Y","X","qcqi"]:
         dataType = "LagrangianArrays"
         dataName = "Lagrangian_Binary_Array"
     elif variableName in ["PROCESSED_A_g","PROCESSED_A_c"]:
