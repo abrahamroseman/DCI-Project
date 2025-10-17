@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[5]:
+# In[1]:
 
 
 # ============================================================
@@ -10,9 +10,10 @@
 
 import os
 
-def CallVariable(ModelData, DataManager, timeString, variableName):
+def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate = None):
     if variableName in ModelData.varList:
-        var_data = DataManager.GetTimestepData(DataManager.inputDataDirectory, timeString, variableName=variableName)
+        var_data = DataManager.GetTimestepData(DataManager.inputDataDirectory, timeString, 
+                                               variableName=variableName, zInterpolate = zInterpolate)
         
     elif variableName not in ModelData.varList:
         if variableName in ["A_g","A_c","qcqi"]:
@@ -49,28 +50,28 @@ def CallVariable(ModelData, DataManager, timeString, variableName):
                               'TransferEntrainment_c']:
             dataType = "EntrainmentCalculation"
             dataName = "Entrainment"
-            dataFolder = dataName
+            dataFolder = "EntrainmentCalculation"
 
         elif variableName in ['Detrainment_g','Detrainment_c',
                               'TransferDetrainment_g',
                               'TransferDetrainment_c']:
             dataType = "EntrainmentCalculation"
             dataName = "Detrainment"
-            dataFolder = dataName
+            dataFolder = "EntrainmentCalculation"
 
         elif variableName in ['PROCESSED_Entrainment_g','PROCESSED_Entrainment_c',
                               'PROCESSED_TransferEntrainment_g',
                               'PROCESSED_TransferEntrainment_c']:
             dataType = "EntrainmentCalculation"
             dataName = "PROCESSED_Entrainment"
-            dataFolder = dataName
+            dataFolder = "EntrainmentCalculation"
     
         elif variableName in ['PROCESSED_Detrainment_g','PROCESSED_Detrainment_c',
                               'PROCESSED_TransferDetrainment_g',
                               'PROCESSED_TransferDetrainment_c']:
             dataType = "EntrainmentCalculation"
             dataName = "PROCESSED_Detrainment"
-            dataFolder = dataName
+            dataFolder = "EntrainmentCalculation"
 
             
         inputDataDirectory = os.path.normpath(
@@ -122,29 +123,29 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName):
                           'TransferEntrainment_g',
                           'TransferEntrainment_c']:
         dataType = "EntrainmentCalculation"
-        dataFolder = dataType
         dataName = "Entrainment"
+        dataFolder = "EntrainmentCalculation"
 
     elif variableName in ['Detrainment_g','Detrainment_c',
                           'TransferDetrainment_g',
                           'TransferDetrainment_c']:
         dataType = "EntrainmentCalculation"
-        dataFolder = dataType
         dataName = "Detrainment"
+        dataFolder = "EntrainmentCalculation"
 
     elif variableName in ['PROCESSED_Entrainment_g','PROCESSED_Entrainment_c',
                           'PROCESSED_TransferEntrainment_g',
                           'PROCESSED_TransferEntrainment_c']:
         dataType = "EntrainmentCalculation"
-        dataFolder = dataType
         dataName = "PROCESSED_Entrainment"
+        dataFolder = "EntrainmentCalculation"
 
     elif variableName in ['PROCESSED_Detrainment_g','PROCESSED_Detrainment_c',
                           'PROCESSED_TransferDetrainment_g',
                           'PROCESSED_TransferDetrainment_c']:
         dataType = "EntrainmentCalculation"
-        dataFolder = dataType
         dataName = "PROCESSED_Detrainment"
+        dataFolder = "EntrainmentCalculation"
         
     inputDataDirectory = os.path.normpath(
         os.path.join(DataManager.outputDirectory, "..", dataType,

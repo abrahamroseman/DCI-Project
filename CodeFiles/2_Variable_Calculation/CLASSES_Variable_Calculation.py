@@ -246,7 +246,7 @@ class SlurmJobArray_Class:
         print(f"Running timesteps from {self.start_job}:{self.end_job}","\n")
 
 
-# In[2]:
+# In[1]:
 
 
 # ============================================================
@@ -316,17 +316,26 @@ class DataManager_Class:
             os.makedirs(outputDataDirectory, exist_ok=True)
         return outputDataDirectory
 
-    def GetTimestepData(self, inputDataDirectory, timeString, variableName, dataName="cm1out"):
+    def GetTimestepData(self, inputDataDirectory, timeString, variableName, dataName="cm1out", zInterpolate=None):
         """
         Return the variable data at a single time, closing the HDF5 file handle immediately after.
         """
         inputDataFile = os.path.join(
-            inputDataDirectory,
-            f"{dataName}_{self.res}_{self.t_res}_{self.Nz_str}nz_{timeString}.h5"
-        )
-        with h5py.File(inputDataFile, 'r') as f:
-            InputData = f[variableName][:]
-        return InputData
+                inputDataDirectory,
+                f"{dataName}_{self.res}_{self.t_res}_{self.Nz_str}nz_{timeString}.h5"
+            )
+        if zInterpolate == None:
+            with h5py.File(inputDataFile, 'r') as f:
+                InputData = f[variableName][:]
+            return InputData
+        elif zInterpolate == True:
+            ds = xr.open_dataset(inputDataFile, engine="h5netcdf", phony_dims="sort")
+            if "phony_dim_3" in ds.dims:
+                ds = ds.rename({"phony_dim_3": "zf"})
+            da = ds[variableName]
+            da_interp = da.interp(zf=ModelData.zh)
+            ds.close()
+            return da_interp.data
 
     def GetTimestepParcel(self, inputParcelDirectory, timeString, variableName, dataName="cm1out_pdata"):
         inputDataFile = os.path.join(
