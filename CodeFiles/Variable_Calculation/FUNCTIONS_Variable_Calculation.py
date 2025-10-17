@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[4]:
+# In[1]:
 
 
 # ============================================================
@@ -45,19 +45,19 @@ def CallVariable(ModelData, DataManager, timeString, variableName):
             dataFolder = dataName
 
         elif variableName in ['Entrainment_g','Entrainment_c',
-                              'TransferEntrainment_c_to_g',
-                              'TransferEntrainment_g_to_c']:
+                              'TransferEntrainment_g',
+                              'TransferEntrainment_c']:
             dataName = "Entrainment"
             dataType = "EntrainmentCalculation"
             dataFolder = dataType
 
         elif variableName in ['Detrainment_g','Detrainment_c',
-                              'TransferDetrainment_c_to_g',
-                              'TransferDetrainment_g_to_c']:
+                              'TransferDetrainment_g',
+                              'TransferDetrainment_c']:
             dataName = "Detrainment"
             dataType = "EntrainmentCalculation"
             dataFolder = dataType
-
+            
         inputDataDirectory = os.path.normpath(
             os.path.join(DataManager.outputDirectory, "..", dataType,
                          f"{DataManager.res}_{DataManager.t_res}_{DataManager.Nz_str}nz", dataFolder)
@@ -67,7 +67,7 @@ def CallVariable(ModelData, DataManager, timeString, variableName):
     return var_data
 
 
-# In[ ]:
+# In[4]:
 
 
 # ============================================================
@@ -100,12 +100,19 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName):
         dataName = "MoistureConvergence"
         dataType = "LagrangianArrays"
 
-    elif variableName in ['e_c','d_c','e_g','d_g']:
+    elif variableName in ['Entrainment_g','Entrainment_c',
+                          'TransferEntrainment_g',
+                          'TransferEntrainment_c']:
         dataName = "Entrainment"
-        dataType = "LagrangianArrays"
-    elif variableName in ['c_to_g_E','g_to_c_E','c_to_g_D','g_to_c_D']:
-        dataName = "Transfer_Entrainment"
-        dataType = "LagrangianArrays"
+        dataType = "EntrainmentCalculation"
+        dataFolder = dataType
+
+    elif variableName in ['Detrainment_g','Detrainment_c',
+                          'TransferDetrainment_g',
+                          'TransferDetrainment_c']:
+        dataName = "Detrainment"
+        dataType = "EntrainmentCalculation"
+        dataFolder = dataType
         
     inputDataDirectory = os.path.normpath(
         os.path.join(DataManager.outputDirectory, "..", dataType,
@@ -113,4 +120,10 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName):
     var_data = DataManager.GetTimestepData(inputDataDirectory, timeString,
                                            variableName=variableName, dataName=dataName)
     return var_data
+
+
+# In[ ]:
+
+
+
 
