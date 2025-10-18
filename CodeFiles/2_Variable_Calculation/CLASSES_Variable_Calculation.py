@@ -325,11 +325,11 @@ class DataManager_Class:
                 inputDataDirectory,
                 f"{dataName}_{self.res}_{self.t_res}_{self.Nz_str}nz_{timeString}.h5"
             )
-        if zInterpolate == None:
+        if zInterpolate is None:
             with h5py.File(inputDataFile, 'r') as f:
                 InputData = f[variableName][:]
             return InputData
-        elif zInterpolate != None:
+        elif zInterpolate is not None:
             ds = xr.open_dataset(inputDataFile, engine="h5netcdf", phony_dims="sort")
             if "phony_dim_3" in ds.dims:
                 ds = ds.rename({"phony_dim_3": "zf"})
