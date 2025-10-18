@@ -243,7 +243,7 @@ class SlurmJobArray_Class:
         print("No zero-length ranges:", np.all(np.array(start) != np.array(end)))
 
     def Summary(self):
-        print(f"Running timesteps from {self.start_job}:{self.end_job}","\n")
+        print(f"Running timesteps from {self.start_job}:{self.end_job-1}","\n")
 
 
 # In[1]:
@@ -329,12 +329,12 @@ class DataManager_Class:
             with h5py.File(inputDataFile, 'r') as f:
                 InputData = f[variableName][:]
             return InputData
-        elif zInterpolate == True:
+        elif zInterpolate != None:
             ds = xr.open_dataset(inputDataFile, engine="h5netcdf", phony_dims="sort")
             if "phony_dim_3" in ds.dims:
                 ds = ds.rename({"phony_dim_3": "zf"})
             da = ds[variableName]
-            da_interp = da.interp(zf=ModelData.zh)
+            da_interp = da.interp(zf=zInterpolate)
             ds.close()
             return da_interp.data
 
