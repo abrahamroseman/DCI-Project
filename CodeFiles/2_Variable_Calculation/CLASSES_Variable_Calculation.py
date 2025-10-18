@@ -375,6 +375,32 @@ class DataManager_Class:
                 f.create_dataset(var_name, data=arr, dtype=dtype, compression="gzip")
         print(f"Saved timestep to output file: {out_file}","\n")
 
+    def SaveOutputTimestep_V2(self, outputDataDirectory, timeString, outputDictionary,
+                           dtype=None, dataName=None):
+        if dataName is None:
+            dataName = self.dataName
+    
+        out_file = os.path.join(
+            outputDataDirectory,
+            f"{dataName}_{self.res}_{self.t_res}_{self.Nz_str}nz_{timeString}.h5"
+        )
+    
+        # If dtype is a single value, broadcast it to all variables
+        if dtype is None:
+            dtype_list = [self.dtype] * len(outputDictionary)
+        elif isinstance(dtype, list):
+            if len(dtype) != len(outputDictionary):
+                raise ValueError("Length of dtype list must match number of variables in outputDictionary.")
+            dtype_list = dtype
+        else:
+            dtype_list = [dtype] * len(outputDictionary)
+    
+        with h5py.File(out_file, 'w') as f:
+            for (var_name, arr), dt in zip(outputDictionary.items(), dtype_list):
+                f.create_dataset(var_name, data=arr, dtype=dt, compression="gzip")
+    
+        print(f"Saved timestep to output file: {out_file}\n")
+
     def SaveCalculations(self, outputDataDirectory, outputDictionary, dtype=None,dataName=None,verbose=True):
         if dtype is None:
             dtype = self.dtype
