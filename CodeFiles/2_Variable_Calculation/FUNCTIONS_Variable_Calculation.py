@@ -75,7 +75,7 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
 
             
         inputDataDirectory = os.path.normpath(
-            os.path.join(DataManager.outputDirectory, "..", dataType,
+            os.path.join(DataManager.inputDirectory, "..", dataType,
                          f"{DataManager.res}_{DataManager.t_res}_{DataManager.Nz_str}nz", dataFolder)
                         )
         var_data = DataManager.GetTimestepData(inputDataDirectory, timeString, 
@@ -148,7 +148,7 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName):
         dataFolder = "EntrainmentCalculation"
         
     inputDataDirectory = os.path.normpath(
-        os.path.join(DataManager.outputDirectory, "..", dataType,
+        os.path.join(DataManager.inputDirectory, "..", dataType,
                      f"{DataManager.res}_{DataManager.t_res}_{DataManager.Nz_str}nz", dataName))
     var_data = DataManager.GetTimestepData(inputDataDirectory, timeString,
                                            variableName=variableName, dataName=dataName)

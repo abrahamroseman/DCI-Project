@@ -258,7 +258,7 @@ import os
 import h5py
 
 class DataManager_Class:
-    def __init__(self, mainDirectory, scratchDirectory, res, t_res, Nz_str, Np_str, dataType, dataName, dtype, make_dirs=True):
+    def __init__(self, mainDirectory, scratchDirectory, res, t_res, Nz_str, Np_str, dataType, dataName, dtype, make_dirs=True, codeSection = "Variable_Calculation"):
         self.mainDirectory = mainDirectory
         self.scratchDirectory = scratchDirectory
         self.dataType = dataType
@@ -272,7 +272,7 @@ class DataManager_Class:
 
         # Initialize directories on creation
         self.inputDirectory = self.GetInputDirectory(mainDirectory, scratchDirectory)
-        self.outputDirectory = self.GetOutputDirectory(mainDirectory, scratchDirectory)
+        self.outputDirectory = self.GetOutputDirectory(mainDirectory, scratchDirectory,codeSection)
         self.inputDataDirectory = self.MakeInputDataDirectory(self.inputDirectory)
         self.inputParcelDirectory = self.MakeInputParcelDirectory(self.inputDirectory)
         self.outputDataDirectory = self.MakeOutputDataDirectory(self.outputDirectory)
@@ -291,13 +291,14 @@ class DataManager_Class:
             inputDirectory = os.path.join(scratchDirectory, 'OUTPUT', 'Variable_Calculation', 'TimeSplitModelData')
         return inputDirectory
 
-    def GetOutputDirectory(self, mainDirectory, scratchDirectory):
+    def GetOutputDirectory(self, mainDirectory, scratchDirectory, 
+                           codeSection):
         if self.res == '1km':
-            outputDirectory = os.path.join(mainDirectory, 'Code', 'OUTPUT', 'Variable_Calculation', self.dataType)
+            outputDirectory = os.path.join(mainDirectory, 'Code', 'OUTPUT', codeSection, self.dataType)
             if self.make_dirs:
                 os.makedirs(outputDirectory, exist_ok=True)
         if self.res == '250m':
-            outputDirectory = os.path.join(scratchDirectory, 'OUTPUT', 'Variable_Calculation', self.dataType)
+            outputDirectory = os.path.join(scratchDirectory, 'OUTPUT', codeSection, self.dataType)
             if self.make_dirs:
                 os.makedirs(outputDirectory, exist_ok=True)
         return outputDirectory
