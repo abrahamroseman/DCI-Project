@@ -43,11 +43,11 @@ class DomainProfiles_Class:
         return profiles, VARs_squares
 
     @staticmethod
-    def GetUpdraftMask(data_type, A_g, A_c):
+    def GetUpdraftMask(datatype, A_g, A_c):
         # Threshold mask
-        if data_type == "general":
+        if datatype == "general":
             where_updraft = (A_g==True)
-        elif data_type == "cloudy":
+        elif datatype == "cloudy":
             where_updraft = (A_c==True)
         return where_updraft
 
@@ -90,14 +90,14 @@ class DomainProfiles_Class:
         return profiles
 
     @staticmethod
-    def DomainProfile(VARs,data_type, A_g,A_c, ModelData, masked=True):
+    def DomainProfile(VARs,datatype, A_g,A_c, ModelData, masked=True):
     
         # Initialize profiles for each variable
         profiles, VARs_squares = DomainProfiles_Class.InitializeProfiles(VARs, ModelData)
     
         # Threshold mask
         if masked == True:
-            where_updraft = DomainProfiles_Class.GetUpdraftMask(data_type, A_g, A_c)
+            where_updraft = DomainProfiles_Class.GetUpdraftMask(datatype, A_g, A_c)
         elif masked == False:
             # where_updraft = (A_c == False) | (A_c == True)
             profile = DomainProfiles_Class.RegularAverage(VARs, VARs_squares, profiles)
