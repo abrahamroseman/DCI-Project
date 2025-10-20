@@ -47,6 +47,12 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 #python -u Eulerian_Profiles.py Entrainment $SLURM_ARRAY_TASK_ID \
 #    > job_out/Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
+# TWO.5
+#mkdir -p job_out/Entrainment
+#jupyter nbconvert --to script Eulerian_Profiles.ipynb
+#python -u Eulerian_Profiles.py PROCESSED_Entrainment $SLURM_ARRAY_TASK_ID \
+#    > job_out/Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+
 # THREE
 mkdir -p job_out/W_Budgets
 #jupyter nbconvert --to script Eulerian_Profiles.ipynb
