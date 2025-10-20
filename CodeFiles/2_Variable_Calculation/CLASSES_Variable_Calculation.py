@@ -10,6 +10,7 @@
 
 #Libraries
 import os
+import numpy as np
 import xarray as xr
 from datetime import timedelta
 
@@ -29,6 +30,7 @@ class ModelData_Class:
 
         # Load coordinate data only (lightweight)
         self.GetCoordinateData()
+        [self.dt, self.dz, self.dy, self.dx] = self.GetGridSpacing()
         self.Np = self.GetCoordinateParcel()
         self.timeStrings = self.GetTimeStrings(self.time)
 
@@ -85,6 +87,13 @@ class ModelData_Class:
             p = ds['xh'].values
             Np = len(p)
         return Np
+
+    def GetGridSpacing(self):
+        dt=(self.time[1]-self.time[0]).item()/1e9 #sec
+        dz = np.diff(self.zf) * 1000
+        dy = (self.yh[1].item() - self.yh[0].item()) * 1000
+        dx = (self.xh[1].item() - self.xh[0].item()) * 1000
+        return dt, dz, dy, dx
 
     def GetTimeStrings(self, times):
         """Convert CM1 time array (nanoseconds) to formatted strings."""
