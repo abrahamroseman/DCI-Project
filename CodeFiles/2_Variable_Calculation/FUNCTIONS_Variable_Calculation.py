@@ -92,7 +92,8 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
 
 import os
 
-def CallLagrangianArray(ModelData, DataManager, timeString, variableName):
+def CallLagrangianArray(ModelData, DataManager, timeString, variableName, 
+                        printstatement=False):
 
     if variableName in ["A_g","A_c","z","x","Z","Y","X","qcqi"]:
         dataType = "LagrangianArrays"
@@ -151,6 +152,7 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName):
         os.path.join(DataManager.inputDirectory, "..", dataType,
                      f"{DataManager.res}_{DataManager.t_res}_{DataManager.Nz_str}nz", dataName))
     var_data = DataManager.GetTimestepData(inputDataDirectory, timeString,
-                                           variableName=variableName, dataName=dataName)
+                                           variableName=variableName, dataName=dataName,
+                                           printstatement=printstatement)
     return var_data
 
