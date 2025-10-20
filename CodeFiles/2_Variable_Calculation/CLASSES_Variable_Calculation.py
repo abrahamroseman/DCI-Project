@@ -205,15 +205,20 @@ import os
 import numpy as np
 
 class SlurmJobArray_Class:
-    def __init__(self, total_elements, num_jobs, UsingJobArray):
+    def __init__(self, total_elements, 
+                 num_jobs, UsingJobArray,
+                 custom_job_id=None):
         self.total_elements = total_elements
         self.num_jobs = num_jobs
         self.UsingJobArray = UsingJobArray
         
         # Get job ID (default = 1 if not running under Slurm)
-        self.job_id = int(os.environ.get('SLURM_ARRAY_TASK_ID', 0))
-        if self.job_id == 0:
-            self.job_id = 1
+        if custom_job_id is None:
+            self.job_id = int(os.environ.get('SLURM_ARRAY_TASK_ID', 0))
+            if self.job_id == 0:
+                self.job_id = 1
+        elif custom_job_id is not None:
+            self.job_id = custom_job_id
         
         # Precompute range info
         self.job_range = total_elements // num_jobs
