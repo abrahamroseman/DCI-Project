@@ -331,7 +331,7 @@ class DataManager_Class:
             os.makedirs(outputDataDirectory, exist_ok=True)
         return outputDataDirectory
 
-    def GetTimestepData(self, inputDataDirectory, timeString, variableName, dataName="cm1out", zInterpolate=None):
+    def GetTimestepData(self, inputDataDirectory, timeString, variableName, dataName="cm1out", zInterpolate=None, printstatement=False):
         """
         Return the variable data at a single time, closing the HDF5 file handle immediately after.
         """
@@ -339,6 +339,8 @@ class DataManager_Class:
                 inputDataDirectory,
                 f"{dataName}_{self.res}_{self.t_res}_{self.Nz_str}nz_{timeString}.h5"
             )
+        if printstatement==True:
+            print(f"Retrieving data from {inputDataFile}","\n")
         if zInterpolate is None:
             with h5py.File(inputDataFile, 'r') as f:
                 InputData = f[variableName][:]
