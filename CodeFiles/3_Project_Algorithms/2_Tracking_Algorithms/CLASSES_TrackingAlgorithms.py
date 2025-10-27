@@ -181,7 +181,7 @@ class SlurmJobArray_Class:
     
             for sub_key, arr in sub_dict.items():
                 # Apply job filtering
-                filteredArray = job_filter(arr, start_job, end_job)
+                filteredArray = SlurmJobArray_Class.job_filter(arr, start_job, end_job)
                 trackedArrays_filtered[main_key][sub_key] = filteredArray
     
         print(f"Completed job filter for {len(trackedArrays_filtered)} main categories ({start_job} → {end_job})")
