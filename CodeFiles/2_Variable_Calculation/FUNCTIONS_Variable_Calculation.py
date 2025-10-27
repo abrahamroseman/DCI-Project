@@ -156,3 +156,47 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName,
                                            printstatement=printstatement)
     return var_data
 
+
+# ============================================================
+# OpenMultipleSingleTimes_LagrangianArray_FUNCTION
+# ============================================================
+
+import os
+from glob import glob
+import xarray as xr
+
+def OpenMultipleSingleTimes_LagrangianArray(directory, ModelData, pattern="Lagrangian_Binary_Array_*.h5"):
+    """
+    Load a sequence of Lagrangian .h5 files (each a single timestep)
+    into one xarray.Dataset with dimensions (time, p),
+    enforcing time order from ModelData.timeStrings.
+    """
+    # --- Find all available files
+    files_all = glob(os.path.join(directory, pattern))
+    if not files_all:
+        raise FileNotFoundError(f"No files found in {directory} matching {pattern}")
+
+    # --- Build the correctly ordered list according to ModelData.timeStrings
+    files = []
+    for t in ModelData.timeStrings:
+        time_pattern = f"_{t}.h5"
+        matched = [f for f in files_all if f.endswith(time_pattern)]
+        if matched:
+            files.append(matched[0])
+        else:
+            print(f"Missing file for time {t}")
+
+    # --- Open and concatenate along time
+    ds = xr.open_mfdataset(
+        files,
+        engine="h5netcdf",
+        phony_dims="sort",
+        combine="nested",
+        concat_dim="time",
+    )
+
+    # --- Rename the phony dimension to 'p'
+    if "phony_dim_0" in ds.dims:
+        ds = ds.rename({"phony_dim_0": "p"})
+
+    return ds, files

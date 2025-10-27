@@ -3,7 +3,6 @@
 
 # In[5]:
 
-
 # ============================================================
 # TrackingAlgorithms_DataLoading_Class
 # ============================================================
@@ -34,12 +33,18 @@ class TrackingAlgorithms_DataLoading_Class:
         print(f"Saved output to {filePath}","\n")
 
     @staticmethod
-    def LoadData(ModelData, DataManager, timeString):
+    def LoadData(ModelData, DataManager, timeString,
+                 dataName=None,outputDataDirectory=None):
         """
         Load tracking algorithm results from an HDF5 file.
         """
-        fileName = f"{DataManager.dataName}_{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz_{timeString}.h5"
-        filePath = os.path.join(DataManager.outputDataDirectory, fileName)
+        if dataName is None:
+            dataName = DataManager.dataName
+        if outputDataDirectory is None:
+            outputDataDirectory = DataManager.outputDataDirectory
+        
+        fileName = f"{dataName}_{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz_{timeString}.h5"
+        filePath = os.path.join(outputDataDirectory, fileName)
 
         if not os.path.exists(filePath):
             raise FileNotFoundError(f"HDF5 file not found:\n{filePath}")
@@ -60,4 +65,10 @@ class TrackingAlgorithms_DataLoading_Class:
 # #EXAMPLE USAGE
 # TrackingAlgorithms_DataLoading_Class.SaveData(ModelData,DataManager, Dictionary, timeString)
 # Dictionary = TrackingAlgorithms_DataLoading_Class.LoadData(ModelData,DataManager, timeString)
+
+
+# In[ ]:
+
+
+
 
