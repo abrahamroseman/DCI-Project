@@ -298,3 +298,121 @@ class Results_InputOutput_Class:
     
         return out
 
+
+# In[1]:
+
+
+# ============================================================
+# TrackedParcel_Loading_Class
+# ============================================================
+
+import numpy as np
+
+class TrackedParcel_Loading_Class:
+
+    @staticmethod
+    def LoadFinalData(ModelData,DataManager,Results_InputOutput_Class):    
+        Dictionary = Results_InputOutput_Class.LoadOutFile(ModelData,DataManager,job_id="combined_SUBSET")
+        return Dictionary
+
+    @staticmethod
+    def GetTrackedParcelArrays(Dictionary):
+        """
+        Extract all tracked parcel arrays (CL, nonCL, SBF, ColdPool) from Dictionary.
+    
+        Returns
+        -------
+        dict
+            Nested dictionary of arrays, grouped by type and category.
+        """
+        trackedArrays = {
+            "CL": {
+                "ALL": Dictionary["CL_ALL_out_arr"],
+                "SHALLOW": Dictionary["CL_SHALLOW_out_arr"],
+                "DEEP": Dictionary["CL_DEEP_out_arr"],
+            },
+            "nonCL": {
+                "ALL": Dictionary["nonCL_ALL_out_arr"],
+                "SHALLOW": Dictionary["nonCL_SHALLOW_out_arr"],
+                "DEEP": Dictionary["nonCL_DEEP_out_arr"],
+            },
+            "SBF": {
+                "ALL": Dictionary["SBF_ALL_out_arr"],
+                "SHALLOW": Dictionary["SBF_SHALLOW_out_arr"],
+                "DEEP": Dictionary["SBF_DEEP_out_arr"],
+            },
+            "nonSBF": {
+                "ALL": Dictionary["nonSBF_ALL_out_arr"],
+                "SHALLOW": Dictionary["nonSBF_SHALLOW_out_arr"],
+                "DEEP": Dictionary["nonSBF_DEEP_out_arr"],
+            },
+            "ColdPool": {
+                "ALL": Dictionary["ColdPool_ALL_out_arr"],
+                "SHALLOW": Dictionary["ColdPool_SHALLOW_out_arr"],
+                "DEEP": Dictionary["ColdPool_DEEP_out_arr"],
+            }
+        }
+    
+        # concise summary
+        print(f"CL: ALL={len(trackedArrays['CL']['ALL'])}, SHALLOW={len(trackedArrays['CL']['SHALLOW'])}, DEEP={len(trackedArrays['CL']['DEEP'])}")
+        print(f"nonCL: ALL={len(trackedArrays['nonCL']['ALL'])}, SHALLOW={len(trackedArrays['nonCL']['SHALLOW'])}, DEEP={len(trackedArrays['nonCL']['DEEP'])}")
+        print(f"SBF: ALL={len(trackedArrays['SBF']['ALL'])}, SHALLOW={len(trackedArrays['SBF']['SHALLOW'])}, DEEP={len(trackedArrays['SBF']['DEEP'])}")
+        print(f"ColdPool: ALL={len(trackedArrays['ColdPool']['ALL'])}, SHALLOW={len(trackedArrays['ColdPool']['SHALLOW'])}, DEEP={len(trackedArrays['ColdPool']['DEEP'])}")
+    
+        return trackedArrays
+    
+    
+    #Reading In Final Results from SubsetParcels
+    @staticmethod
+    def LoadingSubsetParcelData(ModelData,DataManager,Results_InputOutput_Class):
+    
+        #Loading Tracked Parcel Data
+        Dictionary = TrackedParcel_Loading_Class.LoadFinalData(ModelData,DataManager,Results_InputOutput_Class)
+        trackedArrays = TrackedParcel_Loading_Class.GetTrackedParcelArrays(Dictionary)
+        
+        #cloudbase
+        all_cloudbase = Results_InputOutput_Class.LoadAllCloudBase_Combined(ModelData,DataManager)["all_cloudbase"]
+    
+        mean_all_cloudbase = np.nanmean(all_cloudbase)
+        min_all_cloudbase = np.nanmin(all_cloudbase)
+        print(f"Mean Cloudbase is: {mean_all_cloudbase:.2f} km\n")
+        print(f"Min Cloudbase is: {min_all_cloudbase:.2f} km\n")
+    
+        #lfc and lcl
+        LFC_profile = Results_InputOutput_Class.LoadLFC_Profile_Combined(ModelData,DataManager,Ltype='LFC')["LFC_profile"]
+        LCL_profile = Results_InputOutput_Class.LoadLFC_Profile_Combined(ModelData,DataManager,Ltype='LCL')["LCL_profile"]
+        
+        #LFC and LCL
+        MeanLFC=np.mean(LFC_profile)
+        MeanLCL=np.mean(LCL_profile)
+        MinLFC=np.min(LFC_profile)
+        MinLCL=np.min(LCL_profile)
+        print(f"Mean LFC is: {MeanLFC:.2f} km\n")
+        print(f"Mean LCL is: {MeanLCL:.2f} km\n")
+        print(f"Min LFC is: {MinLFC:.2f} km\n")
+        print(f"Min LCL is: {MinLCL:.2f} km\n")
+        
+    
+        #combining all level data into dictionary
+        LevelsDictionary = {"all_cloudbase": all_cloudbase,
+                            "mean_all_cloudbase": mean_all_cloudbase,
+                            "min_all_cloudbase": min_all_cloudbase,
+    
+                            "LFC_profile": LFC_profile,
+                            "LCL_profile": LCL_profile,
+                            "MeanLFC": MeanLFC,
+                            "MeanLCL": MeanLCL,
+                            "MinLFC": MinLFC,
+                            "MinLCL": MinLCL}
+                            
+                            
+        return trackedArrays,LevelsDictionary
+
+# #Example Calls
+# trackedArrays,LevelsDictionary = TrackedParcel_Loading_Class.LoadingSubsetParcelData(ModelData,DataManager,
+#                                                          Results_InputOutput_Class)
+    
+# CL_ALL = trackedArrays["CL"]["ALL"]
+# SBF_DEEP = trackedArrays["SBF"]["DEEP"]
+# ColdPool_SHALLOW = trackedArrays["ColdPool"]["SHALLOW"]
+
