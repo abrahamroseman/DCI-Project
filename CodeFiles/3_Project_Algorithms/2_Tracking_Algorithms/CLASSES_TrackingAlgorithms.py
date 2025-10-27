@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[5]:
+# In[6]:
+
 
 # ============================================================
 # TrackingAlgorithms_DataLoading_Class
@@ -34,7 +35,8 @@ class TrackingAlgorithms_DataLoading_Class:
 
     @staticmethod
     def LoadData(ModelData, DataManager, timeString,
-                 dataName=None,outputDataDirectory=None):
+                 dataName=None,outputDataDirectory=None,
+                 printstatement=True):
         """
         Load tracking algorithm results from an HDF5 file.
         """
@@ -53,8 +55,9 @@ class TrackingAlgorithms_DataLoading_Class:
         with h5py.File(filePath, 'r') as f:
             for key in f.keys():
                 Dictionary[key] = f[key][:]
-        
-        print(f"Loaded data from {filePath} ({len(Dictionary)} variables)\n")
+
+        if printstatement == True:
+            print(f"Loaded data from {filePath} ({len(Dictionary)} variables)\n")
         return Dictionary
 
 # #HOW TO LOAD
@@ -70,5 +73,228 @@ class TrackingAlgorithms_DataLoading_Class:
 # In[ ]:
 
 
+# ============================================================
+# SlurmJobArray_Class
+# ============================================================
 
+class SlurmJobArray_Class:
+    
+    @staticmethod
+    def StartSlurmJobArray(num_jobs,num_slurm_jobs, ISRUN):
+        job_id = int(os.environ.get('SLURM_ARRAY_TASK_ID', 0)) #this is the current SBATCH job id
+        if job_id==0: job_id=1
+        if ISRUN==False:
+            start_job=1;end_job=num_jobs+1
+            return start_job,end_job
+        total_elements=num_jobs #total num of variables
+    
+        job_range = total_elements // num_slurm_jobs  # Base size for each chunk
+        remaining = total_elements % num_slurm_jobs   # Number of chunks with 1 extra 
+        
+        # Function to compute the start and end for each job_id
+        def get_job_range(job_id, num_slurm_jobs):
+            job_id-=1
+            # Add one extra element to the first 'remaining' chunks
+            start_job = job_id * job_range + min(job_id, remaining)
+            end_job = start_job + job_range + (1 if job_id < remaining else 0)
+        
+            if job_id == num_slurm_jobs - 1: 
+                end_job = total_elements 
+            return start_job, end_job
+        # def job_testing():
+        #     #TESTING
+        #     start=[];end=[]
+        #     for job_id in range(1,num_slurm_jobs+1):
+        #         start_job, end_job = get_job_range(job_id)
+        #         print(start_job,end_job)
+        #         start.append(start_job)
+        #         end.append(end_job)
+        #     print(np.all(start!=end))
+        #     print(len(np.unique(start))==len(start))
+        #     print(len(np.unique(end))==len(end))
+        # job_testing()
+        # if sbatch==True:
+            
+        start_job, end_job = get_job_range(job_id, num_slurm_jobs)
+        index_adjust=start_job
+        # print(f'start_job = {start_job}, end_job = {end_job}')
+        if start_job==0: start_job=1
+        if end_job==total_elements: end_job+=1
+        return start_job,end_job
+    
+    @staticmethod
+    def StartJobArray(ModelData, job_id,num_jobs):
+        total_elements=ModelData.Np #total num of variables
+    
+        if num_jobs >= total_elements:
+            raise ValueError("Number of jobs cannot be greater than or equal to total elements.")
+        
+        job_range = total_elements // num_jobs  # Base size for each chunk
+        remaining = total_elements % num_jobs   # Number of chunks with 1 extra 
+        
+        # Function to compute the start and end for each job_id
+        def get_job_range(job_id, num_jobs):
+            job_id-=1
+            # Add one extra element to the first 'remaining' chunks
+            start_job = job_id * job_range + min(job_id, remaining)
+            end_job = start_job + job_range + (1 if job_id < remaining else 0)
+        
+            if job_id == num_jobs - 1: 
+                end_job = total_elements #- 1
+            return start_job, end_job
+        # def job_testing():
+        #     #TESTING
+        #     start=[];end=[]
+        #     for job_id in range(1,num_jobs+1):
+        #         start_job, end_job = get_job_range(job_id)
+        #         print(start_job,end_job)
+        #         start.append(start_job)
+        #         end.append(end_job)
+        #     print(np.all(start!=end))
+        #     print(len(np.unique(start))==len(start))
+        #     print(len(np.unique(end))==len(end))
+        # job_testing()
+    
+        # if sbatch==True:
+        #     job_id = int(os.environ.get('SLURM_ARRAY_TASK_ID', 0)) #this is the current SBATCH job id
+        #     if job_id==0: job_id=1
+            
+        start_job, end_job = get_job_range(job_id, num_jobs)
+        index_adjust=start_job
+        # print(f'start_job = {start_job}, end_job = {end_job}')
+        return start_job,end_job,index_adjust
+    
+    @staticmethod
+    def job_filter(arr, start_job,end_job):
+        return arr[(arr[:,0]>=start_job)&(arr[:,0]<end_job)]
+    
+    @staticmethod
+    def ApplyJobArray_Nested(trackedArrays, start_job, end_job):
+        """
+        Apply job-array filtering to all arrays inside the nested trackedArrays dictionary
+        """
+    
+        trackedArrays_filtered = {}
+    
+        for main_key, sub_dict in trackedArrays.items():
+            trackedArrays_filtered[main_key] = {}
+    
+            for sub_key, arr in sub_dict.items():
+                # Apply job filtering
+                filteredArray = job_filter(arr, start_job, end_job)
+                trackedArrays_filtered[main_key][sub_key] = filteredArray
+    
+        print(f"Completed job filter for {len(trackedArrays_filtered)} main categories ({start_job} → {end_job})")
+        return trackedArrays_filtered
+
+
+# In[ ]:
+
+
+# ============================================================
+# Results_InputOutput_Class
+# ============================================================
+
+import os
+import h5py
+
+class Results_InputOutput_Class:
+    """
+    A static utility class for saving and loading tracking algorithm results.
+    """
+
+    @staticmethod
+    def SaveOutFile(ModelData,DataManager, Dictionary,job_id): 
+        """
+        Save tracking algorithm results to an HDF5 file.
+        """
+        
+        fileName = f"{DataManager.dataName}_{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz_job{job_id}.h5"
+        filePath = os.path.join(DataManager.outputDataDirectory,fileName)
+        
+    
+        with h5py.File(filePath, 'w') as f:
+            for varName, varData in Dictionary.items():
+                f.create_dataset(f"{varName}", data=varData, compression="gzip")
+    
+        print(f"Saved output to {filePath}","\n")
+
+    @staticmethod
+    def LoadOutFile(ModelData, DataManager, job_id, varName=None, printstatement=False): 
+        """
+        Load tracking algorithm results from an HDF5 file and return as a dictionary.
+        """
+    
+        fileName = f"{DataManager.dataName}_{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz_job{job_id}.h5"
+        filePath = os.path.join(DataManager.outputDataDirectory, fileName)
+    
+        if printstatement==True:
+            print(f"Loading output from {filePath}\n")
+    
+        Dictionary = {}
+        with h5py.File(filePath, 'r') as f:
+            if varName is None:
+                # Load all variables
+                Dictionary = {name: f[name][:] for name in f.keys()}
+                return Dictionary
+            else:
+                if varName not in f:
+                    raise KeyError(f"{varName} not found in {filePath}")
+                arr = f[varName][:]
+                return arr
+
+    @staticmethod
+    def SaveAllCloudBase_Job(ModelData,DataManager,
+                             all_cloudbase,job_id):
+        Dictionary = {"all_cloudbase": all_cloudbase}
+        Results_InputOutput_Class.SaveOutFile(ModelData,DataManager, Dictionary,f"{job_id}_all_cloudbase")
+
+    @staticmethod
+    def SaveAllCloudBase_Combined(ModelData,DataManager,
+                                  all_cloudbase):
+        Dictionary = {"all_cloudbase": all_cloudbase}
+        Results_InputOutput_Class.SaveOutFile(ModelData,DataManager, Dictionary,f"combined_all_cloudbase")
+
+    @staticmethod
+    def LoadAllCloudBase_Job(ModelData,DataManager,
+                             job_id):
+        out = Results_InputOutput_Class.LoadOutFile(ModelData,DataManager,f"{job_id}_all_cloudbase")
+    
+        return out
+
+    @staticmethod
+    def LoadAllCloudBase_Combined(ModelData,DataManager):
+        out = Results_InputOutput_Class.LoadOutFile(ModelData,DataManager,f"combined_all_cloudbase")
+        return out
+
+    #######################################################
+    
+    @staticmethod
+    def SaveLFC_Profile_Job(ModelData,DataManager,
+                            LFC_profile,job_id, Ltype):
+        #Ltype in LFC or LCL
+        Dictionary = {f"{Ltype}_profile": LFC_profile} 
+        Results_InputOutput_Class.SaveOutFile(ModelData,DataManager, Dictionary,f"{job_id}_{Ltype}_profile")
+
+    @staticmethod
+    def SaveLFC_Profile_Combined(ModelData,DataManager,
+                            LFC_profile, Ltype):
+        #Ltype in LFC or LCL
+        Dictionary = {f"{Ltype}_profile": LFC_profile} 
+        Results_InputOutput_Class.SaveOutFile(ModelData,DataManager, Dictionary,f"combined_{Ltype}_profile")
+
+    @staticmethod
+    def LoadLFC_Profile_Job(ModelData,DataManager,
+                            job_id, Ltype):
+        #Ltype in LFC or LCL
+        out = Results_InputOutput_Class.LoadOutFile(ModelData,DataManager,f"{job_id}_{Ltype}_profile")
+    
+        return out
+
+    @staticmethod
+    def LoadLFC_Profile_Combined(ModelData,DataManager, Ltype):
+        #Ltype in LFC or LCL
+        out = Results_InputOutput_Class.LoadOutFile(ModelData,DataManager,f"combined_{Ltype}_profile")
+    
+        return out
 
