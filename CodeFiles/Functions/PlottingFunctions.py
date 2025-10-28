@@ -4,17 +4,13 @@
 # In[4]:
 
 
-# #Import PlottingFunctions 
+# #How to Import to Code Document
 # import sys
-# dir2='/mnt/lustre/koa/koastore/torri_group/air_directory/DCI-Project/'
-# path=dir2+'../Functions/'
+# path=os.path.join(mainCodeDirectory,'Functions/')
 # sys.path.append(path)
 
-# import NumericalFunctions
-# from NumericalFunctions import * # import NumericalFunctions 
 # import PlottingFunctions
 # from PlottingFunctions import * # import PlottingFunctions
-
 
 # # # Get all functions in NumericalFunctions
 # # import inspect
@@ -316,7 +312,7 @@ def apply_scientific_notation_colorbar(cbars):
     for cbar in cbars:  # These must be Colorbar instances
         cbar.formatter = formatter
         cbar.update_ticks()
-
+        
 # Makes ticks flush to figure boundaries (recommended)
 def SnapLimitsToTicks(axes, dim="x"):
     from matplotlib.ticker import AutoLocator
@@ -329,6 +325,9 @@ def SnapLimitsToTicks(axes, dim="x"):
             ymin, ymax = ax.get_ylim()
             xs = []
             for line in ax.get_lines():
+                if line.get_label() == "_ignore_snap_":
+                    continue
+                    
                 xdata = np.asarray(line.get_xdata())
                 ydata = np.asarray(line.get_ydata())
                 # Skip constant or very short lines (axvline, etc.)
@@ -357,6 +356,9 @@ def SnapLimitsToTicks(axes, dim="x"):
             xmin, xmax = ax.get_xlim()
             ys = []
             for line in ax.get_lines():
+                if line.get_label() == "_ignore_snap_":
+                    continue
+                    
                 xdata = np.asarray(line.get_xdata())
                 ydata = np.asarray(line.get_ydata())
                 if len(np.unique(xdata)) <= 2 or len(np.unique(ydata)) <= 2:
@@ -378,6 +380,28 @@ def SnapLimitsToTicks(axes, dim="x"):
             hi_tick = ticks[ticks >= hi][0]
             ax.set_ylim(lo_tick, hi_tick)
             ax.set_yticks(ax.get_yticks())  # <== solidifies ticks
+
+def EvenTicksToLimits(axes, dim="x", n_ticks=4):
+    """
+    Create an even number of evenly spaced ticks that fit exactly within
+    the current axis limits (including both ends).
+    """
+    if not isinstance(axes, (list, tuple, np.ndarray)):
+        axes = [axes]
+
+    for ax in axes:
+        if dim == "x":
+            lo, hi = ax.get_xlim()
+            ticks = np.linspace(lo, hi, n_ticks)
+            ticks = np.round(ticks, 1)
+            ax.set_xticks(ticks)
+            
+        elif dim == "y":
+            lo, hi = ax.get_ylim()
+            ticks = np.linspace(lo, hi, n_ticks)
+            ticks = np.round(ticks, 1)
+            ax.set_yticks(ticks)
+
 
 # In[3]:
 
