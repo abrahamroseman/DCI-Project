@@ -157,6 +157,36 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName,
     return var_data
 
 
+# In[ ]:
+
+
+# ============================================================
+# Get_LagrangianArrays_Function
+# ============================================================
+
+def Get_LagrangianArrays(t, dataType="VARS", dataName="VARS", varNames=["W"]):
+    res = ModelData.res
+    t_res = ModelData.t_res
+    Nz_str = ModelData.Nz_str
+    inputDirectory = os.path.join(DataManager.inputDirectory,
+                                  "..","LagrangianArrays",
+                                  f"{res}_{t_res}_{Nz_str}nz", dataType)
+    timeString = ModelData.timeStrings[t]
+
+    FileName = os.path.join(inputDirectory, f"{dataName}_{res}_{t_res}_{Nz_str}nz_{timeString}.h5")
+
+    dataDictionary = {}
+    with h5py.File(FileName, 'r') as f:
+        # print("Keys in file:", list(f.keys()))
+        for key in varNames:
+            dataDictionary[key] = f[key][:]
+            # print(f"{key}: shape = {dataDictionary[key].shape}, dtype = {dataDictionary[key].dtype}")
+    return dataDictionary
+
+
+# In[ ]:
+
+
 # ============================================================
 # OpenMultipleSingleTimes_LagrangianArray_FUNCTION
 # ============================================================
@@ -200,3 +230,9 @@ def OpenMultipleSingleTimes_LagrangianArray(directory, ModelData, pattern="Lagra
         ds = ds.rename({"phony_dim_0": "p"})
 
     return ds, files
+
+# #EXAMPLE USAGE
+# directory = f"/mnt/lustre/koa/koastore/torri_group/air_directory/Projects/DCI-Project/Code/OUTPUT/Variable_Calculation/LagrangianArrays/{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz/Lagrangian_Binary_Array/"
+
+# Lagrangian_Binary_Array,files = OpenMultipleSingleTimes_LagrangianArray(directory, ModelData)
+
