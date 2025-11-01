@@ -95,7 +95,7 @@ import os
 def CallLagrangianArray(ModelData, DataManager, timeString, variableName, 
                         printstatement=False):
 
-    if variableName in ["A_g","A_c","z","x","Z","Y","X","qcqi"]:
+    if variableName in ["A_g","A_c","z","x","Z","Y","X","W","QCQI"]:
         dataType = "LagrangianArrays"
         dataName = "Lagrangian_Binary_Array"
     elif variableName in ["PROCESSED_A_g","PROCESSED_A_c"]:
