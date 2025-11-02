@@ -315,26 +315,38 @@ def apply_scientific_notation_colorbar(cbars):
         
 # Makes ticks flush to figure boundaries (recommended)
 def SnapLimitsToTicks(axes, dim="x"):
-    from matplotlib.ticker import AutoLocator
     """
     Snap axis limits to the nearest ticks that enclose the visible data.
-    Ignores helper lines (axhline, axvline, etc.) by ignoring lines with <= 2 points (better to run helper lines afterwards). 
+    Ignores helper lines (axhline, axvline, etc.) by ignoring lines with <= 2 points.
+    Safely handles missing or overplotted data (e.g., VMF_g + VMF_c).
     """
+    from matplotlib.ticker import AutoLocator
+    import numpy as np
+
+    # ensure axes is iterable
+    if not isinstance(axes, (list, tuple, np.ndarray)):
+        axes = [axes]
+
     for ax in axes:
         if dim == "x":
             ymin, ymax = ax.get_ylim()
             xs = []
+
+            # --- get line data ---
             for line in ax.get_lines():
                 if line.get_label() == "_ignore_snap_":
                     continue
-                    
+
                 xdata = np.asarray(line.get_xdata())
                 ydata = np.asarray(line.get_ydata())
-                # Skip constant or very short lines (axvline, etc.)
+
+                # Skip short or constant lines (like axvline)
                 if len(np.unique(xdata)) <= 2 or len(np.unique(ydata)) <= 2:
                     continue
+
                 mask = (ydata >= ymin) & (ydata <= ymax)
                 xs.extend(xdata[mask])
+
             # --- include fill_betweenx (PolyCollection) data ---
             for coll in ax.collections:
                 for path in coll.get_paths():
@@ -342,44 +354,73 @@ def SnapLimitsToTicks(axes, dim="x"):
                     ymask = (coords[:, 1] >= ymin) & (coords[:, 1] <= ymax)
                     xs.extend(coords[:, 0][ymask])
 
-            lo, hi = (min(xs), max(xs)) if xs else ax.dataLim.intervalx
-     
+            # fallback to data limits if nothing valid
+            if not xs:
+                lo, hi = ax.dataLim.intervalx
+            else:
+                lo, hi = min(xs), max(xs)
+
             locator = AutoLocator()
             ticks = locator.tick_values(lo, hi)
 
-            lo_tick = ticks[ticks <= lo][-1]
-            hi_tick = ticks[ticks >= hi][0]
-            ax.set_xlim(lo_tick, hi_tick)
-            ax.set_xticks(ax.get_xticks())  # <== solidifies ticks
+            # --- SAFE tick snapping ---
+            ticks_below = ticks[ticks <= lo]
+            ticks_above = ticks[ticks >= hi]
 
-        else:  # y case
+            if len(ticks_below) == 0 or len(ticks_above) == 0:
+                # skip axis if no valid ticks found
+                continue
+
+            lo_tick = ticks_below[-1]
+            hi_tick = ticks_above[0]
+
+            ax.set_xlim(lo_tick, hi_tick)
+            ax.set_xticks(ax.get_xticks())  # solidify tick positions
+
+        else:  # === y case ===
             xmin, xmax = ax.get_xlim()
             ys = []
+
             for line in ax.get_lines():
                 if line.get_label() == "_ignore_snap_":
                     continue
-                    
+
                 xdata = np.asarray(line.get_xdata())
                 ydata = np.asarray(line.get_ydata())
+
                 if len(np.unique(xdata)) <= 2 or len(np.unique(ydata)) <= 2:
                     continue
+
                 mask = (xdata >= xmin) & (xdata <= xmax)
                 ys.extend(ydata[mask])
-            # --- include fill_betweenx (PolyCollection) data ---  
+
+            # --- include fill_betweenx (PolyCollection) data ---
             for coll in ax.collections:
                 for path in coll.get_paths():
                     coords = path.vertices
                     xmask = (coords[:, 0] >= xmin) & (coords[:, 0] <= xmax)
                     ys.extend(coords[:, 1][xmask])
-            lo, hi = (min(ys), max(ys)) if ys else ax.dataLim.intervaly
+
+            if not ys:
+                lo, hi = ax.dataLim.intervaly
+            else:
+                lo, hi = min(ys), max(ys)
 
             locator = AutoLocator()
             ticks = locator.tick_values(lo, hi)
 
-            lo_tick = ticks[ticks <= lo][-1]
-            hi_tick = ticks[ticks >= hi][0]
+            ticks_below = ticks[ticks <= lo]
+            ticks_above = ticks[ticks >= hi]
+
+            if len(ticks_below) == 0 or len(ticks_above) == 0:
+                continue
+
+            lo_tick = ticks_below[-1]
+            hi_tick = ticks_above[0]
+
             ax.set_ylim(lo_tick, hi_tick)
-            ax.set_yticks(ax.get_yticks())  # <== solidifies ticks
+            ax.set_yticks(ax.get_yticks())  # solidify tick positions
+
 
 def EvenTicksToLimits(axes, dim="x", n_ticks=4):
     """
