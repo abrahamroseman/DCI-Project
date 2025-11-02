@@ -18,11 +18,11 @@ class TrackedProfiles_DataLoading_CLASS:
     """
 
     @staticmethod
-    def SaveProfile(ModelData,DataManager, Dictionary, t):
+    def SaveProfile(ModelData,DataManager, Dictionary, dataName, t):
         profileType = "TrackedProfiles"
-        timeString = ModelData.timeStrings[t]
+        timeString = t if isinstance(t, str) else ModelData.timeStrings[t]
         
-        fileName = f"{profileType}_{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz_{timeString}.pkl"
+        fileName = f"{profileType}_{dataName}_{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz_{timeString}.pkl"
         filePath = os.path.join(DataManager.outputDataDirectory,fileName)
         
         with open(filePath, "wb") as f:
@@ -31,20 +31,20 @@ class TrackedProfiles_DataLoading_CLASS:
         print(f"Saved output to {filePath}","\n")
 
     @staticmethod
-    def LoadProfile(ModelData, DataManager, t):
+    def LoadProfile(ModelData, DataManager, dataName, t):
         """
         Load a saved TrackedProfiles .pkl file for a given time index t.
         """
         profileType = "TrackedProfiles"
-        timeString = ModelData.timeStrings[t]
+        timeString = t if isinstance(t, str) else ModelData.timeStrings[t]
         
-        fileName = f"{profileType}_{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz_{timeString}.pkl"
+        fileName = f"{profileType}_{dataName}_{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz_{timeString}.pkl"
         filePath = os.path.join(DataManager.outputDataDirectory,fileName)
     
         with open(filePath, "rb") as f:
             Dictionary = pickle.load(f)
     
-        print(f"Loaded profile dictionary from {filePath}\n")
+        # print(f"Loaded profile dictionary from {filePath}\n")
         return Dictionary
 
 
