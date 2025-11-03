@@ -3,3 +3,6 @@
 
 # Ignore Python junk
 .ipynb_checkpoints
+
+# Ignore PLOTTING results
+/PLOTTING/
