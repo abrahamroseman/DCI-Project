@@ -232,12 +232,14 @@ class TrackedProfiles_Plotting_CLASS:
     
     # === Level 3: Plot one line ===
     @staticmethod
-    def PlotProfileLine(axis, profile, SE_profile, parcelType, parcelDepth, multiplier=1):
+    def PlotProfileLine(axis, profile, SE_profile, parcelType, parcelDepth,
+                        multiplier=1, color=None):
         avg = TrackedProfiles_Plotting_CLASS.ProfileMean(profile)
         x = multiplier * avg[:, 0]
         y = avg[:, 1]
     
-        color = TrackedProfiles_Plotting_CLASS.depth_colors.get(parcelDepth, "gray")
+        #Allow explicit color override (new behavior)
+        color = color or TrackedProfiles_Plotting_CLASS.depth_colors.get(parcelDepth, "gray")
         linestyle = TrackedProfiles_Plotting_CLASS.category_styles.get(parcelType, "solid")
         label = f"{parcelType}-{parcelDepth}"
     
@@ -246,39 +248,51 @@ class TrackedProfiles_Plotting_CLASS:
     
         # Plot SE band
         if SE_profile is not None:
-            TrackedProfiles_Plotting_CLASS.PlotSE(axis, avg, SE_profile, color=color, multiplier=multiplier)
+            TrackedProfiles_Plotting_CLASS.PlotSE(axis, avg, SE_profile,
+                                                  color=color, multiplier=multiplier)
+    
     
     # === Level 2: Plot all depths for a given parcelType ===
     @staticmethod
-    def PlotAllDepths(axis, profiles, profilesSE, parcelType, variableName, parcelDepths, multiplier=1, zlim=(0,6)):
+    def PlotAllDepths(axis, profiles, profilesSE, parcelType, variableName,
+                      parcelDepths, multiplier=1, zlim=(0, 6), color=None):
         for parcelDepth in parcelDepths:
             profile = profiles[parcelType][parcelDepth][variableName]["profile_array"]
             SE_profile = None
             if profilesSE:
                 SE_profile = profilesSE[parcelType][parcelDepth][variableName].get("profile_array_SE")
-            TrackedProfiles_Plotting_CLASS.PlotProfileLine(axis, profile, SE_profile, parcelType, parcelDepth, multiplier=multiplier)
+    
+            #Pass color downstream
+            TrackedProfiles_Plotting_CLASS.PlotProfileLine(
+                axis, profile, SE_profile, parcelType, parcelDepth,
+                multiplier=multiplier, color=color
+            )
     
         TrackedProfiles_Plotting_CLASS.ApplyXLimFromZLim(axis, zlim)
-            
+    
+    
     # === Level 1: Plot one variable to a single axis ===
     @staticmethod
     def PlotSingleVariable(axis, profiles, profilesSE, variableName, variableInfo,
-                           parcelTypes, parcelDepths, hLines,hLineColors):
+                           parcelTypes, parcelDepths, hLines, hLineColors,
+                           color=None):
         label = variableInfo[variableName]["label"]
         units = variableInfo[variableName]["units"]
         multiplier = variableInfo[variableName].get("multiplier", 1)
     
         for parcelType in parcelTypes:
-            
-            TrackedProfiles_Plotting_CLASS.PlotAllDepths(axis, profiles, profilesSE, parcelType, variableName, parcelDepths, multiplier=multiplier)
+            TrackedProfiles_Plotting_CLASS.PlotAllDepths(
+                axis, profiles, profilesSE, parcelType, variableName,
+                parcelDepths, multiplier=multiplier, color=color
+            )
             if variableName in ['VMF_g']:
-                TrackedProfiles_Plotting_CLASS.PlotAllDepths(axis, profiles, profilesSE, parcelType, "VMF_c", parcelDepths, multiplier=multiplier)
+                TrackedProfiles_Plotting_CLASS.PlotAllDepths(
+                    axis, profiles, profilesSE, parcelType, "VMF_c",
+                    parcelDepths, multiplier=multiplier, color=color
+                )
     
         axis.set_ylabel("Height (km)")
         axis.set_xlabel(f"{label} {units}")
         axis.grid(True, linestyle="--", alpha=0.4)
         TrackedProfiles_Plotting_CLASS.PlotHLines(axis, hLines, hLineColors)
-    
-    # === Top Level: Make Figure and Plot all variables ===
-    # Need custom made function for each plot type
 
