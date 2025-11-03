@@ -296,3 +296,81 @@ class TrackedProfiles_Plotting_CLASS:
         axis.grid(True, linestyle="--", alpha=0.4)
         TrackedProfiles_Plotting_CLASS.PlotHLines(axis, hLines, hLineColors)
 
+    # === Level 1: Plot one variable to a single axis (for operations between multiple variables)
+    @staticmethod
+    def PlotCompositeVariable(axis, profiles, variableName, variableInfo, 
+                              parcelTypes, parcelDepths,
+                              zlim=(0, 6), color=None,
+                              printstatement=False):
+        """
+        Plots derived variables defined by multi-step operations in variableInfo['splits'].
+        e.g., ["TransferE_c", "-", "TransferE_g", "/", "E_c"]
+        """
+    
+        info = variableInfo[variableName]
+        label = info["label"]
+        units = info["units"]
+        multiplier = info.get("multiplier", 1)
+        splits = info.get("splits")
+    
+        if splits is None:
+            raise ValueError(f"'splits' not defined for {variableName}")
+    
+        for parcelType in parcelTypes:
+            for parcelDepth in parcelDepths:
+    
+                # Load first variable
+                first_var = splits[0]
+                try:
+                    result_prof = profiles[parcelType][parcelDepth][first_var]["profile_array"]
+                    result = TrackedProfiles_Plotting_CLASS.ProfileMean(result_prof)[:, 0]
+                    z = TrackedProfiles_Plotting_CLASS.ProfileMean(result_prof)[:, 1]
+                except KeyError:
+                    print(f"Missing first variable '{first_var}', skipping this combination.")
+                    continue
+    
+                # Apply operations in sequence
+                i = 1
+                while i < len(splits):
+                    op = splits[i]
+                    varname = splits[i + 1]
+    
+                    try:
+                        next_prof = TrackedProfiles_Plotting_CLASS.ProfileMean(
+                            profiles[parcelType][parcelDepth][varname]["profile_array"]
+                        )[:, 0]
+                    except KeyError:
+                        next_prof = np.zeros_like(result)
+                        print(f"Missing '{varname}', using zeros for '{op}' operation")
+    
+                    # Perform operation
+                    if op == "-":
+                        if printstatement==True:
+                            print(f"    Performing: ({first_var} - {varname})")
+                        result = result - next_prof
+                        first_var = f"({first_var}-{varname})"
+                    elif op == "/":
+                        if printstatement==True:
+                            print(f"    Performing: ({first_var} / {varname})")
+                        result = np.divide(result, next_prof, out=np.zeros_like(result), where=next_prof != 0)
+                        first_var = f"({first_var}/{varname})"
+                    else:
+                        raise ValueError(f"Unsupported operator '{op}'")
+    
+                    i += 2  # move to next operator-variable pair
+    
+                # Apply multiplier
+                x = result * multiplier
+                y = z
+    
+                color_use = color or TrackedProfiles_Plotting_CLASS.depth_colors.get(parcelDepth, "gray")
+                linestyle = TrackedProfiles_Plotting_CLASS.category_styles.get(parcelType, "solid")
+                label_line = f"{parcelType}-{parcelDepth}"
+    
+                axis.plot(x, y, color=color_use, linestyle=linestyle, linewidth=1, label=label_line)
+    
+        axis.set_xlabel(f"{label} {units}")
+        axis.set_ylabel("Height (km)")
+        axis.grid(True, linestyle="--", alpha=0.4)
+        TrackedProfiles_Plotting_CLASS.ApplyXLimFromZLim(axis, zlim)
+
