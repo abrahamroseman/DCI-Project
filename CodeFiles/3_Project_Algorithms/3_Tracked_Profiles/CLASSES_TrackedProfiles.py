@@ -255,7 +255,7 @@ class TrackedProfiles_Plotting_CLASS:
     # === Level 2: Plot all depths for a given parcelType ===
     @staticmethod
     def PlotAllDepths(axis, profiles, profilesSE, parcelType, variableName,
-                      parcelDepths, multiplier=1, zlim=(0, 6), color=None):
+                      parcelDepths, multiplier=1, color=None, zlim=(0, 6)):
         for parcelDepth in parcelDepths:
             profile = profiles[parcelType][parcelDepth][variableName]["profile_array"]
             SE_profile = None
@@ -275,7 +275,7 @@ class TrackedProfiles_Plotting_CLASS:
     @staticmethod
     def PlotSingleVariable(axis, profiles, profilesSE, variableName, variableInfo,
                            parcelTypes, parcelDepths, hLines, hLineColors,
-                           color=None):
+                           color=None, zlim=(0,6)):
         label = variableInfo[variableName]["label"]
         units = variableInfo[variableName]["units"]
         multiplier = variableInfo[variableName].get("multiplier", 1)
@@ -283,12 +283,12 @@ class TrackedProfiles_Plotting_CLASS:
         for parcelType in parcelTypes:
             TrackedProfiles_Plotting_CLASS.PlotAllDepths(
                 axis, profiles, profilesSE, parcelType, variableName,
-                parcelDepths, multiplier=multiplier, color=color
+                parcelDepths, multiplier=multiplier, color=color, zlim=zlim
             )
             if variableName in ['VMF_g']:
                 TrackedProfiles_Plotting_CLASS.PlotAllDepths(
                     axis, profiles, profilesSE, parcelType, "VMF_c",
-                    parcelDepths, multiplier=multiplier, color=color
+                    parcelDepths, multiplier=multiplier, color=color, zlim=zlim
                 )
     
         axis.set_ylabel("Height (km)")
@@ -300,7 +300,7 @@ class TrackedProfiles_Plotting_CLASS:
     @staticmethod
     def PlotCompositeVariable(axis, profiles, variableName, variableInfo, 
                               parcelTypes, parcelDepths,
-                              zlim=(0, 6), color=None,
+                              color=None, zlim=(0, 6), 
                               printstatement=False):
         """
         Plots derived variables defined by multi-step operations in variableInfo['splits'].
