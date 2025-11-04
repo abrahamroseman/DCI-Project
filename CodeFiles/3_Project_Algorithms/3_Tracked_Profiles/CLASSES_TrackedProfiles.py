@@ -372,54 +372,6 @@ class TrackedProfiles_Plotting_CLASS:
 # In[ ]:
 
 
-def MatchAxisLimits(axes, dim='x'):
-    """
-    Find the axis whose tick bounds span all others,
-    then copy its ticks and limits to every axis in the list.
-    """
-    lo_vals, hi_vals = [], []
-
-    # Collect bounds
-    for ax in axes:
-        ticks = ax.get_xticks() if dim == 'x' else ax.get_yticks()
-        if len(ticks) > 1:
-            lo_vals.append(ticks[0])
-            hi_vals.append(ticks[-1])
-
-    if not lo_vals or not hi_vals:
-        return None
-
-    lo, hi = min(lo_vals), max(hi_vals)
-
-    # Find reference axis
-    ref_ax = next(
-        (ax for ax in axes
-         if len((ticks := (ax.get_xticks() if dim == 'x' else ax.get_yticks()))) > 1
-         and ticks[0] == lo and ticks[-1] == hi),
-        None
-    )
-    if ref_ax is None:
-        return None  # no reference axis found
-
-    # Extract ticks and limits from reference
-    ref_ticks = ref_ax.get_xticks() if dim == 'x' else ref_ax.get_yticks()
-    ref_lim   = ref_ax.get_xlim() if dim == 'x' else ref_ax.get_ylim()
-
-    # Apply to all axes
-    for ax in axes:
-        if dim == 'x':
-            ax.set_xlim(ref_lim)
-            ax.set_xticks(ref_ticks)
-        else:
-            ax.set_ylim(ref_lim)
-            ax.set_yticks(ref_ticks)
-
-    return ref_ax
-
-
-# In[ ]:
-
-
 # ============================================================
 # LocationSubset_Plotting_CLASS
 # ============================================================
@@ -589,5 +541,116 @@ class LocationSubset_Plotting_CLASS:
     
         fig.subplots_adjust(top=top_adjust)
     
+        return fig
+    
+    # === Composite version: for derived variables using variableInfo["splits"] ===
+    @staticmethod
+    def PlotCompositeProfiles(trackedProfileArrays, variableInfo,
+                              parcelTypes=["CL", "nonCL", "SBF"],
+                              variableNames=None,
+                              subsetTypes=["", "_left", "_right"],
+                              labels=['everywhere', 'left of SBF', 'right of SBF'],
+                              colors=['black', '#1E90FF', '#D32F2F'],
+                              depthTypes=['SHALLOW', 'DEEP'],
+                              linestyles=['-', '--'],
+                              zlim=(0,6),
+                              figsize_scale=7,
+                              top_adjust=0.82,
+                              ncols_inner=3):
+        """
+        Similar to PlotProfiles, but computes and plots derived variables
+        defined in variableInfo[var]['splits'] (multi-step operations).
+        """
+        def ComputeCompositeProfile(parcelType, depthType, varName, subsetType):
+            info = variableInfo[varName]
+            splits = info.get("splits")
+            if splits is None:
+                raise ValueError(f"'splits' not defined for {varName}")
+            
+            # --- Load first variable ---
+            first_var = splits[0]
+            try:
+                prof = trackedProfileArrays[parcelType][depthType][first_var][f'profile_array{subsetType}']
+                result_prof = TrackedProfiles_Plotting_CLASS.ProfileMean(prof)
+                result = result_prof[:, 0]
+                z = result_prof[:, 1]
+            except KeyError:
+                return None, None  # skip if missing
+            
+            # --- Apply operations ---
+            i = 1
+            while i < len(splits):
+                op = splits[i]
+                next_var = splits[i + 1]
+                try:
+                    next_prof = trackedProfileArrays[parcelType][depthType][next_var][f'profile_array{subsetType}']
+                    next_prof_mean = TrackedProfiles_Plotting_CLASS.ProfileMean(next_prof)[:, 0]
+                except KeyError:
+                    next_prof_mean = np.zeros_like(result)
+                
+                if op == "-":
+                    result = result - next_prof_mean
+                elif op == "/":
+                    result = np.divide(result, next_prof_mean, out=np.zeros_like(result), where=next_prof_mean != 0)
+                else:
+                    raise ValueError(f"Unsupported operator '{op}' in splits for {varName}")
+                i += 2
+            
+            return np.column_stack((result, z)), info.get("multiplier", 1)
+    
+        # === Auto-fill variableNames if not specified ===
+        if variableNames is None:
+            variableNames = [v for v in variableInfo if "splits" in variableInfo[v]]
+    
+        # === Figure setup ===
+        n_parcels = len(parcelTypes)
+        nrows_inner = int(np.ceil(len(variableNames) / ncols_inner))
+        base_row_height = 3.2
+        fig_height = base_row_height * nrows_inner
+    
+        fig = plt.figure(figsize=(figsize_scale * n_parcels, fig_height))
+        outer_gs = gridspec.GridSpec(1, n_parcels, figure=fig, wspace=0.15)
+    
+        # === Loop through parcel types ===
+        for i, parcelType in enumerate(parcelTypes):
+            inner_gs = outer_gs[i].subgridspec(nrows_inner, ncols_inner, wspace=0.25, hspace=0.35)
+    
+            for j, variableName in enumerate(variableNames):
+                r, c = divmod(j, ncols_inner)
+                ax = fig.add_subplot(inner_gs[r, c])
+                ax.variableName = variableName
+    
+                info = variableInfo.get(variableName, {"label": variableName, "units": "", "multiplier": 1})
+                multiplier = info.get("multiplier", 1)
+    
+                # --- Plot derived profiles ---
+                for (subsetType, label, color) in zip(subsetTypes, labels, colors):
+                    for (depthType, linestyle) in zip(depthTypes, linestyles):
+                        prof_data, multiplier_local = ComputeCompositeProfile(parcelType, depthType, variableName, subsetType)
+                        if prof_data is None:
+                            continue
+                        x = prof_data[:, 0] * multiplier_local
+                        y = prof_data[:, 1]
+                        ax.plot(x, y, color=color, linestyle=linestyle)
+    
+                # --- Formatting ---
+                TrackedProfiles_Plotting_CLASS.ApplyXLimFromZLim(ax, zlim)
+                ax.set_title(f"{info['label']} {info['units']}", fontsize=11)
+                if c == 0:
+                    ax.set_ylabel("Height (km)")
+                else:
+                    ax.set_yticklabels([])
+                    ax.set_yticks([])
+    
+            # === Block title ===
+            ax_title = fig.add_subplot(outer_gs[i])
+            ax_title.set_title(parcelType, fontsize=14, pad=20, weight="bold")
+            ax_title.axis("off")
+    
+        # === Legends ===
+        LocationSubset_Plotting_CLASS.AddSubsetLegend(fig, subset_labels=labels, colors=colors, bbox=(0.5, 0.985))
+        LocationSubset_Plotting_CLASS.AddDepthLegend(fig, depthTypes=depthTypes, bbox=(0.5, 0.91))
+    
+        fig.subplots_adjust(top=top_adjust)
         return fig
 
