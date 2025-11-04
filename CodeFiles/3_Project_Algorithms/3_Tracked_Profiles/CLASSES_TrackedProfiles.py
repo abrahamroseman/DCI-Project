@@ -89,12 +89,6 @@ class TrackedProfiles_DataLoading_CLASS:
 # In[ ]:
 
 
-
-
-
-# In[ ]:
-
-
 # ============================================================
 # TrackedProfiles_Plotting_CLASS
 # ============================================================
@@ -373,4 +367,227 @@ class TrackedProfiles_Plotting_CLASS:
         axis.set_ylabel("Height (km)")
         axis.grid(True, linestyle="--", alpha=0.4)
         TrackedProfiles_Plotting_CLASS.ApplyXLimFromZLim(axis, zlim)
+
+
+# In[ ]:
+
+
+def MatchAxisLimits(axes, dim='x'):
+    """
+    Find the axis whose tick bounds span all others,
+    then copy its ticks and limits to every axis in the list.
+    """
+    lo_vals, hi_vals = [], []
+
+    # Collect bounds
+    for ax in axes:
+        ticks = ax.get_xticks() if dim == 'x' else ax.get_yticks()
+        if len(ticks) > 1:
+            lo_vals.append(ticks[0])
+            hi_vals.append(ticks[-1])
+
+    if not lo_vals or not hi_vals:
+        return None
+
+    lo, hi = min(lo_vals), max(hi_vals)
+
+    # Find reference axis
+    ref_ax = next(
+        (ax for ax in axes
+         if len((ticks := (ax.get_xticks() if dim == 'x' else ax.get_yticks()))) > 1
+         and ticks[0] == lo and ticks[-1] == hi),
+        None
+    )
+    if ref_ax is None:
+        return None  # no reference axis found
+
+    # Extract ticks and limits from reference
+    ref_ticks = ref_ax.get_xticks() if dim == 'x' else ref_ax.get_yticks()
+    ref_lim   = ref_ax.get_xlim() if dim == 'x' else ref_ax.get_ylim()
+
+    # Apply to all axes
+    for ax in axes:
+        if dim == 'x':
+            ax.set_xlim(ref_lim)
+            ax.set_xticks(ref_ticks)
+        else:
+            ax.set_ylim(ref_lim)
+            ax.set_yticks(ref_ticks)
+
+    return ref_ax
+
+
+# In[ ]:
+
+
+# ============================================================
+# LocationSubset_Plotting_CLASS
+# ============================================================
+
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+from matplotlib.lines import Line2D
+import numpy as np
+
+class LocationSubset_Plotting_CLASS:
+    
+    
+    @staticmethod
+    def AddDepthLegend(fig, depthTypes=["SHALLOW", "DEEP"],
+                                      loc='upper center', bbox=(0.5, 0.93)):
+        """
+        Adds a custom legend for depth categories (e.g., SHALLOW, DEEP)
+        based on linestyle.
+        """
+        linestyle_map = {
+            "SHALLOW": "--",
+            "DEEP": "-"
+        }
+    
+        custom_lines = [
+            Line2D([0], [0], color='black',
+                   linestyle=linestyle_map.get(dtype, "-"),
+                   linewidth=2.0, label=dtype)
+            for dtype in depthTypes
+        ]
+    
+        fig.legend(
+            handles=custom_lines,
+            loc=loc,
+            ncol=len(custom_lines),
+            fontsize=10,
+            title='Depth Category',
+            title_fontsize=11,
+            bbox_to_anchor=bbox,
+            borderaxespad=0.5,
+            frameon=True,
+            fancybox=True,
+            framealpha=0.9
+        )
+    
+    @staticmethod
+    def AddSubsetLegend(fig,
+                                       subset_labels=['everywhere', 'left of SBF', 'right of SBF'],
+                                       colors=['black', '#1E90FF', '#D32F2F'],
+                                       loc='upper center', bbox=(0.5, 0.98)):
+        """
+        Adds a custom legend for SBF subset categories (everywhere, left, right)
+        based on color.
+        """
+        custom_lines = [
+            Line2D([0], [0], color=color, linestyle='-', linewidth=2.0, label=label)
+            for label, color in zip(subset_labels, colors)
+        ]
+    
+        fig.legend(
+            handles=custom_lines,
+            loc=loc,
+            ncol=len(custom_lines),
+            fontsize=10,
+            title='SBF Subset',
+            title_fontsize=11,
+            bbox_to_anchor=bbox,
+            borderaxespad=0.5,
+            frameon=True,
+            fancybox=True,
+            framealpha=0.9
+        )
+
+    @staticmethod
+    def GetVariableAxes(fig, variableName):
+        return [ax for ax in fig.get_axes()
+                if getattr(ax, "variableName", None) == variableName]
+
+    @staticmethod
+    def PlotProfiles(trackedProfileArrays, variableInfo,
+                        parcelTypes=["CL", "nonCL", "SBF"],
+                        variableNames=None,
+                        subsetTypes=["", "_left", "_right"],
+                        labels=['everywhere', 'left of SBF', 'right of SBF'],
+                        colors=['black', '#1E90FF', '#D32F2F'],
+                        depthTypes=['SHALLOW', 'DEEP'],
+                        linestyles=['-', '--'],
+                        zlim=(0,6),
+                        figsize_scale=7,
+                        top_adjust=0.82,
+                        ncols_inner = 3):
+        """
+        Create a 1×N grid of parcel-type subplots (e.g., CL, nonCL, SBF),
+        each containing multiple variable panels.
+        """
+        # === Helper functions ===
+        def GetProfileAverage(parcelType,depthType,varName,subsetType):
+            profile = trackedProfileArrays[parcelType][depthType][varName][f'profile_array{subsetType}']
+            return TrackedProfiles_Plotting_CLASS.ProfileMean(profile)
+    
+        def Plot(ax, multiplier, profileAverage, color, linestyle):
+            xvals = multiplier * profileAverage[:, 0]
+            yvals = profileAverage[:, 1]
+            ax.plot(xvals, yvals, color=color, linestyle=linestyle)
+    
+        # === Auto-fill variableNames if not specified ===
+        if variableNames is None:
+            variableNames = list(variableInfo.keys())
+    
+        # # === Figure setup === (old)
+        # n_parcels = len(parcelTypes)
+        # fig = plt.figure(figsize=(figsize_scale * n_parcels, 10))
+        # outer_gs = gridspec.GridSpec(1, n_parcels, figure=fig, wspace=0.15)
+    
+        # ncols_inner = 3
+        # nrows_inner = int(np.ceil(len(variableNames) / ncols_inner))
+        # === Figure setup ===
+        n_parcels = len(parcelTypes)
+        nrows_inner = int(np.ceil(len(variableNames) / ncols_inner))
+        
+        # dynamically scale height by number of variable rows
+        base_row_height = 3.2  # inch per row, tweak as needed
+        fig_height = base_row_height * nrows_inner
+        
+        fig = plt.figure(figsize=(figsize_scale * n_parcels, fig_height))
+        outer_gs = gridspec.GridSpec(1, n_parcels, figure=fig, wspace=0.15)
+    
+        # === Loop through parcel types ===
+        for i, parcelType in enumerate(parcelTypes):
+            inner_gs = outer_gs[i].subgridspec(nrows_inner, ncols_inner, wspace=0.25, hspace=0.35)
+    
+            for j, variableName in enumerate(variableNames):
+                r, c = divmod(j, ncols_inner)
+                ax = fig.add_subplot(inner_gs[r, c])
+                ax.variableName = variableName
+    
+                info = variableInfo.get(variableName, {"label": variableName, "units": "", "multiplier": 1})
+                multiplier = info["multiplier"]
+    
+                # --- Plot profiles ---
+                for (subsetType, label, color) in zip(subsetTypes, labels, colors):
+                    for (depthType, linestyle) in zip(depthTypes, linestyles):
+                        var_list = [variableName]
+                        if variableName == "VMF_g":
+                            var_list.append("VMF_c")
+                        for v in var_list:
+                            profileAverage = GetProfileAverage(parcelType, depthType, v, subsetType)
+                            Plot(ax, multiplier, profileAverage, color, linestyle)
+    
+                # --- Formatting ---
+                TrackedProfiles_Plotting_CLASS.ApplyXLimFromZLim(ax, zlim)
+                ax.set_title(f"{info['label']} {info['units']}", fontsize=11)
+                if c == 0:
+                    ax.set_ylabel("Height (km)")
+                else:
+                    ax.set_yticklabels([])
+                    ax.set_yticks([])
+    
+            # === Block title ===
+            ax_title = fig.add_subplot(outer_gs[i])
+            ax_title.set_title(parcelType, fontsize=14, pad=20, weight="bold")
+            ax_title.axis("off")
+    
+        # === Legends ===
+        LocationSubset_Plotting_CLASS.AddSubsetLegend(fig, subset_labels=labels, colors=colors, bbox=(0.5, 0.985))
+        LocationSubset_Plotting_CLASS.AddDepthLegend(fig, depthTypes=depthTypes, bbox=(0.5, 0.93))
+    
+        fig.subplots_adjust(top=top_adjust)
+    
+        return fig
 
