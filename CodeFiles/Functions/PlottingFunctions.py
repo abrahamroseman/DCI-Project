@@ -632,6 +632,49 @@ def MatchAxisLimits(axes, dim='x'):
 
     return ref_ax
 
+def MatchAxisLimits_V2(axes, dim='x'):
+    """
+    Match axis limits and ticks across multiple axes.
+    This version computes the global min/max tick
+    directly instead of requiring an axis to already contain them.
+    """
+
+    # gather ticks from all axes
+    all_ticks = []
+    for ax in axes:
+        ticks = ax.get_xticks() if dim == 'x' else ax.get_yticks()
+        if len(ticks) > 1:
+            all_ticks.append(ticks)
+
+    if not all_ticks:
+        return None
+
+    # global min and max tick endpoints
+    lo = min(t[0] for t in all_ticks)
+    hi = max(t[-1] for t in all_ticks)
+
+    # choose a reference tick array with the largest number of ticks
+    ref_ticks = max(all_ticks, key=len)
+
+    # but shift its first and last value to the global min/max
+    ref_ticks = ref_ticks.copy()
+    ref_ticks[0] = lo
+    ref_ticks[-1] = hi
+
+    # determine the limits corresponding to the tick endpoints
+    ref_lim = (lo, hi)
+
+    # apply to all axes
+    for ax in axes:
+        if dim == 'x':
+            ax.set_xlim(ref_lim)
+            ax.set_xticks(ref_ticks)
+        else:
+            ax.set_ylim(ref_lim)
+            ax.set_yticks(ref_ticks)
+
+    return ref_lim
+
 
 # In[3]:
 
