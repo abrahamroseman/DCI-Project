@@ -308,15 +308,42 @@ def apply_scientific_notation(axes, dimension='xy', use_math_text=True, power_li
             axis.xaxis.set_major_formatter(formatter)
         if 'y' in dimension:
             axis.yaxis.set_major_formatter(formatter)
-            
 
-def apply_scientific_notation_colorbar(cbars):
-    from matplotlib.ticker import ScalarFormatter
-    formatter = ScalarFormatter(useMathText=True)
-    formatter.set_powerlimits((-2, 2))  # Adjust the range for scientific notation
-    for cbar in cbars:  # These must be Colorbar instances
-        cbar.formatter = formatter
+# def apply_scientific_notation_colorbar(cbars):
+#     from matplotlib.ticker import ScalarFormatter
+#     formatter = ScalarFormatter(useMathText=True)
+#     formatter.set_powerlimits((-2, 2))  # Adjust the range for scientific notation
+#     for cbar in cbars:  # These must be Colorbar instances
+#         cbar.formatter = formatter
+#         cbar.update_ticks()
+
+class FixedDecimalScalarFormatter(ScalarFormatter):
+    def __init__(self, decimals=2, useMathText=True, **kwargs):
+        self.decimals = decimals
+        super().__init__(useMathText=useMathText, **kwargs)
+
+    def _set_format(self, vmin=None, vmax=None):
+        """
+        Matplotlib requires _set_format(self, vmin, vmax)
+        We override it only to set the desired decimal format string.
+        """
+        # mantissa format: e.g., ".2f"
+        fmt = f"%.{self.decimals}f"
+
+        # scientific notation handled by ScalarFormatter internals
+        # we only update the mantissa part
+        self.format = fmt
+        self._useOffset = True   # keep exponent in offsetText
+
+def apply_scientific_notation_colorbar(cbars, decimals=2):
+    for cbar in cbars:
+        fmt = FixedDecimalScalarFormatter(decimals=decimals, useMathText=True)
+        fmt.set_powerlimits((-3, 3))   # enforce sci-notation range
+        
+        cbar.formatter = fmt
         cbar.update_ticks()
+
+
         
 # Makes ticks flush to figure boundaries (recommended)
 def SnapLimitsToTicks(axes, dim="x"):
