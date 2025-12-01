@@ -292,7 +292,7 @@ class RoundedScalarFormatter(ScalarFormatter):
         self.format = f"%.{self.decimals}f"
 
 
-def apply_scientific_notation(axes, use_math_text=True, power_limits=(-1, 1), decimals=2, scientific=True):
+def apply_scientific_notation(axes, dimension='xy', use_math_text=True, power_limits=(-1, 1), decimals=2, scientific=True):
     """
     Apply scientific notation with mantissas rounded to a fixed number of decimals.
     """
@@ -303,7 +303,12 @@ def apply_scientific_notation(axes, use_math_text=True, power_limits=(-1, 1), de
             powerlimits=power_limits,
             scientific=scientific
         )
-        axis.xaxis.set_major_formatter(formatter)
+        # Map dimension flags to actual axis objects
+        if 'x' in dimension:
+            axis.xaxis.set_major_formatter(formatter)
+        if 'y' in dimension:
+            axis.yaxis.set_major_formatter(formatter)
+            
 
 def apply_scientific_notation_colorbar(cbars):
     from matplotlib.ticker import ScalarFormatter
