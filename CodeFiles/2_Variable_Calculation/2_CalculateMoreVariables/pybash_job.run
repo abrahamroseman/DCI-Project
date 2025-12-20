@@ -48,7 +48,7 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 #    > job_out/Eulerian_VMF/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # THREE
-#mkdir -p job_out/Virtual_Potential_Temperature
+#mkdir -p job_out/Density_Potential_Temperature
 #jupyter nbconvert --to script Virtual_Potential_Temperature.ipynb
 #python -u Virtual_Potential_Temperature.py $SLURM_ARRAY_TASK_ID \
 #    > job_out/Virtual_Potential_Temperature/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
