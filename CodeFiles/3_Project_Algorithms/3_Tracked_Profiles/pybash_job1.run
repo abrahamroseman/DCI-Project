@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name=python
-#SBATCH --array=1-20 #%+number after to limit number of of runs at a time
+#SBATCH --array=1-100 #%+number after to limit number of of runs at a time
 ##SBATCH --account=torri
 ##SBATCH --partition=torri
 
 #SBATCH --partition=shared
 
-#SBATCH --time=0-03:00:00
+#SBATCH --time=0-02:00:00
 ##SBATCH --ntasks=1
 #SBATCH --nodes=1 
 #SBATCH  --tasks-per-node=1  
@@ -41,17 +41,17 @@ jupyter nbconvert --to script Tracked_Profiles.ipynb
 python -u Tracked_Profiles.py Variables $SLURM_ARRAY_TASK_ID \
     > job_out/Variables/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
-# TWO
+# TWO.a
 mkdir -p job_out/Entrainment
 jupyter nbconvert --to script Tracked_Profiles.ipynb
 python -u Tracked_Profiles.py Entrainment $SLURM_ARRAY_TASK_ID \
     > job_out/Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
-# TWO.5
-mkdir -p job_out/PROCESSED_Entrainment
-jupyter nbconvert --to script Tracked_Profiles.ipynb
-python -u Tracked_Profiles.py PROCESSED_Entrainment $SLURM_ARRAY_TASK_ID \
-    > job_out/PROCESSED_Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+# TWO.b
+#mkdir -p job_out/PROCESSED_Entrainment
+#jupyter nbconvert --to script Tracked_Profiles.ipynb
+#python -u Tracked_Profiles.py PROCESSED_Entrainment $SLURM_ARRAY_TASK_ID \
+#    > job_out/PROCESSED_Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # THREE
 mkdir -p job_out/W_Budgets
