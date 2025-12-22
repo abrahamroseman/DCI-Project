@@ -34,7 +34,8 @@ export HDF5_USE_FILE_LOCKING=FALSE #disable HDF5 file locking
 export PYTHONUNBUFFERED=TRUE #allows print statements during run
 
 # --- RUNNING PYTHON ---
-mkdir -p job_out/Lagrangian_UpdraftTracking
-jupyter nbconvert --to script Lagrangian_UpdraftTracking.ipynb
-python -u Lagrangian_UpdraftTracking.py $SLURM_ARRAY_TASK_ID \
-    > job_out/Lagrangian_UpdraftTracking/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+
+mkdir -p job_out/Subset_Parcels
+jupyter nbconvert --to script Subset_Parcels.ipynb
+python -u Subset_Parcels.py $SLURM_ARRAY_TASK_ID \
+    > job_out/Subset_Parcels/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
