@@ -6,7 +6,7 @@
 
 #SBATCH --partition=shared
 
-#SBATCH --time=0-02:00:00
+#SBATCH --time=0-04:00:00
 ##SBATCH --ntasks=1
 #SBATCH --nodes=1 
 #SBATCH  --tasks-per-node=1  
@@ -37,42 +37,36 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 
 # ONE
 mkdir -p job_out/Variables
-jupyter nbconvert --to script Tracked_Profiles.ipynb
+#jupyter nbconvert --to script Tracked_Profiles.ipynb #don't use
 python -u Tracked_Profiles.py Variables $SLURM_ARRAY_TASK_ID \
     > job_out/Variables/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # TWO.a
-mkdir -p job_out/Entrainment
-jupyter nbconvert --to script Tracked_Profiles.ipynb
-python -u Tracked_Profiles.py Entrainment $SLURM_ARRAY_TASK_ID \
-    > job_out/Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+#mkdir -p job_out/Entrainment
+##jupyter nbconvert --to script Tracked_Profiles.ipynb
+#python -u Tracked_Profiles.py Entrainment $SLURM_ARRAY_TASK_ID \
+#    > job_out/Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # TWO.b
 #mkdir -p job_out/PROCESSED_Entrainment
-#jupyter nbconvert --to script Tracked_Profiles.ipynb
+##jupyter nbconvert --to script Tracked_Profiles.ipynb
 #python -u Tracked_Profiles.py PROCESSED_Entrainment $SLURM_ARRAY_TASK_ID \
 #    > job_out/PROCESSED_Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # THREE
 mkdir -p job_out/W_Budgets
-jupyter nbconvert --to script Tracked_Profiles.ipynb
+#jupyter nbconvert --to script Tracked_Profiles.ipynb
 python -u Tracked_Profiles.py W_Budgets $SLURM_ARRAY_TASK_ID \
     > job_out/W_Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # FOUR
 mkdir -p job_out/QV_Budgets
-jupyter nbconvert --to script Tracked_Profiles.ipynb
+#jupyter nbconvert --to script Tracked_Profiles.ipynb
 python -u Tracked_Profiles.py QV_Budgets $SLURM_ARRAY_TASK_ID \
     > job_out/QV_Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # FIVE
 mkdir -p job_out/TH_Budgets
-jupyter nbconvert --to script Tracked_Profiles.ipynb
+#jupyter nbconvert --to script Tracked_Profiles.ipynb
 python -u Tracked_Profiles.py TH_Budgets $SLURM_ARRAY_TASK_ID \
     > job_out/TH_Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
-
-# SIX
-mkdir -p job_out/UpdraftArea
-jupyter nbconvert --to script Tracked_Profiles_UpdraftArea.ipynb
-python -u Tracked_Profiles_UpdraftArea.py $SLURM_ARRAY_TASK_ID \
-    > job_out/UpdraftArea/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
