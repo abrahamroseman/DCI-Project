@@ -19,7 +19,7 @@
 #SBATCH --output=pybash_job-%A.out
 ## Remote notification
 #SBATCH --mail-type=BEGIN,END,FAIL,REQUEUE,TIME_LIMIT_80
-#SBATCH --mail-user=air673@hawaii.edu
+#SBATCH --mail-user=supercomputerjobs@gmail.com
 
 mkdir -p job_out
 #exec >> "job_out/py-$SLURM_ARRAY_TASK_ID.out" 2>&1 #don't use if you are piping to .out file below
@@ -37,7 +37,7 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 
 # ONE
 mkdir -p job_out/Lagrangian_Entrainment_Lagrangian_Array
-jupyter nbconvert --to script Lagrangian_Entrainment_Lagrangian_Array.ipynb
+#jupyter nbconvert --to script Lagrangian_Entrainment_Lagrangian_Array.ipynb
 python -u Lagrangian_Entrainment_Lagrangian_Array.py $SLURM_ARRAY_TASK_ID \
     > job_out/Lagrangian_Entrainment_Lagrangian_Array/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
