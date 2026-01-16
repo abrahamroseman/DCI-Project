@@ -249,12 +249,13 @@ class TrackedProfiles_Plotting_CLASS:
     # === Level 2: Plot all depths for a given parcelType ===
     @staticmethod
     def PlotAllDepths(axis, profiles, profilesSE, parcelType, variableName,
-                      parcelDepths, multiplier=1, color=None, zlim=(0, 6)):
+                      parcelDepths, multiplier=1, color=None, zlim=(0, 6),
+                      locationSubset=""):
         for parcelDepth in parcelDepths:
-            profile = profiles[parcelType][parcelDepth][variableName]["profile_array"]
+            profile = profiles[parcelType][parcelDepth][variableName][f"profile_array{locationSubset}"]
             SE_profile = None
             if profilesSE:
-                SE_profile = profilesSE[parcelType][parcelDepth][variableName].get("profile_array_SE")
+                SE_profile = profilesSE[parcelType][parcelDepth][variableName].get(f"profile_array{locationSubset}_SE")
     
             #Pass color downstream
             TrackedProfiles_Plotting_CLASS.PlotProfileLine(
@@ -269,7 +270,8 @@ class TrackedProfiles_Plotting_CLASS:
     @staticmethod
     def PlotSingleVariable(axis, profiles, profilesSE, variableName, variableInfo,
                            parcelTypes, parcelDepths, hLines, hLineColors,
-                           color=None, zlim=(0,6)):
+                           color=None, zlim=(0,6),
+                           locationSubset=""):
         label = variableInfo[variableName]["label"]
         units = variableInfo[variableName]["units"]
         multiplier = variableInfo[variableName].get("multiplier", 1)
@@ -277,13 +279,13 @@ class TrackedProfiles_Plotting_CLASS:
         for parcelType in parcelTypes:
             TrackedProfiles_Plotting_CLASS.PlotAllDepths(
                 axis, profiles, profilesSE, parcelType, variableName,
-                parcelDepths, multiplier=multiplier, color=color, zlim=zlim
-            )
+                parcelDepths, multiplier=multiplier, color=color, zlim=zlim,
+                locationSubset=locationSubset)
             if variableName in ['VMF_g']:
                 TrackedProfiles_Plotting_CLASS.PlotAllDepths(
                     axis, profiles, profilesSE, parcelType, "VMF_c",
-                    parcelDepths, multiplier=multiplier, color=color, zlim=zlim
-                )
+                    parcelDepths, multiplier=multiplier, color=color, zlim=zlim,
+                    locationSubset=locationSubset)
     
         axis.set_ylabel("Height (km)")
         axis.set_xlabel(f"{label} {units}")
@@ -295,7 +297,8 @@ class TrackedProfiles_Plotting_CLASS:
     def PlotCompositeVariable(axis, profiles, variableName, variableInfo, 
                               parcelTypes, parcelDepths,
                               color=None, zlim=(0, 6), 
-                              printstatement=False):
+                              printstatement=False,
+                              locationSubset=""):
         """
         Plots derived variables defined by multi-step operations in variableInfo['splits'].
         e.g., ["TransferE_c", "-", "TransferE_g", "/", "E_c"]
@@ -316,7 +319,7 @@ class TrackedProfiles_Plotting_CLASS:
                 # Load first variable
                 first_var = splits[0]
                 try:
-                    result_prof = profiles[parcelType][parcelDepth][first_var]["profile_array"]
+                    result_prof = profiles[parcelType][parcelDepth][first_var][f"profile_array{locationSubset}"]
                     result = TrackedProfiles_Plotting_CLASS.ProfileMean(result_prof)[:, 0]
                     z = TrackedProfiles_Plotting_CLASS.ProfileMean(result_prof)[:, 1]
                 except KeyError:
@@ -331,7 +334,7 @@ class TrackedProfiles_Plotting_CLASS:
     
                     try:
                         next_prof = TrackedProfiles_Plotting_CLASS.ProfileMean(
-                            profiles[parcelType][parcelDepth][varname]["profile_array"]
+                            profiles[parcelType][parcelDepth][varname][f"profile_array{locationSubset}"]
                         )[:, 0]
                     except KeyError:
                         next_prof = np.zeros_like(result)
