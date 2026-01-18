@@ -47,13 +47,13 @@ class ModelData_Class:
     def GetDataDirectories(self):
         """Return directory paths and metadata based on simulation number."""
         if self.simulationNumber == 1:
-            Directory = os.path.join(self.mainDirectory, 'Model/cm1r20.3/run')
+            Directory = os.path.join(self.mainDirectory, 'Model/cm1r20.3/run/MODEL_OUTPUT/Test_Simulation/')
             res, t_res, Np_str, Nz_str = '1km', '5min', '1e6', '34'
         elif self.simulationNumber == 2:
-            Directory = self.scratchDirectory
+            Directory = os.path.join(self.mainDirectory, 'Model/cm1r20.3/run/MODEL_OUTPUT/Simulation_One/')
             res, t_res, Np_str, Nz_str = '1km', '1min', '50e6', '95'
         elif self.simulationNumber == 3:
-            Directory = self.scratchDirectory
+            Directory = os.path.join(self.mainDirectory, 'Model/cm1r20.3/run/MODEL_OUTPUT/Simulation_Two/')
             res, t_res, Np_str, Nz_str = '250m', '1min', '50e6', '95'
         else:
             raise ValueError("Invalid simulationNumber (must be 1, 2, or 3).")
