@@ -555,7 +555,7 @@ class LocationSubset_Plotting_CLASS:
                               labels=['everywhere', 'left of SBF', 'right of SBF'],
                               colors=['black', '#1E90FF', '#D32F2F'],
                               depthTypes=['SHALLOW', 'DEEP'],
-                              linestyles=['-', '--'],
+                              linestyles=['--', '-'],
                               zlim=(0,6),
                               figsize_scale=7,
                               top_adjust=0.82,
