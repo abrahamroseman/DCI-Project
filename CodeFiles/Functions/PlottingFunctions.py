@@ -292,7 +292,7 @@ class RoundedScalarFormatter(ScalarFormatter):
         self.format = f"%.{self.decimals}f"
 
 
-def apply_scientific_notation(axes, dimension='xy', use_math_text=True, power_limits=(-1, 1), decimals=2, scientific=True):
+def apply_scientific_notation(axes, dimension='x', use_math_text=True, power_limits=(-1, 1), decimals=2, scientific=True):
     """
     Apply scientific notation with mantissas rounded to a fixed number of decimals.
     """
