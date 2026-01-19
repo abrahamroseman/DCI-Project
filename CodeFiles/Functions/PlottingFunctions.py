@@ -30,6 +30,7 @@ import matplotlib.colors as colors
 import matplotlib.ticker as ticker
 import matplotlib.cm as cm
 from matplotlib.colors import Normalize
+import matplotlib.ticker as mticker
 from matplotlib.ticker import MaxNLocator
 from matplotlib.ticker import ScalarFormatter
 import matplotlib.gridspec as gridspec
