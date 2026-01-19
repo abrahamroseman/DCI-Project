@@ -454,11 +454,54 @@ def SnapLimitsToTicks(axes, dim="x"):
             ax.set_yticks(ax.get_yticks())  # solidify tick positions
 
 
-def SetEvenTicks(axes, dim="x", n_ticks=4, decimals=1, pad_frac=0.05):
-    """
-    Set evenly spaced ticks spanning current axis limits.
-    Ensures at least two distinct ticks even for near-zero ranges.
-    """
+# def SetEvenTicks(axes, dim="x", n_ticks=4, decimals=1, pad_frac=0.05):
+#     """
+#     Set evenly spaced ticks spanning current axis limits.
+#     Ensures at least two distinct ticks even for near-zero ranges.
+#     """
+#     if not isinstance(axes, (list, tuple, np.ndarray)):
+#         axes = [axes]
+
+#     for ax in axes:
+#         if dim == "x":
+#             lo, hi = ax.get_xlim()
+#         else:
+#             lo, hi = ax.get_ylim()
+
+#         # --- handle flat or extremely narrow ranges ---
+#         span = hi - lo
+#         if np.isclose(span, 0) or span < 1e-12:
+#             pad = max(abs(lo) * pad_frac, pad_frac)
+#             lo, hi = lo - pad, hi + pad
+#             span = hi - lo
+
+#         # --- compute ticks without rounding first ---
+#         ticks = np.linspace(lo, hi, n_ticks)
+
+#         # avoid collapse after rounding
+#         ticks_rounded = np.round(ticks, decimals)
+#         if len(np.unique(ticks_rounded)) < 2:
+#             # fallback to higher precision if all identical after rounding
+#             ticks_rounded = np.round(ticks, decimals + 2)
+
+#         if dim == "x":
+#             ax.set_xticks(ticks_rounded)
+#         else:
+#             ax.set_yticks(ticks_rounded)
+def SetEvenTicks(axes, dim="x", n_ticks=4, pad_frac=0.05,
+                 decimals=2):
+    
+    def RoundedFormatter(decimals=2):
+        tol = 0.5 * 10**(-decimals)
+    
+        def _fmt(x, pos):
+            if abs(x) < tol:
+                x = 0.0
+            return f"{x:.{decimals}f}"
+    
+        return mticker.FuncFormatter(_fmt)
+
+
     if not isinstance(axes, (list, tuple, np.ndarray)):
         axes = [axes]
 
@@ -468,26 +511,25 @@ def SetEvenTicks(axes, dim="x", n_ticks=4, decimals=1, pad_frac=0.05):
         else:
             lo, hi = ax.get_ylim()
 
-        # --- handle flat or extremely narrow ranges ---
         span = hi - lo
-        if np.isclose(span, 0) or span < 1e-12:
-            pad = max(abs(lo) * pad_frac, pad_frac)
-            lo, hi = lo - pad, hi + pad
-            span = hi - lo
+        if not np.isfinite(span) or span <= 0:
+            continue
 
-        # --- compute ticks without rounding first ---
-        ticks = np.linspace(lo, hi, n_ticks)
+        # --- apply padding ---
+        pad = span * pad_frac
+        lo_p, hi_p = lo - pad, hi + pad
 
-        # avoid collapse after rounding
-        ticks_rounded = np.round(ticks, decimals)
-        if len(np.unique(ticks_rounded)) < 2:
-            # fallback to higher precision if all identical after rounding
-            ticks_rounded = np.round(ticks, decimals + 2)
+        # --- exact tick positions ---
+        ticks = np.linspace(lo_p, hi_p, n_ticks)
 
         if dim == "x":
-            ax.set_xticks(ticks_rounded)
+            ax.set_xlim(lo_p, hi_p)
+            ax.xaxis.set_major_locator(mticker.FixedLocator(ticks))
+            ax.xaxis.set_major_formatter(RoundedFormatter(decimals))
         else:
-            ax.set_yticks(ticks_rounded)
+            ax.set_ylim(lo_p, hi_p)
+            ax.yaxis.set_major_locator(mticker.FixedLocator(ticks))
+            ax.yaxis.set_major_formatter(RoundedFormatter(decimals))
 
 
 # In[3]:
