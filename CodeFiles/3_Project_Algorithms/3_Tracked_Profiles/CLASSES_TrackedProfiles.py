@@ -11,6 +11,7 @@
 #Libraries
 import os
 import pickle
+from datetime import datetime, timedelta
 
 class TrackedProfiles_DataLoading_CLASS:
     """
@@ -72,6 +73,38 @@ class TrackedProfiles_DataLoading_CLASS:
                             "profile_array_SE": profile_SE
                         }
         return output
+
+    @staticmethod
+    def ConvertTimeStringsToDatetime(timeStrings):
+        """
+        '0-00-00' → 2022-06-22 06:00
+        'hour-min-sec' = '0-00-00'
+        end_time: 5 pm
+        """
+        startDatetime = datetime(2022, 6, 22, 6, 0, 0)
+    
+        datetimeList = []
+        for t in timeStrings:
+            hour, minute, second = map(int, t.split("-"))
+    
+            dt = startDatetime + timedelta(
+                hours=hour,
+                minutes=minute,
+                seconds=second
+            )
+            datetimeList.append(dt)
+    
+        return np.array(datetimeList)
+
+    @staticmethod
+    def FindTimeWindowIndices(timeDatetimes, startHour, endHour):
+        startTime = timeDatetimes[0].replace(hour=startHour, minute=0)
+        endTime   = timeDatetimes[0].replace(hour=endHour, minute=0)
+    
+        return [
+            i for i, dt in enumerate(timeDatetimes)
+            if startTime <= dt < endTime
+        ]
 
 
 #Example Call
