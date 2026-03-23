@@ -73,6 +73,16 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
             dataName = "PROCESSED_Detrainment"
             dataFolder = "EntrainmentCalculation"
 
+        elif variableName in ['MassFlux_g','MassFlux_c']:
+            dataType = "EntrainmentCalculation"
+            dataName = "MassFlux"
+            dataFolder = "MassFluxCalculation"
+
+        elif variableName in ['PROCESSED_MassFlux_g','PROCESSED_MassFlux_c']:
+            dataType = "EntrainmentCalculation"
+            dataName = "PROCESSED_MassFlux"
+            dataFolder = "MassFluxCalculation"
+
             
         inputDataDirectory = os.path.normpath(
             os.path.join(DataManager.inputDirectory, "..", dataType,
