@@ -38,3 +38,9 @@ mkdir -p job_out/Lagrangian_MassFlux
 #jupyter nbconvert --to script Lagrangian_MassFlux.ipynb
 python -u Lagrangian_MassFlux.py $SLURM_ARRAY_TASK_ID \
     > job_out/Lagrangian_MassFlux/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+
+# --- RUNNING PYTHON ---
+mkdir -p job_out/Lagrangian_Entrainment_DivideMassFlux
+#jupyter nbconvert --to script Lagrangian_Entrainment_DivideMassFlux.ipynb
+python -u Lagrangian_Entrainment_DivideMassFlux.py $SLURM_ARRAY_TASK_ID \
+    > job_out/Lagrangian_Entrainment_DivideMassFlux/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
