@@ -57,16 +57,35 @@ class DomainProfiles_Class:
         z_ind, y_ind, x_ind = np.where(where_updraft)
         return z_ind, y_ind, x_ind
 
+    # @staticmethod
+    # def MakeProfiles(VARs, VARs_squares, profiles, where_updraft, z_ind):
+    #     # Make Profiles
+    #     # Iterate over each variable in var_names and bin the data
+    #     for (var,var_squares) in zip(VARs,VARs_squares):
+    #         masked_data = VARs[var][where_updraft]
+            
+    #         np.add.at(profiles[var][:, 0], z_ind, masked_data)
+    #         np.add.at(profiles[var][:, 1], z_ind, 1)
+    #         np.add.at(profiles[var_squares][:, 0], z_ind, masked_data**2)
+    #         np.add.at(profiles[var_squares][:, 1], z_ind, 1)
+    #     return profiles
+
     @staticmethod
     def MakeProfiles(VARs, VARs_squares, profiles, where_updraft, z_ind):
         # Make Profiles
         # Iterate over each variable in var_names and bin the data
+        #* new NaN-Aware Version
         for (var,var_squares) in zip(VARs,VARs_squares):
             masked_data = VARs[var][where_updraft]
-            np.add.at(profiles[var][:, 0], z_ind, masked_data)
-            np.add.at(profiles[var][:, 1], z_ind, 1)
-            np.add.at(profiles[var_squares][:, 0], z_ind, masked_data**2)
-            np.add.at(profiles[var_squares][:, 1], z_ind, 1)
+            NaN_mask = ~np.isnan(masked_data)
+            
+            masked_data_valid = masked_data[NaN_mask]
+            z_ind_valid = z_ind[NaN_mask]
+            
+            np.add.at(profiles[var][:, 0], z_ind_valid, masked_data_valid)
+            np.add.at(profiles[var][:, 1], z_ind_valid, 1)
+            np.add.at(profiles[var_squares][:, 0], z_ind_valid, masked_data_valid**2)
+            np.add.at(profiles[var_squares][:, 1], z_ind_valid, 1)
         return profiles
 
     @staticmethod
@@ -79,8 +98,8 @@ class DomainProfiles_Class:
             var_data = VARs[var]
     
             # Mean and squared mean profiles
-            mean_profile = np.mean(var_data, axis=(1, 2))
-            mean_sq_profile = np.mean(var_data**2, axis=(1, 2))
+            mean_profile = np.nanmean(var_data, axis=(1, 2))
+            mean_sq_profile = np.nanmean(var_data**2, axis=(1, 2))
     
             # Store results
             profiles[var][:, 0] = mean_profile
@@ -108,7 +127,6 @@ class DomainProfiles_Class:
     
         # Make Profiles
         profiles = DomainProfiles_Class.MakeProfiles(VARs, VARs_squares, profiles, where_updraft, z_ind)
-    
         return profiles
 
 
