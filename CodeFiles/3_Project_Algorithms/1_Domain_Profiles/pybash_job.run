@@ -19,7 +19,7 @@
 #SBATCH --output=pybash_job-%A.out
 ## Remote notification
 #SBATCH --mail-type=BEGIN,END,FAIL,REQUEUE,TIME_LIMIT_80
-#SBATCH --mail-user=air673@hawaii.edu
+#SBATCH --mail-user=supercomputerjobs@gmail.com
 
 mkdir -p job_out
 #exec >> "job_out/py-$SLURM_ARRAY_TASK_ID.out" 2>&1 #don't use if you are piping to .out file below
@@ -36,37 +36,43 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 # --- RUNNING PYTHON ---
 
 # ONE
-mkdir -p job_out/Variables
-jupyter nbconvert --to script Eulerian_Profiles.ipynb
-python -u Eulerian_Profiles.py Variables $SLURM_ARRAY_TASK_ID \
-    > job_out/Variables/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+#mkdir -p job_out/Variables
+##jupyter nbconvert --to script Eulerian_Profiles.ipynb
+#python -u Eulerian_Profiles.py Variables $SLURM_ARRAY_TASK_ID \
+#    > job_out/Variables/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # TWO_a
-mkdir -p job_out/Entrainment
-jupyter nbconvert --to script Eulerian_Profiles.ipynb
-python -u Eulerian_Profiles.py Entrainment $SLURM_ARRAY_TASK_ID \
-    > job_out/Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+#mkdir -p job_out/Entrainment
+##jupyter nbconvert --to script Eulerian_Profiles.ipynb
+#python -u Eulerian_Profiles.py Entrainment $SLURM_ARRAY_TASK_ID \
+#    > job_out/Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # TWO_b
 #mkdir -p job_out/PROCESSED_Entrainment
-#jupyter nbconvert --to script Eulerian_Profiles.ipynb
+##jupyter nbconvert --to script Eulerian_Profiles.ipynb
 #python -u Eulerian_Profiles.py PROCESSED_Entrainment $SLURM_ARRAY_TASK_ID \
 #    > job_out/PROCESSED_Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
+# TWO_c
+mkdir -p job_out/PROCESSED_Entrainment_DivideMassFlux
+#jupyter nbconvert --to script Eulerian_Profiles.ipynb
+python -u Eulerian_Profiles.py PROCESSED_Entrainment_DivideMassFlux $SLURM_ARRAY_TASK_ID \
+    > job_out/PROCESSED_Entrainment_DivideMassFlux/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+
 # THREE
-mkdir -p job_out/W_Budgets
-jupyter nbconvert --to script Eulerian_Profiles.ipynb
-python -u Eulerian_Profiles.py W_Budgets $SLURM_ARRAY_TASK_ID \
-    > job_out/W_Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+#mkdir -p job_out/W_Budgets
+##jupyter nbconvert --to script Eulerian_Profiles.ipynb
+#python -u Eulerian_Profiles.py W_Budgets $SLURM_ARRAY_TASK_ID \
+#    > job_out/W_Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # FOUR
-mkdir -p job_out/QV_Budgets
-jupyter nbconvert --to script Eulerian_Profiles.ipynb
-python -u Eulerian_Profiles.py QV_Budgets $SLURM_ARRAY_TASK_ID \
-    > job_out/QV_Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+#mkdir -p job_out/QV_Budgets
+##jupyter nbconvert --to script Eulerian_Profiles.ipynb
+#python -u Eulerian_Profiles.py QV_Budgets $SLURM_ARRAY_TASK_ID \
+#    > job_out/QV_Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # FIVE
-mkdir -p job_out/TH_Budgets
-jupyter nbconvert --to script Eulerian_Profiles.ipynb
-python -u Eulerian_Profiles.py TH_Budgets $SLURM_ARRAY_TASK_ID \
-    > job_out/TH_Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+#mkdir -p job_out/TH_Budgets
+##jupyter nbconvert --to script Eulerian_Profiles.ipynb
+#python -u Eulerian_Profiles.py TH_Budgets $SLURM_ARRAY_TASK_ID \
+#    > job_out/TH_Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
