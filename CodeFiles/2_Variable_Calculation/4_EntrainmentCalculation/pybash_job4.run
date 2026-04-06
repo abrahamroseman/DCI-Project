@@ -34,10 +34,10 @@ export HDF5_USE_FILE_LOCKING=FALSE #disable HDF5 file locking
 export PYTHONUNBUFFERED=TRUE #allows print statements during run
 
 # --- RUNNING PYTHON ---
-mkdir -p job_out/Lagrangian_MassFlux
-#jupyter nbconvert --to script Lagrangian_MassFlux.ipynb
-python -u Lagrangian_MassFlux.py $SLURM_ARRAY_TASK_ID \
-    > job_out/Lagrangian_MassFlux/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+#mkdir -p job_out/Lagrangian_MassFlux
+##jupyter nbconvert --to script Lagrangian_MassFlux.ipynb
+#python -u Lagrangian_MassFlux.py $SLURM_ARRAY_TASK_ID \
+#    > job_out/Lagrangian_MassFlux/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # --- RUNNING PYTHON ---
 mkdir -p job_out/Lagrangian_Entrainment_DivideMassFlux
