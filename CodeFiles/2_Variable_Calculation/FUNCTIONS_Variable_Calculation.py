@@ -80,98 +80,6 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
     return var_data
 
 
-# In[ ]:
-
-
-# # ============================================================
-# # CallVariable_Function (old before processed_string cleanup)
-# # ============================================================
-
-# import os
-
-# def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate = None, printstatement=False):
-#     if variableName in ModelData.varList:
-#         var_data = DataManager.GetTimestepData(DataManager.inputDataDirectory, timeString, 
-#                                                variableName=variableName, zInterpolate = zInterpolate)
-        
-#     elif variableName not in ModelData.varList:
-#         if variableName in ["A_g","A_c","qcqi"]:
-#             dataType = "CalculateMoreVariables"
-#             dataName = "Eulerian_Binary_Array"
-#             dataFolder = dataName
-#         elif variableName in ["VMF_g","VMF_c"]:
-#             dataType = "CalculateMoreVariables"
-#             dataName = "Eulerian_VMF"
-#             dataFolder = dataName
-#         elif variableName in ["MSE"]:
-#             dataType = "CalculateMoreVariables"
-#             dataName = "Moist_Static_Energy"
-#             dataFolder = dataName
-#         elif variableName in ["theta_v"]:
-#             dataType = "CalculateMoreVariables"
-#             dataName = "Virtual_Potential_Temperature"
-#             dataFolder = dataName
-#         elif variableName in ["theta_e", "RH_vapor", "RH_ice"]:
-#             dataType = "CalculateMoreVariables"
-#             dataName = "Equivalent_Potential_Temperature"
-#             dataFolder = dataName
-#         elif variableName in ["convergence"]:
-#             dataType = "CalculateMoreVariables"
-#             dataName = "Convergence"
-#             dataFolder = dataName
-#         elif variableName in ["HMC"]:
-#             dataType = "CalculateMoreVariables"
-#             dataName = "MoistureConvergence"
-#             dataFolder = dataName
-
-#         elif variableName in ['Entrainment_g','Entrainment_c',
-#                               'TransferEntrainment_g',
-#                               'TransferEntrainment_c']:
-#             dataType = "EntrainmentCalculation"
-#             dataName = "Entrainment"
-#             dataFolder = "EntrainmentCalculation"
-
-#         elif variableName in ['Detrainment_g','Detrainment_c',
-#                               'TransferDetrainment_g',
-#                               'TransferDetrainment_c']:
-#             dataType = "EntrainmentCalculation"
-#             dataName = "Detrainment"
-#             dataFolder = "EntrainmentCalculation"
-
-#         elif variableName in ['PROCESSED_Entrainment_g','PROCESSED_Entrainment_c',
-#                               'PROCESSED_TransferEntrainment_g',
-#                               'PROCESSED_TransferEntrainment_c']:
-#             dataType = "EntrainmentCalculation"
-#             dataName = "PROCESSED_Entrainment"
-#             dataFolder = "EntrainmentCalculation"
-    
-#         elif variableName in ['PROCESSED_Detrainment_g','PROCESSED_Detrainment_c',
-#                               'PROCESSED_TransferDetrainment_g',
-#                               'PROCESSED_TransferDetrainment_c']:
-#             dataType = "EntrainmentCalculation"
-#             dataName = "PROCESSED_Detrainment"
-#             dataFolder = "EntrainmentCalculation"
-
-#         elif variableName in ['MassFlux_g','MassFlux_c']:
-#             dataType = "EntrainmentCalculation"
-#             dataName = "MassFlux"
-#             dataFolder = "MassFluxCalculation"
-
-#         elif variableName in ['PROCESSED_MassFlux_g','PROCESSED_MassFlux_c']:
-#             dataType = "EntrainmentCalculation"
-#             dataName = "PROCESSED_MassFlux"
-#             dataFolder = "MassFluxCalculation"
-
-            
-#         inputDataDirectory = os.path.normpath(
-#             os.path.join(DataManager.inputDirectory, "..", dataType,
-#                          f"{DataManager.res}_{DataManager.t_res}_{DataManager.Nz_str}nz", dataFolder)
-#                         )
-#         var_data = DataManager.GetTimestepData(inputDataDirectory, timeString, 
-#                                                variableName=variableName, dataName=dataName, printstatement=printstatement)
-#     return var_data
-
-
 # In[4]:
 
 
@@ -183,14 +91,16 @@ import os
 
 def CallLagrangianArray(ModelData, DataManager, timeString, variableName, 
                         printstatement=False):
+    Processed_string = "PROCESSED_" if "PROCESSED_" in variableName else ""
+    DivideMassFlux_string = "_DivideMassFlux" if "_DivideMassFlux" in variableName else ""
 
     if variableName in ["A_g","A_c","z","x","Z","Y","X","W","QCQI"]:
         dataType = "LagrangianArrays"
         dataName = "Lagrangian_Binary_Array"
         dataFolder = dataName
-    elif variableName in ["PROCESSED_A_g","PROCESSED_A_c"]:
+    elif variableName in [f"{Processed_string}A_g",f"{Processed_string}A_c"]:
         dataType = "LagrangianArrays"
-        dataName = "PROCESSED_Lagrangian_Binary_Array"
+        dataName = f"{Processed_string}Lagrangian_Binary_Array"
         dataFolder = dataName
     elif variableName in  ["QV", "QCQI",
                            "RH_vapor",
@@ -216,14 +126,14 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName,
         dataName = "Lagrangian_Entrainment"
         dataFolder = "Lagrangian_Entrainment"
 
-    elif variableName in ['PROCESSED_D_c', 'PROCESSED_D_g',
+    elif variableName in [f'{Processed_string}D{DivideMassFlux_string}_c', f'{Processed_string}D{DivideMassFlux_string}_g',
                           
-                          'PROCESSED_E_c', 'PROCESSED_E_g',
-                          'PROCESSED_TransferD_c', 'PROCESSED_TransferD_g', 
-                          'PROCESSED_TransferE_c', 'PROCESSED_TransferE_g']:
+                          f'{Processed_string}E{DivideMassFlux_string}_c', f'{Processed_string}E{DivideMassFlux_string}_g',
+                          f'{Processed_string}TransferD{DivideMassFlux_string}_c', f'{Processed_string}TransferD{DivideMassFlux_string}_g', 
+                          f'{Processed_string}TransferE{DivideMassFlux_string}_c', f'{Processed_string}TransferE{DivideMassFlux_string}_g']:
         dataType = "LagrangianArrays"
-        dataName = "PROCESSED_Lagrangian_Entrainment"
-        dataFolder = "PROCESSED_Lagrangian_Entrainment"
+        dataName = f"{Processed_string}Lagrangian_Entrainment{DivideMassFlux_string}"
+        dataFolder = f"{Processed_string}Lagrangian_Entrainment{DivideMassFlux_string}"
 
     elif variableName in ['WB_BUOY', 'WB_HADV', 'WB_HIDIFF', 'WB_HTURB',
                     'WB_PGRAD', 'WB_VADV', 'WB_VIDIFF', 'WB_VTURB']:
