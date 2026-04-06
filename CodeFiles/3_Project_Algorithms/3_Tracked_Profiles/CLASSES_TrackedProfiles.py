@@ -690,3 +690,73 @@ class LocationSubset_Plotting_CLASS:
         fig.subplots_adjust(top=top_adjust)
         return fig
 
+
+# In[ ]:
+
+
+# ============================================================
+# PiecewiseScale Class
+# ============================================================
+
+import matplotlib.scale as mscale
+import matplotlib.transforms as mtransforms
+
+class PiecewiseScale_CLASS(mscale.ScaleBase):
+    """
+    Allows for non-linear axis ticks
+    Custom piecewise y-axis scaling. The axis is linear below a specified height (yBreak), and compressed above it by a constant factor (scaleFactor).
+    This case the break is at y=2 and above y=2, the tick spacing is compressed by 0.3.
+    """
+    name = 'piecewise'
+
+    def __init__(self, axis, **kwargs):
+        super().__init__(axis)
+        self.yBreak = kwargs.get('yBreak', 2)
+        self.scaleFactor = kwargs.get('scaleFactor', 0.3)
+
+    def get_transform(self):
+        return self.PiecewiseTransform(self.yBreak, self.scaleFactor)
+
+    def set_default_locators_and_formatters(self, axis):
+        pass  # keep defaults
+
+    class PiecewiseTransform(mtransforms.Transform):
+        input_dims = output_dims = 1
+        is_separable = True
+
+        def __init__(self, yBreak, scaleFactor):
+            super().__init__()
+            self.yBreak = yBreak
+            self.scaleFactor = scaleFactor
+
+        def transform_non_affine(self, y):
+            y = np.array(y)
+            return np.where(
+                y < self.yBreak,
+                y,
+                self.yBreak + (y - self.yBreak) * self.scaleFactor
+            )
+
+        def inverted(self):
+            return PiecewiseScale.InvertedPiecewiseTransform(self.yBreak, self.scaleFactor)
+
+    class InvertedPiecewiseTransform(mtransforms.Transform):
+        input_dims = output_dims = 1
+        is_separable = True
+
+        def __init__(self, yBreak, scaleFactor):
+            super().__init__()
+            self.yBreak = yBreak
+            self.scaleFactor = scaleFactor
+
+        def transform_non_affine(self, y):
+            y = np.array(y)
+            return np.where(
+                y < self.yBreak,
+                y,
+                self.yBreak + (y - self.yBreak) / self.scaleFactor
+            )
+
+# Register it
+mscale.register_scale(PiecewiseScale_CLASS)
+
