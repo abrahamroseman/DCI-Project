@@ -738,7 +738,7 @@ class PiecewiseScale_CLASS(mscale.ScaleBase):
             )
 
         def inverted(self):
-            return PiecewiseScale.InvertedPiecewiseTransform(self.yBreak, self.scaleFactor)
+            return PiecewiseScale_CLASS.InvertedPiecewiseTransform(self.yBreak, self.scaleFactor)
 
     class InvertedPiecewiseTransform(mtransforms.Transform):
         input_dims = output_dims = 1
