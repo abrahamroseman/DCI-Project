@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=python
-#SBATCH --array=1-132  #%+number after to limit number of of runs at a time
+#SBATCH --array=1-660%200  #%+number after to limit number of of runs at a time
 ##SBATCH --account=torri
 ##SBATCH --partition=torri
 
