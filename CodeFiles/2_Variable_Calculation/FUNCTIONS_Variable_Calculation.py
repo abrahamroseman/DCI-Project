@@ -188,7 +188,7 @@ def Get_LagrangianArrays(ModelData, DataManager, t, dataType="VARS", dataName="V
     return dataDictionary
 
 
-# In[ ]:
+# In[1]:
 
 
 # ============================================================
@@ -237,6 +237,48 @@ def OpenMultipleSingleTimes_LagrangianArray(directory, ModelData, pattern="Lagra
 
 # #EXAMPLE USAGE
 # directory = f"/mnt/lustre/koa/koastore/torri_group/air_directory/Projects/DCI-Project/Code/OUTPUT/Variable_Calculation/LagrangianArrays/{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz/Lagrangian_Binary_Array/"
-
 # Lagrangian_Binary_Array,files = OpenMultipleSingleTimes_LagrangianArray(directory, ModelData)
+
+def OpenMultipleSingleTimes_LagrangianArray_JobArray(directory, ModelData, start_job,end_job, 
+                                                     pattern="Lagrangian_Binary_Array_*.h5"):
+    """
+    Load a sequence of Lagrangian .h5 files (each a single timestep)
+    into one xarray.Dataset with dimensions (time, p),
+    enforcing time order from ModelData.timeStrings.
+    """
+    # --- Find all available files
+    files_all = glob(os.path.join(directory, pattern))
+    if not files_all:
+        raise FileNotFoundError(f"No files found in {directory} matching {pattern}")
+
+    # --- Build the correctly ordered list according to ModelData.timeStrings
+    files = []
+    for t in ModelData.timeStrings:
+        time_pattern = f"_{t}.h5"
+        matched = [f for f in files_all if f.endswith(time_pattern)]
+        if matched:
+            files.append(matched[0])
+        else:
+            print(f"Missing file for time {t}")
+
+    # --- Open and concatenate along time
+    def limit_parcels(ds): return ds.isel(phony_dim_0=slice(start_job, end_job))
+    ds = xr.open_mfdataset(
+        files,
+        engine="h5netcdf",
+        phony_dims="sort",
+        combine="nested",
+        concat_dim="time",
+        preprocess=limit_parcels
+    )
+
+    # --- Rename the phony dimension to 'p'
+    if "phony_dim_0" in ds.dims:
+        ds = ds.rename({"phony_dim_0": "p"})
+
+    return ds, files
+
+# #EXAMPLE USAGE
+# directory = f"/mnt/lustre/koa/koastore/torri_group/air_directory/Projects/DCI-Project/Code/OUTPUT/Variable_Calculation/LagrangianArrays/{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz/Lagrangian_Binary_Array/"
+# Lagrangian_Binary_Array,files = OpenMultipleSingleTimes_LagrangianArray_JobArray(directory, ModelData, start_job,end_job)
 

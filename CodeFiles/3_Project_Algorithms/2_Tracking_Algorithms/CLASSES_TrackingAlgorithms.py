@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[6]:
+# In[ ]:
 
 
 # ============================================================
@@ -269,11 +269,19 @@ class Results_InputOutput_Class:
 
     #######################################################
     
+    # @staticmethod
+    # def SaveLFC_Profile_Job(ModelData,DataManager,
+    #                         LFC_profile,job_id, Ltype):
+    #     #Ltype in LFC or LCL
+    #     Dictionary = {f"{Ltype}_profile": LFC_profile} 
+    #     Results_InputOutput_Class.SaveOutFile(ModelData,DataManager, Dictionary,f"{job_id}_{Ltype}_profile")
+
     @staticmethod
     def SaveLFC_Profile_Job(ModelData,DataManager,
-                            LFC_profile,job_id, Ltype):
+                            LFC_profile,LFC_times,job_id, Ltype):
         #Ltype in LFC or LCL
-        Dictionary = {f"{Ltype}_profile": LFC_profile} 
+        Dictionary = {f"{Ltype}_profile": LFC_profile,
+                      f"{Ltype}_times": LFC_times} 
         Results_InputOutput_Class.SaveOutFile(ModelData,DataManager, Dictionary,f"{job_id}_{Ltype}_profile")
 
     @staticmethod
@@ -288,7 +296,6 @@ class Results_InputOutput_Class:
                             job_id, Ltype):
         #Ltype in LFC or LCL
         out = Results_InputOutput_Class.LoadOutFile(ModelData,DataManager,f"{job_id}_{Ltype}_profile")
-    
         return out
 
     @staticmethod
@@ -299,7 +306,7 @@ class Results_InputOutput_Class:
         return out
 
 
-# In[1]:
+# In[ ]:
 
 
 # ============================================================
