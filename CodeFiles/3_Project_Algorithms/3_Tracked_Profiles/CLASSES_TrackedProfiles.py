@@ -167,12 +167,25 @@ class TrackedProfiles_Plotting_CLASS:
         hLines = (hLine_1,hLine_2)
         hLineColors = ("purple","#FF8C00")
         return hLines,hLineColors
-
     @staticmethod
     def PlotHLines(axis,hLines,hLineColors):
         for (hLine,hLineColor) in zip(hLines,hLineColors):
             axis.axhline(hLine, color=hLineColor, linestyle='dashed', zorder=-10)
-
+    @staticmethod
+    def GetTimeSlice(ModelData,timeIndiceRange):
+        if timeIndiceRange == "":
+            timeSlice = np.arange(ModelData.Ntime)
+        else:
+            split = timeIndiceRange.split('-'); a=int(split[0][1:]); b=int(split[1])
+            timeStrings_datetime=TrackedProfiles_DataLoading_CLASS.ConvertTimeStringsToDatetime(ModelData.timeStrings)
+            timeSlice = TrackedProfiles_DataLoading_CLASS.FindTimeWindowIndices(timeStrings_datetime,a,b)
+        return timeSlice
+    @staticmethod
+    def UpdateMeanLFC(ModelData,timeIndiceRange,LevelsDictionary,LFC_profile):    
+        timeSlice = TrackedProfiles_Plotting_CLASS.GetTimeSlice(ModelData,timeIndiceRange)
+        MeanLFC = np.nanmean(LFC_profile[timeSlice])
+        LevelsDictionary['MeanLFC']=MeanLFC
+        return LevelsDictionary
     @staticmethod
     def ApplyXLimFromZLim(axis, zlim, buffer=0.05):
         """
