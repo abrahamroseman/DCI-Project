@@ -384,16 +384,16 @@ class TrackedParcel_Loading_Class:
         min_all_cloudbase = np.nanmin(all_cloudbase)
         print(f"Mean Cloudbase is: {mean_all_cloudbase:.2f} km\n")
         print(f"Min Cloudbase is: {min_all_cloudbase:.2f} km\n")
-    
+
+        #LFC and Cloudbase
         #lfc and lcl
         LFC_profile = Results_InputOutput_Class.LoadLFC_Profile_Combined(ModelData,DataManager,Ltype='LFC')["LFC_profile"]
         LCL_profile = Results_InputOutput_Class.LoadLFC_Profile_Combined(ModelData,DataManager,Ltype='LCL')["LCL_profile"]
-        
-        #LFC and LCL
-        MeanLFC=np.mean(LFC_profile)
-        MeanLCL=np.mean(LCL_profile)
-        MinLFC=np.min(LFC_profile)
-        MinLCL=np.min(LCL_profile)
+        #means
+        MeanLFC=np.nanmean(LFC_profile)
+        MeanLCL=np.nanmean(LCL_profile)
+        MinLFC=np.nanmin(LFC_profile)
+        MinLCL=np.nanmin(LCL_profile)
         print(f"Mean LFC is: {MeanLFC:.2f} km\n")
         print(f"Mean LCL is: {MeanLCL:.2f} km\n")
         print(f"Min LFC is: {MinLFC:.2f} km\n")
