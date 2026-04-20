@@ -306,7 +306,7 @@ class Results_InputOutput_Class:
         return out
 
 
-# In[ ]:
+# In[1]:
 
 
 # ============================================================
@@ -342,6 +342,11 @@ class TrackedParcel_Loading_Class:
                 "ALL": Dictionary["ALL_out_array_nonCL"],
                 "SHALLOW": Dictionary["SHALLOW_out_array_nonCL"],
                 "DEEP": Dictionary["DEEP_out_array_nonCL"],
+            },
+            "turbulentCL": {
+                "ALL": Dictionary["ALL_out_array_turbulentCL"],
+                "SHALLOW": Dictionary["SHALLOW_out_array_turbulentCL"],
+                "DEEP": Dictionary["DEEP_out_array_turbulentCL"],
             },
             "SBF": {
                 "ALL": Dictionary["ALL_out_array_SBF"],

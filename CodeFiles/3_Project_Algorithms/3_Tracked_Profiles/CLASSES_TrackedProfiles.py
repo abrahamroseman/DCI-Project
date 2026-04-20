@@ -119,7 +119,7 @@ class TrackedProfiles_DataLoading_CLASS:
 # TrackedProfiles_DataLoading_CLASS.LoadProfile(ModelData,DataManager_TrackedProfiles, t)
 
 
-# In[ ]:
+# In[3]:
 
 
 # ============================================================
@@ -216,21 +216,47 @@ class TrackedProfiles_Plotting_CLASS:
     
         axis.set_ylim(zlim)
 
+    # @staticmethod
+    # def AddCategoryLegend(fig, parcelTypes=["CL", "nonCL", "SBF"], loc='upper center', bbox=(0.5, 0.93)):
+    #     """
+    #     Adds a custom legend for parcel types based on linestyle (e.g., CL, nonCL, SBF).
+    #     """
+    #     linestyle_map = {
+    #         "CL": "solid",
+    #         "nonCL": "dashed",
+    #         "SBF": "dashdot"
+    #     }
+    
+    #     custom_lines = [
+    #         Line2D([0], [0], color='black', linestyle=linestyle_map[ptype],
+    #                linewidth=1.5, label=ptype)
+    #         for ptype in parcelTypes if ptype in linestyle_map
+    #     ]
+    
+    #     fig.legend(
+    #         handles=custom_lines,
+    #         loc=loc,
+    #         ncol=len(custom_lines),
+    #         fontsize=10,
+    #         title='Parcel Types',
+    #         title_fontsize=12,
+    #         bbox_to_anchor=bbox,
+    #         borderaxespad=0,
+    #         frameon=True
+    #     )
+
     @staticmethod
     def AddCategoryLegend(fig, parcelTypes=["CL", "nonCL", "SBF"], loc='upper center', bbox=(0.5, 0.93)):
         """
-        Adds a custom legend for parcel types based on linestyle (e.g., CL, nonCL, SBF).
+        Adds a custom legend using a list comprehension to avoid an explicit for-loop block.
         """
-        linestyle_map = {
-            "CL": "solid",
-            "nonCL": "dashed",
-            "SBF": "dashdot"
-        }
+        styles = ["solid", "dashed", "dashdot", "dotted"]
     
+        # This single list comprehension replaces the entire loop and mapping logic
         custom_lines = [
-            Line2D([0], [0], color='black', linestyle=linestyle_map[ptype],
+            Line2D([0], [0], color='black', linestyle=styles[i % len(styles)], 
                    linewidth=1.5, label=ptype)
-            for ptype in parcelTypes if ptype in linestyle_map
+            for i, ptype in enumerate(parcelTypes)
         ]
     
         fig.legend(
@@ -273,14 +299,15 @@ class TrackedProfiles_Plotting_CLASS:
     # === Level 3: Plot one line ===
     @staticmethod
     def PlotProfileLine(axis, profile, SE_profile, parcelType, parcelDepth,
-                        multiplier=1, color=None):
+                        multiplier=1, color=None,
+                        linestyle_override=None):
         avg = TrackedProfiles_Plotting_CLASS.ProfileMean(profile)
         x = multiplier * avg[:, 0]
         y = avg[:, 1]
     
         #Allow explicit color override (new behavior)
         color = color or TrackedProfiles_Plotting_CLASS.depth_colors.get(parcelDepth, "gray")
-        linestyle = TrackedProfiles_Plotting_CLASS.category_styles.get(parcelType, "solid")
+        linestyle = linestyle_override if linestyle_override is not None else TrackedProfiles_Plotting_CLASS.category_styles.get(parcelType, "solid") 
         label = f"{parcelType}-{parcelDepth}"
     
         # Plot main line
@@ -296,7 +323,7 @@ class TrackedProfiles_Plotting_CLASS:
     @staticmethod
     def PlotAllDepths(axis, profiles, profilesSE, parcelType, variableName,
                       parcelDepths, multiplier=1, color=None, zlim=(0, 6),
-                      locationSubset=""):
+                      locationSubset="",linestyle_override=None):
         for parcelDepth in parcelDepths:
             profile = profiles[parcelType][parcelDepth][variableName][f"profile_array{locationSubset}"]
             SE_profile = None
@@ -304,10 +331,9 @@ class TrackedProfiles_Plotting_CLASS:
                 SE_profile = profilesSE[parcelType][parcelDepth][variableName].get(f"profile_array{locationSubset}_SE")
     
             #Pass color downstream
-            TrackedProfiles_Plotting_CLASS.PlotProfileLine(
-                axis, profile, SE_profile, parcelType, parcelDepth,
-                multiplier=multiplier, color=color
-            )
+            TrackedProfiles_Plotting_CLASS.PlotProfileLine(axis, profile, SE_profile, parcelType, parcelDepth,
+                                                           multiplier=multiplier, color=color,
+                                                           linestyle_override=linestyle_override)
     
         TrackedProfiles_Plotting_CLASS.ApplyXLimFromZLim(axis, zlim)
     
@@ -322,16 +348,16 @@ class TrackedProfiles_Plotting_CLASS:
         units = variableInfo[variableName]["units"]
         multiplier = variableInfo[variableName].get("multiplier", 1)
     
-        for parcelType in parcelTypes:
-            TrackedProfiles_Plotting_CLASS.PlotAllDepths(
-                axis, profiles, profilesSE, parcelType, variableName,
-                parcelDepths, multiplier=multiplier, color=color, zlim=zlim,
-                locationSubset=locationSubset)
+        for i, parcelType in enumerate(parcelTypes):
+            styles = ["solid", "dashed", "dashdot", "dotted"]
+            current_linestyle = styles[i % len(styles)]
+            TrackedProfiles_Plotting_CLASS.PlotAllDepths(axis, profiles, profilesSE, parcelType, variableName,
+                                                         parcelDepths, multiplier=multiplier, color=color, zlim=zlim,
+                                                         locationSubset=locationSubset,linestyle_override=current_linestyle)
             if variableName in ['VMF_g']:
-                TrackedProfiles_Plotting_CLASS.PlotAllDepths(
-                    axis, profiles, profilesSE, parcelType, "VMF_c",
-                    parcelDepths, multiplier=multiplier, color=color, zlim=zlim,
-                    locationSubset=locationSubset)
+                TrackedProfiles_Plotting_CLASS.PlotAllDepths(axis, profiles, profilesSE, parcelType, "VMF_c",
+                                                             parcelDepths, multiplier=multiplier, color=color, zlim=zlim,
+                                                             locationSubset=locationSubset,linestyle_override=current_linestyle)
     
         axis.set_ylabel("Height (km)")
         axis.set_xlabel(f"{label} {units}")
@@ -344,7 +370,8 @@ class TrackedProfiles_Plotting_CLASS:
                               parcelTypes, parcelDepths,
                               color=None, zlim=(0, 6), 
                               printstatement=False,
-                              locationSubset=""):
+                              locationSubset="",
+                              linestyle_override=True):
         """
         Plots derived variables defined by multi-step operations in variableInfo['splits'].
         e.g., ["TransferE_c", "-", "TransferE_g", "/", "E_c"]
@@ -358,8 +385,11 @@ class TrackedProfiles_Plotting_CLASS:
     
         if splits is None:
             raise ValueError(f"'splits' not defined for {variableName}")
+
+        styles = ["solid", "dashed", "dashdot", "dotted"]
     
-        for parcelType in parcelTypes:
+        for idx, parcelType in enumerate(parcelTypes):
+            current_linestyle = styles[idx % len(styles)]
             for parcelDepth in parcelDepths:
     
                 # Load first variable
@@ -407,7 +437,7 @@ class TrackedProfiles_Plotting_CLASS:
                 y = z
     
                 color_use = color or TrackedProfiles_Plotting_CLASS.depth_colors.get(parcelDepth, "gray")
-                linestyle = TrackedProfiles_Plotting_CLASS.category_styles.get(parcelType, "solid")
+                linestyle = current_linestyle if linestyle_override is True else TrackedProfiles_Plotting_CLASS.category_styles.get(parcelType, "solid")
                 label_line = f"{parcelType}-{parcelDepth}"
     
                 axis.plot(x, y, color=color_use, linestyle=linestyle, linewidth=1, label=label_line)
