@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --job-name=python
 #SBATCH --array=1-60 #%+number after to limit number of of runs at a time
-##SBATCH --account=torri
-##SBATCH --partition=torri
+#SBATCH --account=torri
+#SBATCH --partition=torri
 
-#SBATCH --partition=shared
+##SBATCH --partition=shared
 
 #SBATCH --time=0-03:00:00
 ##SBATCH --ntasks=1
