@@ -325,7 +325,7 @@ class TrackedParcel_Loading_Class:
     @staticmethod
     def GetTrackedParcelArrays(Dictionary):
         """
-        Extract all tracked parcel arrays (CL, nonCL, SBF, ColdPool) from Dictionary.
+        Extract all tracked parcel arrays (CL, nonCL, turbulentCL SBF, ColdPool,Thermal) from Dictionary.
     
         Returns
         -------
@@ -334,29 +334,29 @@ class TrackedParcel_Loading_Class:
         """
         trackedArrays = {
             "CL": {
-                "ALL": Dictionary["CL_ALL_out_arr"],
-                "SHALLOW": Dictionary["CL_SHALLOW_out_arr"],
-                "DEEP": Dictionary["CL_DEEP_out_arr"],
+                "ALL": Dictionary["ALL_out_array_CL"],
+                "SHALLOW": Dictionary["SHALLOW_out_array_CL"],
+                "DEEP": Dictionary["DEEP_out_array_CL"],
             },
             "nonCL": {
-                "ALL": Dictionary["nonCL_ALL_out_arr"],
-                "SHALLOW": Dictionary["nonCL_SHALLOW_out_arr"],
-                "DEEP": Dictionary["nonCL_DEEP_out_arr"],
+                "ALL": Dictionary["ALL_out_array_nonCL"],
+                "SHALLOW": Dictionary["SHALLOW_out_array_nonCL"],
+                "DEEP": Dictionary["DEEP_out_array_nonCL"],
             },
             "SBF": {
-                "ALL": Dictionary["SBF_ALL_out_arr"],
-                "SHALLOW": Dictionary["SBF_SHALLOW_out_arr"],
-                "DEEP": Dictionary["SBF_DEEP_out_arr"],
-            },
-            "nonSBF": {
-                "ALL": Dictionary["nonSBF_ALL_out_arr"],
-                "SHALLOW": Dictionary["nonSBF_SHALLOW_out_arr"],
-                "DEEP": Dictionary["nonSBF_DEEP_out_arr"],
+                "ALL": Dictionary["ALL_out_array_SBF"],
+                "SHALLOW": Dictionary["SHALLOW_out_array_SBF"],
+                "DEEP": Dictionary["DEEP_out_array_SBF"],
             },
             "ColdPool": {
-                "ALL": Dictionary["ColdPool_ALL_out_arr"],
-                "SHALLOW": Dictionary["ColdPool_SHALLOW_out_arr"],
-                "DEEP": Dictionary["ColdPool_DEEP_out_arr"],
+                "ALL": Dictionary["ALL_out_array_ColdPool"],
+                "SHALLOW": Dictionary["SHALLOW_out_array_ColdPool"],
+                "DEEP": Dictionary["DEEP_out_array_ColdPool"],
+            },
+            "Thermal": {
+                "ALL": Dictionary["ALL_out_array_Thermal"],
+                "SHALLOW": Dictionary["SHALLOW_out_array_Thermal"],
+                "DEEP": Dictionary["DEEP_out_array_Thermal"]
             }
         }
     
@@ -365,6 +365,7 @@ class TrackedParcel_Loading_Class:
         print(f"nonCL: ALL={len(trackedArrays['nonCL']['ALL'])}, SHALLOW={len(trackedArrays['nonCL']['SHALLOW'])}, DEEP={len(trackedArrays['nonCL']['DEEP'])}")
         print(f"SBF: ALL={len(trackedArrays['SBF']['ALL'])}, SHALLOW={len(trackedArrays['SBF']['SHALLOW'])}, DEEP={len(trackedArrays['SBF']['DEEP'])}")
         print(f"ColdPool: ALL={len(trackedArrays['ColdPool']['ALL'])}, SHALLOW={len(trackedArrays['ColdPool']['SHALLOW'])}, DEEP={len(trackedArrays['ColdPool']['DEEP'])}")
+        print(f"Thermal: ALL={len(trackedArrays['Thermal']['ALL'])}, SHALLOW={len(trackedArrays['Thermal']['SHALLOW'])}, DEEP={len(trackedArrays['Thermal']['DEEP'])}")
     
         return trackedArrays
     
