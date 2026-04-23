@@ -7,7 +7,7 @@
 
 ##SBATCH --partition=shared
 
-#SBATCH --time=0-03:00:00
+#SBATCH --time=0-07:00:00
 ##SBATCH --ntasks=1
 #SBATCH --nodes=1 
 #SBATCH  --tasks-per-node=1  
