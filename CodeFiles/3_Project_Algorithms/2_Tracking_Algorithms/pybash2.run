@@ -5,7 +5,7 @@
 
 ##SBATCH --partition=shared
 
-#SBATCH --time=0-03:00:00
+#SBATCH --time=0-5:00:00
 ##SBATCH --ntasks=1
 #SBATCH --nodes=1 
 #SBATCH  --tasks-per-node=1  
@@ -33,7 +33,9 @@ export HDF5_USE_FILE_LOCKING=FALSE #disable HDF5 file locking
 export PYTHONUNBUFFERED=TRUE #allows print statements during run
 
 # --- RUNNING PYTHON ---
-mkdir -p job_out/Tracked_Histograms
-jupyter nbconvert --to script Tracked_Histograms.ipynb
-python -u Tracked_Histograms.py $SLURM_ARRAY_TASK_ID \
-     > job_out/Tracked_Histograms/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+
+# ONE
+mkdir -p job_out/Tracked_Trajectories
+jupyter nbconvert --to script Tracked_Trajectories.ipynb
+python -u Tracked_Trajectories.py $SLURM_ARRAY_TASK_ID \
+     > job_out/Tracked_Trajectories/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
