@@ -221,12 +221,24 @@ def OpenMultipleSingleTimes_LagrangianArray(directory, ModelData, pattern="Lagra
             print(f"Missing file for time {t}")
 
     # --- Open and concatenate along time
+    chunk_spec = {'phony_dim_0': -1}  #new
     ds = xr.open_mfdataset(
         files,
         engine="h5netcdf",
         phony_dims="sort",
         combine="nested",
         concat_dim="time",
+        
+    # 1. Stop xarray from generating tasks to check phony_dim_0 alignment across 661 files
+        compat="override", 
+        coords="minimal", 
+        join="override", 
+        
+        # 2. Chunking (Prevents massive graph explosion on full dataset)
+        chunks=chunk_spec, 
+        
+        # 3. Parallelize graph generation
+        parallel=True 
     )
 
     # --- Rename the phony dimension to 'p'
@@ -263,13 +275,25 @@ def OpenMultipleSingleTimes_LagrangianArray_JobArray(directory, ModelData, start
 
     # --- Open and concatenate along time
     def limit_parcels(ds): return ds.isel(phony_dim_0=slice(start_job, end_job))
+    chunk_spec = {'phony_dim_0': -1}  #new
     ds = xr.open_mfdataset(
         files,
         engine="h5netcdf",
         phony_dims="sort",
         combine="nested",
         concat_dim="time",
-        preprocess=limit_parcels
+        preprocess=limit_parcels,
+    
+        # 1. Stop xarray from generating tasks to check phony_dim_0 alignment across 661 files
+        compat="override", #new
+        coords="minimal", #new
+        join="override", #new
+    
+        # 2. Chunking
+        chunks=chunk_spec, #new
+    
+        # 3. Parallelize
+        parallel=True #new
     )
 
     # --- Rename the phony dimension to 'p'
