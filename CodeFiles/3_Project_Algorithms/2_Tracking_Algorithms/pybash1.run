@@ -35,7 +35,7 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 # --- RUNNING PYTHON ---
 
 # ONE
-mkdir -p job_out/Tracked_Histograms
-jupyter nbconvert --to script Tracked_Histograms.ipynb
-python -u Tracked_Histograms.py $SLURM_ARRAY_TASK_ID \
-     > job_out/Tracked_Histograms/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+mkdir -p job_out/Eulerian_CLTracking_Plotting
+jupyter nbconvert --to script Eulerian_CLTracking_Plotting.ipynb
+python -u Eulerian_CLTracking_Plotting.py $SLURM_ARRAY_TASK_ID \
+     > job_out/Eulerian_CLTracking_Plotting/py-${SLURM_ARRAY_TASK_ID}.out 2>&1

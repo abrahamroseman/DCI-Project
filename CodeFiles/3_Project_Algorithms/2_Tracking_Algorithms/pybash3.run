@@ -1,17 +1,16 @@
 #!/bin/bash
 #SBATCH --job-name=python
-#SBATCH --array=1-20 #%+number after to limit number of of runs at a time
 #SBATCH --account=torri
 #SBATCH --partition=torri
 
 ##SBATCH --partition=shared
 
-#SBATCH --time=0-03:00:00
+#SBATCH --time=0-5:00:00
 ##SBATCH --ntasks=1
 #SBATCH --nodes=1 
 #SBATCH  --tasks-per-node=1  
 #SBATCH --cpus-per-task=1 #Each node has 47 CPUs
-#SBATCH --mem=10G #GBTotal 180GB per node (180G/30 = 6G) #0 for full node memory
+#SBATCH --mem=32G #GBTotal 180GB per node (180G/30 = 6G) #0 for full node memory
 ##SBATCH --constraint=“ib_hdr” # will allow a mix of HDR200 and HDR100 nodes
 ##SBATCH --constraint=“ib_hdr100” # explicitly only allow HDR100 nodes
 ##SBATCH --distribution=“*:*:*” # Set the distribution to defaults if doing sbatch from interactive session
@@ -19,7 +18,7 @@
 #SBATCH --output=pybash_job-%A.out
 ## Remote notification
 #SBATCH --mail-type=BEGIN,END,FAIL,REQUEUE,TIME_LIMIT_80
-#SBATCH --mail-user=supercomputerjobs@gmail.com
+#SBATCH --mail-user=air673@hawaii.edu
 
 mkdir -p job_out
 #exec >> "job_out/py-$SLURM_ARRAY_TASK_ID.out" 2>&1 #don't use if you are piping to .out file below
@@ -36,13 +35,7 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 # --- RUNNING PYTHON ---
 
 # ONE
-mkdir -p job_out/Eulerian_CLTracking
-#jupyter nbconvert --to script Eulerian_CLTracking.ipynb
-python -u Eulerian_CLTracking.py $SLURM_ARRAY_TASK_ID \
-    > job_out/Eulerian_CLTracking/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
-
-# TWO
-#mkdir -p job_out/Eulerian_CLTracking_Plotting
-#jupyter nbconvert --to script Eulerian_CLTracking_Plotting.ipynb
-#python -u Eulerian_CLTracking_Plotting.py $SLURM_ARRAY_TASK_ID \
-#    > job_out/Eulerian_CLTracking_Plotting/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+mkdir -p job_out/Tracked_Trajectories
+jupyter nbconvert --to script Tracked_Trajectories.ipynb
+python -u Tracked_Trajectories.py $SLURM_ARRAY_TASK_ID \
+     > job_out/Tracked_Trajectories/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
