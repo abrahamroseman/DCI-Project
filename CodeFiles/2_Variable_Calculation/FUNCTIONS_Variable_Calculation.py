@@ -267,6 +267,7 @@ def OpenMultipleSingleTimes_LagrangianArray(directory, ModelData, pattern="Lagra
 # Lagrangian_Binary_Array,files = OpenMultipleSingleTimes_LagrangianArray(directory, ModelData)
 
 def OpenMultipleSingleTimes_LagrangianArray_JobArray(directory, ModelData, start_job,end_job, 
+                                                     limitParcels=None,varNames=None,
                                                      pattern="Lagrangian_Binary_Array_*.h5"):
     """
     Load a sequence of Lagrangian .h5 files (each a single timestep)
@@ -289,7 +290,15 @@ def OpenMultipleSingleTimes_LagrangianArray_JobArray(directory, ModelData, start
             print(f"Missing file for time {t}")
 
     # --- Open and concatenate along time
-    def limit_parcels(ds): return ds.isel(phony_dim_0=slice(start_job, end_job))
+    if limitParcels is None:
+        pIndices=slice(start_job,end_job)
+        def limitParcelsFunction(ds): 
+            ds = ds.isel(phony_dim_0=pIndices)
+            if varNames is not None:
+                ds = ds[varNames]
+            return ds
+    else:
+        limitParcelsFunction = limitParcels
     chunk_spec = {'phony_dim_0': -1}  #new
     ds = xr.open_mfdataset(
         files,
@@ -297,7 +306,7 @@ def OpenMultipleSingleTimes_LagrangianArray_JobArray(directory, ModelData, start
         phony_dims="sort",
         combine="nested",
         concat_dim="time",
-        preprocess=limit_parcels,
+        preprocess=limitParcelsFunction,
     
         # 1. Stop xarray from generating tasks to check phony_dim_0 alignment across 661 files
         compat="override", #new
