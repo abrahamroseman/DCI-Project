@@ -25,6 +25,14 @@
 # In[ ]:
 
 
+#IMPORTING NECESSARY LIBRARIES
+import numpy as np
+import sys
+
+
+# In[ ]:
+
+
 #INITIALIZE DATA FUNCTION
 ###############################################################
 def initiate_array_2D(out_file,vars,t_chunk_size,z_chunk_size,t_size=None,z_size=None):
@@ -72,14 +80,12 @@ def initiate_array_4D(out_file,vars,t_chunk_size,z_chunk_size,y_chunk_size,x_chu
 
 
 def Ddt(f,dt):
-    import numpy as np
     # dt=(data['time'][1]-data['time'][0]).item()/1e9
     _ddt=np.zeros_like(f)
     _ddt[1:-1] = (f[2:] - f[:-2]) / (dt)
     return _ddt
 
 def Ddz_1D(f,dz):  
-    import numpy as np
     _ddz=np.zeros_like(f)
     _ddz[:, 1:-1] = (f[:, 2:] - f[:, :-2]) / (2 * dz)
     _ddz[:, 0] = (f[:, 1] - f[:, 0]) / dz  # Forward difference 
@@ -87,7 +93,6 @@ def Ddz_1D(f,dz):
     return _ddz
 
 def Ddz_1DStretch(f,data):
-    import numpy as np
     #f must be interpolated to cell centers
     dz=np.diff(data['zf'].values)
     
@@ -100,7 +105,6 @@ def Ddz_1DStretch(f,data):
 ##################################################################
 
 def Profile_Ddz(profile):
-    import numpy as np
     #f must be interpolated to cell centers
     dz=np.diff(profile[:,1])
 
@@ -115,7 +119,6 @@ def Profile_Ddz(profile):
 ##################################################################
 
 def Ddz_4DStretch(f,data):
-    import numpy as np
     #f must be interpolated to cell centers
     dz=np.diff(data['zf'].values)
     dz=dz.copy()[np.newaxis, :, np.newaxis, np.newaxis]
@@ -127,7 +130,6 @@ def Ddz_4DStretch(f,data):
     return ddz
 
 def Ddy_4D(f,dy):   
-    import numpy as np
     _ddy=np.zeros_like(f)
     _ddy[:, :, 1:-1] = (f[:, :, 2:] - f[:, :, :-2]) / (2 * dy)
     _ddy[:, :, 0] = (f[:, :, 1] - f[:, :, 0]) / dy  # Forward difference 
@@ -135,7 +137,6 @@ def Ddy_4D(f,dy):
     return _ddy
 
 def Ddx_4D(f,dx): 
-    import numpy as np
     _ddx=np.zeros_like(f)
     _ddx[:, :, :, 1:-1] = (f[:, :, :, 2:] - f[:, :, :, :-2]) / (2 * dx)
     _ddx[:, :, :, 0] = (f[:, :, :, 1] - f[:, :, :, 0]) / dx  # Forward difference 
@@ -145,7 +146,6 @@ def Ddx_4D(f,dx):
 ##############################
 
 def Ddz_3D(f,dz): 
-    import numpy as np
     _ddz=np.zeros_like(f)
     _ddz[1:-1] = (f[2:] - f[:-2]) / (2 * dz)
     _ddz[0] = (f[1] - f[0]) / dz  # Forward difference 
@@ -153,7 +153,6 @@ def Ddz_3D(f,dz):
     return _ddz
 
 def Ddz_3DStretch(f,data):
-    import numpy as np
     #f must be interpolated to cell centers
     dz=np.diff(data['zf'].values)
     dz=dz.copy()[:, np.newaxis, np.newaxis]
@@ -165,7 +164,6 @@ def Ddz_3DStretch(f,data):
     return ddz
 
 def Ddy_3D(f,dy):   
-    import numpy as np
     _ddy=np.zeros_like(f)
     _ddy[:, 1:-1] = (f[:, 2:] - f[:, :-2]) / (2 * dy)
     _ddy[:, 0] = (f[:, 1] - f[:, 0]) / dy  # Forward difference 
@@ -173,14 +171,11 @@ def Ddy_3D(f,dy):
     return _ddy
 
 def Ddx_3D(f,dx): 
-    import numpy as np
     _ddx=np.zeros_like(f)
     _ddx[:, :, 1:-1] = (f[:, :, 2:] - f[:, :, :-2]) / (2 * dx)
     _ddx[:, :, 0] = (f[:, :, 1] - f[:, :, 0]) / dx  # Forward difference 
     _ddx[:, :, -1] = (f[:, :, -1] - f[:, :, -2]) / dx  # Backward difference 
     return _ddx
-
-
 
 def DivergenceHoriz(f,dx,dy):
     out=Ddy(f,dy)+Ddx(f,dx)
@@ -195,7 +190,6 @@ def Divergence3DStretch(f,dx,dy):
     return out
 
 def LaplacianHoriz(f,dx,dy):
-    import numpy as np
     # Initialize the second derivatives arrays with zeros, same shape as f
     d2f_dx2 = np.zeros_like(f)
     d2f_dy2 = np.zeros_like(f)
@@ -209,7 +203,7 @@ def LaplacianHoriz(f,dx,dy):
     return out
 
 def Laplacian3D(f, dx, dy, dz):
-    import numpy as np
+
     #f must be provided at a specific 
     
     # Initialize the second derivatives arrays with zeros, same shape as f
@@ -227,7 +221,6 @@ def Laplacian3D(f, dx, dy, dz):
     return out
 
 def Laplacian3DStretch(f, dx, dy):
-    import numpy as np
     # Initialize the second derivatives arrays with zeros, same shape as f
     #f must be interpolated to cell centers
     #f must be an array array with f for face and h for center (e.g. zf/zh)
@@ -279,20 +272,18 @@ def Laplacian3DStretch(f, dx, dy):
 
 
 #Averaging and Slicing Functions
+def NanDivide(a,b):
+    return np.divide(a,b,out=np.full(np.shape(a), np.nan),where=b!=0)
 def HorizAvg_zt(f): 
-    import numpy as np
     out=np.mean(f, axis=(2,3)) #takes horizontal average leaving f(t,z)
     return out
 def VertProfile_z(f): 
-    import numpy as np
     out=np.mean(f, axis=(0,2,3)) #takes horizontal + time average leaving f(z)
     return out
 def HorizProfile_txy(f): 
-    import numpy as np
     out=np.mean(f, axis=(1)) #takes horizontal + time average leaving f(z)
     return out    
 def Slice(type,f,ind):
-    import numpy as np
     if type=='t':
         out=f[ind]
     if type=='z':
@@ -316,11 +307,81 @@ def Slice(type,f,ind):
 # Slice('x',f,2)
 
 
+# In[30]:
+
+
+def Ultimate_AreaAverage(data, dims, avg_over):
+    """
+    Average a NumPy array over selected dimensions by name.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        Input array (2D–4D).
+    dims : tuple of str
+        Names of each axis in order of data.shape, e.g. ('t','z','y','x').
+    avg_over : tuple of str
+        Dimensions to average over, e.g. ('z',) or ('z','y','x').
+
+    Returns
+    -------
+    out : np.ndarray
+        Array averaged over the specified axes.
+    out_dims : tuple of str
+        Remaining dimensions after averaging.
+    """
+    # Map dimension names to axis indices
+    axes = [dims.index(d) for d in avg_over]
+
+    # String of Remaining dimensions
+    out_dims = tuple(d for d in dims if d not in avg_over)
+
+    # Take Area Average
+    out = np.mean(data, axis=tuple(axes))
+    
+    return out, out_dimshow 
+
+
+# # #TESTING 
+# # ######################################
+# import numpy as np
+# arr4d = np.random.rand(10, 11, 12, 13)  # shape (t,z,y,x)
+# arr3d = np.random.rand(11, 12, 13)  # shape (z,y,x)
+# arr2d = np.random.rand(12, 13)  # shape (y,x)
+
+# # Time series (avg over z,y,x)
+# out, dims = Ultimate_AreaAverage(arr4d, dims=('t','z','y','x'), avg_over=('z','y','x'))
+# print(out.shape, dims, '\n')   
+# out, dims = Ultimate_AreaAverage(arr4d, dims=('t','z','y','x'), avg_over=('y','x'))
+# print(out.shape, dims, '\n')   
+# out, dims = Ultimate_AreaAverage(arr4d, dims=('t','z','y','x'), avg_over=('y'))
+# print(out.shape, dims, '\n')  
+
+# print('------','\n')
+
+# out, dims = Ultimate_AreaAverage(arr3d, dims=('z','y','x'), avg_over=('y','x'))
+
+# print(out.shape, dims, '\n')   
+
+# out, dims = Ultimate_AreaAverage(arr3d, dims=('z','y','x'), avg_over=('x'))
+# print(out.shape, dims, '\n')  
+
+# print('------','\n')
+
+# out, dims = Ultimate_AreaAverage(arr2d, dims=('y','x'), avg_over=('x'))
+# print(out.shape, dims, '\n')  
+
+
+# In[ ]:
+
+
+
+
+
 # In[1]:
 
 
 # def check_memory():
-#     import sys
 #     ipython_vars = ["In", "Out", "exit", "quit", "get_ipython", "ipython_vars"]
 #     print("Top 10 objects with highest memory usage")
 #     # Get a sorted list of the objects and their sizes
@@ -341,7 +402,6 @@ def Slice(type,f,ind):
 # check_memory()
 
 def check_memory(namespace):
-    import sys
     ipython_vars = ["In", "Out", "exit", "quit", "get_ipython", "ipython_vars"]
     print("Top 10 objects with highest memory usage")
     # Get a sorted list of the objects and their sizes
@@ -358,10 +418,4 @@ def check_memory(namespace):
     }
     print({key: f"{value} MB" for key, value in mem.items()})
     print(f"\n{round(sum(mem.values()), 2)/1000} GB in use overall")
-
-
-# In[ ]:
-
-
-
 

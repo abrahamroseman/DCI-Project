@@ -77,8 +77,8 @@ class DomainProfiles_Class:
         #* new NaN-Aware Version
         for (var,var_squares) in zip(VARs,VARs_squares):
             masked_data = VARs[var][where_updraft]
-            NaN_mask = ~np.isnan(masked_data)
             
+            NaN_mask = ~np.isnan(masked_data)
             masked_data_valid = masked_data[NaN_mask]
             z_ind_valid = z_ind[NaN_mask]
             
@@ -193,6 +193,36 @@ class DomainProfiles_DataLoading_Class:
     
         if printstatement==True:
             print(f"Loaded profile data from {filePath}\n")
+        return Dictionary
+    
+    @staticmethod
+    def SaveProfile_TZContour(ModelData,DataManager, Dictionary, dataName, t):
+        profileType = "Domain_Profiles"
+        timeString = t if isinstance(t, str) else ModelData.timeStrings[t]
+        
+        fileName = f"{profileType}_{dataName}_{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz_{timeString}.pkl"
+        filePath = os.path.join(DataManager.outputDataDirectory,fileName)
+        
+        with open(filePath, "wb") as f:
+            pickle.dump(Dictionary, f, protocol=pickle.HIGHEST_PROTOCOL)
+    
+        print(f"Saved output to {filePath}","\n")
+    
+    @staticmethod
+    def LoadProfile_TZContour(ModelData, DataManager, dataName, t):
+        """
+        Load a saved TrackedProfiles .pkl file for a given time index t.
+        """
+        profileType = "Domain_Profiles"
+        timeString = t if isinstance(t, str) else ModelData.timeStrings[t]
+        
+        fileName = f"{profileType}_{dataName}_{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz_{timeString}.pkl"
+        filePath = os.path.join(DataManager.outputDataDirectory,fileName)
+    
+        with open(filePath, "rb") as f:
+            Dictionary = pickle.load(f)
+    
+        # print(f"Loaded profile dictionary from {filePath}\n")
         return Dictionary
 
 
