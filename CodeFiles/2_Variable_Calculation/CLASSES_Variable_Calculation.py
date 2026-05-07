@@ -4,7 +4,6 @@
 # In[4]:
 
 
-# ============================================================
 # ModelData_Class
 # ============================================================
 
@@ -13,6 +12,8 @@ import os
 import numpy as np
 import xarray as xr
 from datetime import timedelta
+from netCDF4 import Dataset
+from tqdm import tqdm
 
 class ModelData_Class:
     def __init__(self, mainDirectory, scratchDirectory, simulationNumber):
@@ -62,6 +63,13 @@ class ModelData_Class:
             raise ValueError("Invalid simulationNumber (must be 1, 2, or 3).")
 
         dataDirectory = os.path.join(Directory, f"cm1out_{res}_{t_res}_{Nz_str}nz.nc")
+        #########
+        if not os.path.exists(dataDirectory):
+            self.is_data_timestepbytimestep = True
+            dataDirectory = os.path.join(Directory, f"cm1out_000001.nc")
+        else:
+            self.is_data_timestepbytimestep = False
+        #########
         parcelDirectory = os.path.join(Directory, f"cm1out_pdata_{res}_{t_res}_{Np_str}np.nc")
         return dataDirectory, parcelDirectory, res, t_res, Np_str, Nz_str
 
@@ -73,6 +81,10 @@ class ModelData_Class:
         with xr.open_dataset(self.dataDirectory, decode_timedelta=True) as ds:
             coords = ['time', 'zf', 'zh', 'yf', 'yh', 'xf', 'xh']
             extracted = {k: ds[k].values for k in coords}
+
+        if self.is_data_timestepbytimestep: #*
+            self.all_files = self.GetAllTimestepFilePaths(self.dataDirectory)
+            extracted['time'] = np.array(self.GetTimeCoordinate(self.all_files))*1e9
 
         # Assign coordinate arrays and their lengths
         for k, v in extracted.items():
@@ -92,7 +104,7 @@ class ModelData_Class:
         return Np
 
     def GetGridSpacing(self):
-        dt=(self.time[1]-self.time[0]).item()/1e9 #sec
+        dt=(self.time[1]-self.time[0]).item()/1e9 #secs
         dz = np.diff(self.zf) * 1000
         dy = (self.yh[1].item() - self.yh[0].item()) * 1000
         dx = (self.xh[1].item() - self.xh[0].item()) * 1000
@@ -107,20 +119,97 @@ class ModelData_Class:
         with xr.open_dataset(self.dataDirectory, decode_timedelta=True) as ds:
             varList = list(ds.data_vars)
         return varList
+
+    # ============================================================
+    # ========== Additionally code when dealing with timestep by timestep data ==========
+    # ============================================================
+
+    def GetAllTimestepFilePaths(self,dataDirectory):
+        # 1. Split the path into directory and filename
+        directory = os.path.dirname(dataDirectory)
+        filename = os.path.basename(dataDirectory)
+        
+        # 2. Identify prefix and extension
+        start_idx = filename.find('_')
+        end_idx = filename.rfind('.')
+        
+        if start_idx == -1 or end_idx == -1:
+            return [dataDirectory] if os.path.exists(dataDirectory) else []
+        
+        prefix = filename[:start_idx + 1]
+        extension = filename[end_idx:]
+        
+        if not os.path.isdir(directory):
+            return []
+        
+        # 3. List and Filter: Remove files containing 'pdata' or 'stats'
+        all_files = [
+            os.path.join(directory, f)               
+            for f in os.listdir(directory)           
+            if f.startswith(prefix) 
+            and f.endswith(extension)
+            and 'pdata' not in f   # Excludes pdata files
+            and 'stats' not in f   # Excludes stats files
+        ]
+        
+        # 4. Sort alphabetically
+        all_files.sort()
+        
+        return all_files
     
+    def GetTimeCoordinate(self,all_files):
+        t0 = int(Dataset(all_files[0], 'r').variables['time'][:])
+        t1 = int(Dataset(all_files[1], 'r').variables['time'][:])
+        dt = t1 - t0
+        times = [t0 + (i * dt) for i in range(len(all_files))]
+        return times
+        
     # ============================================================
     # ========== On-demand Variable Access ==========
     # ============================================================
 
-    def OpenData(self, decode_timedelta=True):
+    def OpenData(self, decode_timedelta=True, verbose=False):
+        """
+        Opens full data netcdf file
+        Depreciated for simulations that is output timestep by timestep
+        Instead use DataManager.GetTimestepData from the DataManager_Class class
+        """
         #EXAMPLE: ds = ModelData.OpenData()
         #         ...
         #         del ds
-        data = xr.open_dataset(self.dataDirectory, decode_timedelta=decode_timedelta)
-        print(f"Opened dataset: {self.dataDirectory}")
+
+        if self.is_data_timestepbytimestep:
+            pbar = tqdm(total=len(self.all_files), desc="Opening files")
+
+            def update_pbar(ds):
+                pbar.update(1)
+                return ds
+            
+            data = xr.open_mfdataset(self.all_files,
+                                     preprocess=update_pbar,
+                                     decode_timedelta=True, 
+                                     concat_dim="time", combine="nested",coords="minimal", compat="override",parallel=True)
+            pbar.close()
+        else:
+            data = xr.open_dataset(self.dataDirectory, decode_timedelta=decode_timedelta)
+            if verbose: print(f"Opened dataset: {self.dataDirectory}")
+        return data
+
+    def OpenData_SingleTime(self, t, decode_timedelta=True, verbose=False):
+        """
+        Opens full data netcdf file
+        Depreciated for simulations that is output timestep by timestep
+        Instead use DataManager.GetTimestepData from the DataManager_Class class
+        """
+        all_files = self.GetAllTimestepFilePaths(self.dataDirectory)
+        data = xr.open_dataset(all_files[t], decode_timedelta=decode_timedelta)
+        if verbose: print(f"Opened dataset: {all_files[t]}")
         return data
 
     def OpenParcel(self, decode_timedelta=True):
+        """
+        Opens full lagrangian parcel data netcdf file
+        """
         #EXAMPLE: ds = ModelData.OpenParcel()
         #         ...
         #         del ds
@@ -200,7 +289,6 @@ class ModelData_Class:
 # In[3]:
 
 
-# ============================================================
 # SlurmJobArray_Class
 # ============================================================
 
@@ -266,7 +354,6 @@ class SlurmJobArray_Class:
 # In[1]:
 
 
-# ============================================================
 # DataManager_Class
 # ============================================================
 
