@@ -4,6 +4,7 @@
 # Only include the names, no extension needed
 NOTEBOOKS=(
     "Tracked_Profiles"
+    "Tracked_Profiles_UpdraftArea"
 )
 
 # Optional: Load your environment if jupyter isn't in your base path
