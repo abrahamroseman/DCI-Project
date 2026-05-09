@@ -52,13 +52,13 @@ class ModelData_Class:
             res, t_res, Np_str, Nz_str = '1km', '5min', '1e6', '34'
         elif self.simulationNumber == 2:
             Directory = os.path.join(self.mainDirectory, 'Model/cm1r20.3/run/MODEL_OUTPUT/Simulation_Two/')
-            res, t_res, Np_str, Nz_str = '1km', '3min', '20e6', '95'
+            res, t_res, Np_str, Nz_str = '1km', '1min', '50e6', '95'
         elif self.simulationNumber == 3:
             Directory = os.path.join(self.mainDirectory, 'Model/cm1r20.3/run/MODEL_OUTPUT/Simulation_Three/')
-            res, t_res, Np_str, Nz_str = '1km', '1min', '50e6', '95'
+            res, t_res, Np_str, Nz_str = '1km', '3min', '20e6', '95'
         # elif self.simulationNumber == 4:
         #     Directory = os.path.join(self.mainDirectory, 'Model/cm1r20.3/run/MODEL_OUTPUT/Simulation_Four/')
-        #     res, t_res, Np_str, Nz_str = '250m', '1min', '50e6', '95'
+        #     res, t_res, Np_str, Nz_str = '1km', '3min', '20e6', '95'
         else:
             raise ValueError("Invalid simulationNumber (must be 1, 2, or 3).")
 
