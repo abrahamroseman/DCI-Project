@@ -7,6 +7,7 @@ NOTEBOOKS=(
     "Lagrangian_Entrainment"
     "Lagrangian_MassFlux"
     "Lagrangian_Entrainment_DivideMassFlux"
+    "Lagrangian_Entrainment_Plotting"
 )
 
 # Optional: Load your environment if jupyter isn't in your base path
