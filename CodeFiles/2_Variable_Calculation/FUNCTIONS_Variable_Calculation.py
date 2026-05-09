@@ -81,8 +81,7 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
 
         inputDataDirectory = os.path.normpath(
             os.path.join(DataManager.inputDirectory, "..", dataType,
-                         f"Simulation_{ModelData.simulationNumber}_
-                         {DataManager.res}_{DataManager.t_res}_{DataManager.Nz_str}nz", dataFolder)
+                         f"Simulation_{ModelData.simulationNumber}_{DataManager.res}_{DataManager.t_res}_{DataManager.Nz_str}nz", dataFolder)
                         )
         var_data = DataManager.GetTimestepData(inputDataDirectory, timeString, 
                                                variableName=variableName, dataName=dataName, printstatement=printstatement)
@@ -171,8 +170,7 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName,
         
     inputDataDirectory = os.path.normpath(
         os.path.join(DataManager.inputDirectory, "..", dataType,
-                     f"Simulation_{ModelData.simulationNumber}_
-                     {DataManager.res}_{DataManager.t_res}_{DataManager.Nz_str}nz", dataFolder))
+                     f"Simulation_{ModelData.simulationNumber}_{DataManager.res}_{DataManager.t_res}_{DataManager.Nz_str}nz", dataFolder))
     var_data = DataManager.GetTimestepData(inputDataDirectory, timeString,
                                            variableName=variableName, dataName=dataName,
                                            printstatement=printstatement)
@@ -192,8 +190,7 @@ def Get_LagrangianArrays(ModelData, DataManager, t, dataType="VARS", dataName="V
     Nz_str = ModelData.Nz_str
     inputDirectory = os.path.join(DataManager.inputDirectory,
                                   "..","LagrangianArrays",
-                                  f"Simulation_{ModelData.simulationNumber}_
-                                  {res}_{t_res}_{Nz_str}nz", dataType)
+                                  f"Simulation_{ModelData.simulationNumber}_{res}_{t_res}_{Nz_str}nz", dataType)
     timeString = ModelData.timeStrings[t]
 
     FileName = os.path.join(inputDirectory, f"{dataName}_{res}_{t_res}_{Nz_str}nz_{timeString}.h5")
