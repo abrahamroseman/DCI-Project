@@ -37,24 +37,24 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 # --- RUNNING PYTHON ---
 
 # ONE
-mkdir -p job_out/Variables
-python -u Tracked_Profiles.py Variables $SLURM_ARRAY_TASK_ID \
-    > job_out/Variables/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+#mkdir -p job_out/Variables
+#python -u Tracked_Profiles.py Variables $SLURM_ARRAY_TASK_ID \
+#    > job_out/Variables/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # TWO.a
-#mkdir -p job_out/Entrainment
-#python -u Tracked_Profiles.py Entrainment $SLURM_ARRAY_TASK_ID \
-#    > job_out/Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+mkdir -p job_out/Entrainment
+python -u Tracked_Profiles.py Entrainment $SLURM_ARRAY_TASK_ID \
+    > job_out/Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # TWO.b
-#mkdir -p job_out/PROCESSED_Entrainment
-#python -u Tracked_Profiles.py PROCESSED_Entrainment $SLURM_ARRAY_TASK_ID \
-#    > job_out/PROCESSED_Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+mkdir -p job_out/PROCESSED_Entrainment
+python -u Tracked_Profiles.py PROCESSED_Entrainment $SLURM_ARRAY_TASK_ID \
+    > job_out/PROCESSED_Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # TWO.c
-#mkdir -p job_out/PROCESSED_Entrainment_DivideMassFlux
-#python -u Tracked_Profiles.py PROCESSED_Entrainment_DivideMassFlux $SLURM_ARRAY_TASK_ID \
-#    > job_out/PROCESSED_Entrainment_DivideMassFlux/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+mkdir -p job_out/PROCESSED_Entrainment_DivideMassFlux
+python -u Tracked_Profiles.py PROCESSED_Entrainment_DivideMassFlux $SLURM_ARRAY_TASK_ID \
+    > job_out/PROCESSED_Entrainment_DivideMassFlux/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # THREE
 #mkdir -p job_out/W_Budgets
@@ -66,7 +66,7 @@ python -u Tracked_Profiles.py Variables $SLURM_ARRAY_TASK_ID \
 #python -u Tracked_Profiles.py QV_Budgets $SLURM_ARRAY_TASK_ID \
 #    > job_out/QV_Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
-## FIVE
+# FIVE
 #mkdir -p job_out/TH_Budgets
 #python -u Tracked_Profiles.py TH_Budgets $SLURM_ARRAY_TASK_ID \
 #    > job_out/TH_Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
