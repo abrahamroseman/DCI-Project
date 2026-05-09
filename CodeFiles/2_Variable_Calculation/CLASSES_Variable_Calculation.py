@@ -362,7 +362,7 @@ import os
 import h5py
 
 class DataManager_Class:
-    def __init__(self, mainDirectory, scratchDirectory, simulationNumber,ModelData,dataType, dataName, dtype, make_dirs=True, codeSection = "Variable_Calculation"):
+    def __init__(self, mainDirectory, scratchDirectory,ModelData,dataType, dataName, dtype, make_dirs=True, codeSection = "Variable_Calculation"):
         self.mainDirectory = mainDirectory
         self.scratchDirectory = scratchDirectory
         self.dataType = dataType
@@ -410,21 +410,17 @@ class DataManager_Class:
 
     def MakeInputDataDirectory(self, inputDirectory):
         inputDataDirectory = os.path.join(inputDirectory, 
-                                          f"Simulation_{self.simulationNumber}_
-                                          {self.res}_{self.t_res}_{self.Nz_str}nz", "ModelData")
+                                          f"Simulation_{self.simulationNumber}_{self.res}_{self.t_res}_{self.Nz_str}nz", "ModelData")
         return inputDataDirectory
 
     def MakeInputParcelDirectory(self, inputDirectory):
         inputParcelDirectory = os.path.join(inputDirectory, 
-                                            f"Simulation_{self.simulationNumber}_
-                                            {self.res}_{self.t_res}_{self.Nz_str}nz", "ParcelData")
+                                            f"Simulation_{self.simulationNumber}_{self.res}_{self.t_res}_{self.Nz_str}nz", "ParcelData")
         return inputParcelDirectory
 
     def MakeOutputDataDirectory(self, outputDirectory):
         outputDataDirectory = os.path.join(outputDirectory, 
-                                           f"Simulation_{self.simulationNumber}_
-                                           {self.res}_{self.t_res}_
-                                           {self.Nz_str}nz",self.dataName)
+                                           f"Simulation_{self.simulationNumber}_{self.res}_{self.t_res}_{self.Nz_str}nz",self.dataName)
         if self.make_dirs:
             os.makedirs(outputDataDirectory, exist_ok=True)
         return outputDataDirectory
