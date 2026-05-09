@@ -81,7 +81,8 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
 
         inputDataDirectory = os.path.normpath(
             os.path.join(DataManager.inputDirectory, "..", dataType,
-                         f"{DataManager.res}_{DataManager.t_res}_{DataManager.Nz_str}nz", dataFolder)
+                         f"Simulation_{ModelData.simulationNumber}_
+                         {DataManager.res}_{DataManager.t_res}_{DataManager.Nz_str}nz", dataFolder)
                         )
         var_data = DataManager.GetTimestepData(inputDataDirectory, timeString, 
                                                variableName=variableName, dataName=dataName, printstatement=printstatement)
@@ -114,7 +115,8 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName,
                            "RH_vapor",
                            "VMF_g", "VMF_c",
                            "HMC", "CONVERGENCE",
-                           "THETA_v", "THETA_e",
+                           "THETA","THETA_v", "THETA_e",
+                           "BUOYANCY",
                            "MSE"]:
         dataType = "LagrangianArrays"
         dataName = "VARS"       
@@ -169,7 +171,8 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName,
         
     inputDataDirectory = os.path.normpath(
         os.path.join(DataManager.inputDirectory, "..", dataType,
-                     f"{DataManager.res}_{DataManager.t_res}_{DataManager.Nz_str}nz", dataFolder))
+                     f"Simulation_{ModelData.simulationNumber}_
+                     {DataManager.res}_{DataManager.t_res}_{DataManager.Nz_str}nz", dataFolder))
     var_data = DataManager.GetTimestepData(inputDataDirectory, timeString,
                                            variableName=variableName, dataName=dataName,
                                            printstatement=printstatement)
@@ -189,7 +192,8 @@ def Get_LagrangianArrays(ModelData, DataManager, t, dataType="VARS", dataName="V
     Nz_str = ModelData.Nz_str
     inputDirectory = os.path.join(DataManager.inputDirectory,
                                   "..","LagrangianArrays",
-                                  f"{res}_{t_res}_{Nz_str}nz", dataType)
+                                  f"Simulation_{ModelData.simulationNumber}_
+                                  {res}_{t_res}_{Nz_str}nz", dataType)
     timeString = ModelData.timeStrings[t]
 
     FileName = os.path.join(inputDirectory, f"{dataName}_{res}_{t_res}_{Nz_str}nz_{timeString}.h5")
@@ -263,7 +267,7 @@ def OpenMultipleSingleTimes_LagrangianArray(directory, ModelData, pattern="Lagra
     return ds, files
 
 # #EXAMPLE USAGE
-# directory = f"/mnt/lustre/koa/koastore/torri_group/air_directory/Projects/DCI-Project/Code/OUTPUT/Variable_Calculation/LagrangianArrays/{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz/Lagrangian_Binary_Array/"
+# directory = f"/mnt/lustre/koa/koastore/torri_group/air_directory/Projects/DCI-Project/Code/OUTPUT/Variable_Calculation/LagrangianArrays/Simulation_{ModelData.simulationNumber}_{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz/Lagrangian_Binary_Array/"
 # Lagrangian_Binary_Array,files = OpenMultipleSingleTimes_LagrangianArray(directory, ModelData)
 
 def OpenMultipleSingleTimes_LagrangianArray_JobArray(directory, ModelData, start_job,end_job, 
@@ -327,6 +331,6 @@ def OpenMultipleSingleTimes_LagrangianArray_JobArray(directory, ModelData, start
     return ds, files
 
 # #EXAMPLE USAGE
-# directory = f"/mnt/lustre/koa/koastore/torri_group/air_directory/Projects/DCI-Project/Code/OUTPUT/Variable_Calculation/LagrangianArrays/{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz/Lagrangian_Binary_Array/"
+# directory = f"/mnt/lustre/koa/koastore/torri_group/air_directory/Projects/DCI-Project/Code/OUTPUT/Variable_Calculation/LagrangianArrays/Simulation_{ModelData.simulationNumber}_{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz/Lagrangian_Binary_Array/"
 # Lagrangian_Binary_Array,files = OpenMultipleSingleTimes_LagrangianArray_JobArray(directory, ModelData, start_job,end_job)
 
