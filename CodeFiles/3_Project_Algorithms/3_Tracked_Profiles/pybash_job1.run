@@ -37,9 +37,9 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 # --- RUNNING PYTHON ---
 
 # ONE
-#mkdir -p job_out/Variables
-#python -u Tracked_Profiles.py Variables $SLURM_ARRAY_TASK_ID \
-#    > job_out/Variables/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+mkdir -p job_out/Variables
+python -u Tracked_Profiles.py Variables $SLURM_ARRAY_TASK_ID \
+    > job_out/Variables/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # TWO.a
 mkdir -p job_out/Entrainment
@@ -57,16 +57,16 @@ python -u Tracked_Profiles.py PROCESSED_Entrainment_DivideMassFlux $SLURM_ARRAY_
     > job_out/PROCESSED_Entrainment_DivideMassFlux/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # THREE
-#mkdir -p job_out/W_Budgets
-#python -u Tracked_Profiles.py W_Budgets $SLURM_ARRAY_TASK_ID \
-#    > job_out/W_Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+mkdir -p job_out/W_Budgets
+python -u Tracked_Profiles.py W_Budgets $SLURM_ARRAY_TASK_ID \
+    > job_out/W_Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # FOUR
-#mkdir -p job_out/QV_Budgets
-#python -u Tracked_Profiles.py QV_Budgets $SLURM_ARRAY_TASK_ID \
-#    > job_out/QV_Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+mkdir -p job_out/QV_Budgets
+python -u Tracked_Profiles.py QV_Budgets $SLURM_ARRAY_TASK_ID \
+    > job_out/QV_Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # FIVE
-#mkdir -p job_out/TH_Budgets
-#python -u Tracked_Profiles.py TH_Budgets $SLURM_ARRAY_TASK_ID \
-#    > job_out/TH_Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+mkdir -p job_out/TH_Budgets
+python -u Tracked_Profiles.py TH_Budgets $SLURM_ARRAY_TASK_ID \
+    > job_out/TH_Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
