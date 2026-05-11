@@ -19,11 +19,13 @@ class TrackedProfiles_DataLoading_CLASS:
     """
 
     @staticmethod
-    def SaveProfile(ModelData,DataManager, Dictionary, dataName, t):
+    def SaveProfile(ModelData,DataManager, Dictionary, dataName, t,
+                    Apply_FilterOutPriorAscent=False):
         profileType = "TrackedProfiles"
         timeString = t if isinstance(t, str) else ModelData.timeStrings[t]
-        
-        fileName = f"{profileType}_{dataName}_{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz_{timeString}.pkl"
+
+        suffix = "_FilterOutPriorAscent" if Apply_FilterOutPriorAscent else ""
+        fileName = f"{profileType}_{dataName}_{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz_{timeString}{suffix}.pkl"
         filePath = os.path.join(DataManager.outputDataDirectory,fileName)
         
         with open(filePath, "wb") as f:
@@ -32,14 +34,16 @@ class TrackedProfiles_DataLoading_CLASS:
         print(f"Saved output to {filePath}","\n")
 
     @staticmethod
-    def LoadProfile(ModelData, DataManager, dataName, t):
+    def LoadProfile(ModelData, DataManager, dataName, t,
+                    Apply_FilterOutPriorAscent=False):
         """
         Load a saved TrackedProfiles .pkl file for a given time index t.
         """
         profileType = "TrackedProfiles"
         timeString = t if isinstance(t, str) else ModelData.timeStrings[t]
-        
-        fileName = f"{profileType}_{dataName}_{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz_{timeString}.pkl"
+
+        suffix = "_FilterOutPriorAscent" if Apply_FilterOutPriorAscent else "
+        fileName = f"{profileType}_{dataName}_{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz_{timeString}{suffix}.pkl"
         filePath = os.path.join(DataManager.outputDataDirectory,fileName)
     
         with open(filePath, "rb") as f:

@@ -318,8 +318,10 @@ import numpy as np
 class TrackedParcel_Loading_Class:
 
     @staticmethod
-    def LoadFinalData(ModelData,DataManager,Results_InputOutput_Class):    
-        Dictionary = Results_InputOutput_Class.LoadOutFile(ModelData,DataManager,job_id="combined_SUBSET")
+    def LoadFinalData(ModelData,DataManager,Results_InputOutput_Class,
+                      Apply_FilterOutPriorAscent=False):    
+        suffix = "_FilterOutPriorAscent" if Apply_FilterOutPriorAscent else ""
+        Dictionary = Results_InputOutput_Class.LoadOutFile(ModelData,DataManager,job_id=f"combined_SUBSET{suffix}")
         return Dictionary
 
     @staticmethod
@@ -377,10 +379,11 @@ class TrackedParcel_Loading_Class:
     
     #Reading In Final Results from SubsetParcels
     @staticmethod
-    def LoadingSubsetParcelData(ModelData,DataManager,Results_InputOutput_Class):
+    def LoadingSubsetParcelData(ModelData,DataManager,Results_InputOutput_Class,Apply_FilterOutPriorAscent=False):
     
         #Loading Tracked Parcel Data
-        Dictionary = TrackedParcel_Loading_Class.LoadFinalData(ModelData,DataManager,Results_InputOutput_Class)
+        Dictionary = TrackedParcel_Loading_Class.LoadFinalData(ModelData,DataManager,Results_InputOutput_Class,
+                                                              Apply_FilterOutPriorAscent=Apply_FilterOutPriorAscent)
         trackedArrays = TrackedParcel_Loading_Class.GetTrackedParcelArrays(Dictionary)
         
         #cloudbase
