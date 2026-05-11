@@ -48,7 +48,6 @@ python -u Eulerian_VMF.py $SLURM_ARRAY_TASK_ID \
 
 # THREE
 mkdir -p job_out/Equivalent_Potential_Temperature
-#jupyter nbconvert --to script Equivalent_Potential_Temperature.ipynb
 python -u Equivalent_Potential_Temperature.py $SLURM_ARRAY_TASK_ID \
     > job_out/Equivalent_Potential_Temperature/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
