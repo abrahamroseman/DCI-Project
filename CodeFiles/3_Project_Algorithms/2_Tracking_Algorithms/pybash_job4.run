@@ -36,6 +36,6 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 
 # --- RUNNING PYTHON ---
 
-mkdir -p job_out/Tracked_Histograms
-python -u Tracked_Histograms.py $SLURM_ARRAY_TASK_ID \
-    > job_out/Tracked_Histograms/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+mkdir -p job_out/Tracked_Histograms_Plotting
+python -u Tracked_Histograms_Plotting.py $SLURM_ARRAY_TASK_ID \
+    > job_out/Tracked_Histograms_Plotting/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
