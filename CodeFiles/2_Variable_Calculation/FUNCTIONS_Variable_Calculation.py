@@ -50,6 +50,13 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
             dataType = "CalculateMoreVariables"
             dataName = "MoistureConvergence"
             dataFolder = dataName
+        elif variableName in ['E_g_eulerian', 'D_g_eulerian', 
+                              'E_c_eulerian', 'D_c_eulerian',
+                              'E_g_eulerian_DivideMassFlux', 'D_g_eulerian_DivideMassFlux', 
+                              'E_c_eulerian_DivideMassFlux', 'D_c_eulerian_DivideMassFlux']:
+            dataType = "EntrainmentCalculation"
+            dataName = "EulerianEntrainment"
+            dataFolder = dataName
 
         elif variableName in ['qv_prime','qcqi_prime','RH_vapor_prime',
                               'winterp_prime','VMF_g_prime','VMF_c_prime',
@@ -135,6 +142,13 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName,
         dataType = "LagrangianArrays"
         dataName = "VARS_Perturbations"       
         dataFolder = dataName
+    elif variableName in ['E_g_eulerian', 'D_g_eulerian', 
+                          'E_c_eulerian', 'D_c_eulerian',
+                          'E_g_eulerian_DivideMassFlux', 'D_g_eulerian_DivideMassFlux', 
+                          'E_c_eulerian_DivideMassFlux', 'D_c_eulerian_DivideMassFlux']:
+        dataType = "LagrangianArrays"
+        dataName = "Eulerian_Entrainment"
+        dataFolder = "Eulerian_Entrainment"
     elif variableName in ['D_c', 'D_g', 'E_c', 'E_g',
                           'TransferD_c', 'TransferD_g', 
                           'TransferE_c', 'TransferE_g']:
