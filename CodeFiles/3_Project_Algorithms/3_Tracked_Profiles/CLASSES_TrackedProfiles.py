@@ -42,7 +42,7 @@ class TrackedProfiles_DataLoading_CLASS:
         profileType = "TrackedProfiles"
         timeString = t if isinstance(t, str) else ModelData.timeStrings[t]
 
-        suffix = "_FilterOutPriorAscent" if Apply_FilterOutPriorAscent else "
+        suffix = "_FilterOutPriorAscent" if Apply_FilterOutPriorAscent else ""
         fileName = f"{profileType}_{dataName}_{ModelData.res}_{ModelData.t_res}_{ModelData.Nz_str}nz_{timeString}{suffix}.pkl"
         filePath = os.path.join(DataManager.outputDataDirectory,fileName)
     
