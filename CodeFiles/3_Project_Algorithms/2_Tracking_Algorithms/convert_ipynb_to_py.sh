@@ -4,10 +4,10 @@
 # Only include the names, no extension needed
 NOTEBOOKS=(
     "Eulerian_CLTracking"
-    "Eulerian_CLTracking_Plotting"
-    "Lagrangian_UpdraftTracking"
-    "Subset_Parcels"
-    "Tracked_Histograms"
+    # "Eulerian_CLTracking_Plotting"
+    # "Lagrangian_UpdraftTracking"
+    # "Subset_Parcels"
+    # "Tracked_Histograms_Plotting"
 )
 
 # Optional: Load your environment if jupyter isn't in your base path

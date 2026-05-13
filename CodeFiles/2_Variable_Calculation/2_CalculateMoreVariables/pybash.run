@@ -1,18 +1,16 @@
 #!/bin/bash
 #SBATCH --job-name=python
-##SBATCH --array=1-30 #%+number after to limit number of of runs at a time
-#SBATCH --array=1-100 #%+number after to limit number of of runs at a time
 #SBATCH --account=torri
 #SBATCH --partition=torri
 
 ##SBATCH --partition=shared
 
-#SBATCH --time=0-03:00:00
+#SBATCH --time=0-01:00:00
 ##SBATCH --ntasks=1
 #SBATCH --nodes=1 
 #SBATCH  --tasks-per-node=1  
 #SBATCH --cpus-per-task=1 #Each node has 47 CPUs
-#SBATCH --mem=20G #GBTotal 180GB per node (180G/30 = 6G) #0 for full node memory
+#SBATCH --mem=10G #GBTotal 180GB per node (180G/30 = 6G) #0 for full node memory
 ##SBATCH --constraint=“ib_hdr” # will allow a mix of HDR200 and HDR100 nodes
 ##SBATCH --constraint=“ib_hdr100” # explicitly only allow HDR100 nodes
 ##SBATCH --distribution=“*:*:*” # Set the distribution to defaults if doing sbatch from interactive session
@@ -36,23 +34,6 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 
 # --- RUNNING PYTHON ---
 
-# ONE
-mkdir -p job_out/Lagrangian_Binary_Array
-python -u Lagrangian_Binary_Array.py $SLURM_ARRAY_TASK_ID \
-    > job_out/Lagrangian_Binary_Array/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
-
-# TWO
-mkdir -p job_out/LFC_Lagrangian_Array
-python -u LFC_Lagrangian_Array.py $SLURM_ARRAY_TASK_ID \
-    > job_out/LFC_Lagrangian_Array/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
-
-# THREE
-mkdir -p job_out/VARS_Lagrangian_Array
-jupyter nbconvert --to script VARS_Lagrangian_Array.ipynb
-python -u VARS_Lagrangian_Array.py $SLURM_ARRAY_TASK_ID \
-    > job_out/VARS_Lagrangian_Array/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
-
-# FOUR
-mkdir -p job_out/BUDGET_VARS_Lagrangian_Array
-python -u BUDGET_VARS_Lagrangian_Array.py $SLURM_ARRAY_TASK_ID \
-    > job_out/BUDGET_VARS_Lagrangian_Array/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+mkdir -p job_out/TimeSeries
+python -u TimeSeries.py $SLURM_ARRAY_TASK_ID \
+    > job_out/TimeSeries/py-${SLURM_ARRAY_TASK_ID}.out 2>&1

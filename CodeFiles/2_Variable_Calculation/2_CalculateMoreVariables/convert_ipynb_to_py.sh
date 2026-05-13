@@ -3,13 +3,14 @@
 # --- LIST YOUR NOTEBOOKS HERE ---
 # Only include the names, no extension needed
 NOTEBOOKS=(
-    "Eulerian_Binary_Array"
-    "Eulerian_VMF"
-    "Equivalent_Potential_Temperature"
-    "Density_Potential_Temperature"
-    "Moist_Static_Energy"
-    "Convergence"
-    "MoistureConvergence"
+    # "Eulerian_Binary_Array"
+    # "Eulerian_VMF"
+    # "Equivalent_Potential_Temperature"
+    # "Density_Potential_Temperature"
+    # "Moist_Static_Energy"
+    # "Convergence"
+    # "MoistureConvergence"
+    "TimeSeries"
 )
 
 # Optional: Load your environment if jupyter isn't in your base path
