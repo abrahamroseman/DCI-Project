@@ -5,8 +5,8 @@
 NOTEBOOKS=(
     # "Eulerian_CLTracking"
     # "Eulerian_CLTracking_Plotting"
-    "Lagrangian_UpdraftTracking"
-    # "Subset_Parcels"
+    # "Lagrangian_UpdraftTracking"
+    "Subset_Parcels"
     # "Tracked_Histograms_Plotting"
 )
 
