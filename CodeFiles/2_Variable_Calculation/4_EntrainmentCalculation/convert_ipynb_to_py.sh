@@ -4,10 +4,10 @@
 # Only include the names, no extension needed
 NOTEBOOKS=(
     "Entrainment_Preprocessing"
-    "Lagrangian_Entrainment"
-    "Lagrangian_MassFlux"
-    "Lagrangian_Entrainment_DivideMassFlux"
-    "Lagrangian_Entrainment_Plotting"
+    # "Lagrangian_Entrainment"
+    # "Lagrangian_MassFlux"
+    # "Lagrangian_Entrainment_DivideMassFlux"
+    # "Lagrangian_Entrainment_Plotting"
 )
 
 # Optional: Load your environment if jupyter isn't in your base path
