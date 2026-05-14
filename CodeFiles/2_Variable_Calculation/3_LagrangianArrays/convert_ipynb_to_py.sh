@@ -3,13 +3,13 @@
 # --- LIST YOUR NOTEBOOKS HERE ---
 # Only include the names, no extension needed
 NOTEBOOKS=(
-    "VARS_Lagrangian_Array"
-    "LFC_Lagrangian_Array"
-    "Lagrangian_Binary_Array"
-    "BUDGET_VARS_Lagrangian_Array"
-    # "Lagrangian_Entrainment_Lagrangian_Array"
-    # "Lagrangian_Entrainment_Lagrangian_Array-Copy1"
-    # "Lagrangian_Entrainment_Lagrangian_Array-Copy2"
+    # "VARS_Lagrangian_Array"
+    # "LFC_Lagrangian_Array"
+    # "Lagrangian_Binary_Array"
+    # "BUDGET_VARS_Lagrangian_Array"
+    "Lagrangian_Entrainment_Lagrangian_Array"
+    "Lagrangian_Entrainment_Lagrangian_Array-Copy1"
+    "Lagrangian_Entrainment_Lagrangian_Array-Copy2"
 )
 
 # Optional: Load your environment if jupyter isn't in your base path
