@@ -6,8 +6,8 @@ NOTEBOOKS=(
     # "Eulerian_CLTracking"
     # "Eulerian_CLTracking_Plotting"
     # "Lagrangian_UpdraftTracking"
-    "Subset_Parcels"
-    # "Tracked_Histograms_Plotting"
+    # "Subset_Parcels"
+    "Tracked_Histograms"
 )
 
 # Optional: Load your environment if jupyter isn't in your base path
