@@ -113,6 +113,10 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName,
         dataType = "LagrangianArrays"
         dataName = "Lagrangian_Binary_Array"
         dataFolder = dataName
+    elif variableName in  ["LFC","LCL"]:
+        dataType = "LagrangianArrays"
+        dataName = "LFC"       
+        dataFolder = dataName
     elif variableName in [f"{Processed_string}A_g",f"{Processed_string}A_c"]:
         dataType = "LagrangianArrays"
         dataName = f"{Processed_string}Lagrangian_Binary_Array"
