@@ -38,6 +38,5 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 
 # ONE
 mkdir -p job_out/UpdraftArea
-#jupyter nbconvert --to script Tracked_Profiles_UpdraftArea.ipynb
 python -u Tracked_Profiles_UpdraftArea.py $SLURM_ARRAY_TASK_ID \
     > job_out/UpdraftArea/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
