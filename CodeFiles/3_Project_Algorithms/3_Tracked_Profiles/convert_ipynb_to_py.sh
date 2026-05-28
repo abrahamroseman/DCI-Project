@@ -3,9 +3,10 @@
 # --- LIST YOUR NOTEBOOKS HERE ---
 # Only include the names, no extension needed
 NOTEBOOKS=(
-    "Tracked_Profiles"
-    "Tracked_Profiles_UpdraftArea"
-    "Tracked_Profiles_Plotting_TZContours"
+    # "Tracked_Profiles"
+    # "Tracked_Profiles_UpdraftArea"
+    # "Tracked_Profiles_Plotting_TZContours"
+    "Tracked_Ascent_Trajectories"
 )
 
 # Optional: Load your environment if jupyter isn't in your base path
