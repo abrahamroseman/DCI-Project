@@ -109,7 +109,7 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
 import os
 
 def CallLagrangianArray(ModelData, DataManager, timeString, variableName, 
-                        printstatement=False):
+                        printstatement=False,loadData=True):
     Processed_string = "PROCESSED_" if "PROCESSED_" in variableName else ""
     DivideMassFlux_string = "_DivideMassFlux" if "_DivideMassFlux" in variableName else ""
 
@@ -134,14 +134,6 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName,
                            "MSE"]:
         dataType = "LagrangianArrays"
         dataName = "VARS"       
-        dataFolder = dataName
-    elif variableName in ["convergence"]:
-        dataType = "LagrangianArrays"
-        dataName = "Convergence"
-        dataFolder = dataName
-    elif variableName in ["HMC"]:
-        dataType = "LagrangianArrays"
-        dataName = "MoistureConvergence"
         dataFolder = dataName
     elif variableName in ["QV_prime","QCQI_prime","RH_vapor_prime",
                            "W_prime","VMF_g_prime",'VMF_c_prime',
@@ -193,10 +185,14 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName,
     inputDataDirectory = os.path.normpath(
         os.path.join(DataManager.inputDirectory, "..", dataType,
                      f"Simulation_{ModelData.simulationNumber}_{DataManager.res}_{DataManager.t_res}_{DataManager.Nz_str}nz", dataFolder))
-    var_data = DataManager.GetTimestepData(inputDataDirectory, timeString,
-                                           variableName=variableName, dataName=dataName,
-                                           printstatement=printstatement)
-    return var_data
+
+    if loadData:
+        var_data = DataManager.GetTimestepData(inputDataDirectory, timeString,
+                                               variableName=variableName, dataName=dataName,
+                                               printstatement=printstatement)
+        return var_data
+    else:
+        return inputDataDirectory,dataName
 
 
 # In[ ]:
