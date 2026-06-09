@@ -10,7 +10,8 @@ NOTEBOOKS=(
     # "Moist_Static_Energy"
     # "Convergence"
     # "MoistureConvergence"
-    "TimeSeries"
+    "UpdraftArea"
+    # "TimeSeries"
 )
 
 # Optional: Load your environment if jupyter isn't in your base path

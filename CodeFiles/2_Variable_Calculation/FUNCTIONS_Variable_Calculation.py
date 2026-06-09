@@ -54,6 +54,12 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
             dataType = "CalculateMoreVariables"
             dataName = "MoistureConvergence"
             dataFolder = dataName
+        elif variableName in ['updraftArea_g','updraftArea_c',
+                              'updraftEdgeDistance_g','updraftEdgeDistance_c']:
+            dataType = "CalculateMoreVariables"
+            dataName = "UpdraftArea"
+            dataFolder = dataName
+        
         elif variableName in ['E_g_eulerian', 'D_g_eulerian', 
                               'E_c_eulerian', 'D_c_eulerian',
                               'E_g_eulerian_DivideMassFlux', 'D_g_eulerian_DivideMassFlux', 
@@ -142,6 +148,13 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName,
         dataType = "LagrangianArrays"
         dataName = "VARS_Perturbations"       
         dataFolder = dataName
+
+    elif variableName in  ["UPDRAFT_AREA_g", "UPDRAFT_AREA_c",
+                           "UPDRAFT_EDGE_DISTANCE_g","UPDRAFT_EDGE_DISTANCE_c"]:
+        dataType = "LagrangianArrays"
+        dataName = "UPDRAFT_AREA"       
+        dataFolder = dataName
+    
     elif variableName in ['E_g_eulerian', 'D_g_eulerian', 
                           'E_c_eulerian', 'D_c_eulerian',
                           'E_g_eulerian_DivideMassFlux', 'D_g_eulerian_DivideMassFlux', 
