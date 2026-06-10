@@ -16,8 +16,13 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
     ###########################################################################
     
     if variableName in ModelData.varList:
-        var_data = DataManager.GetTimestepData(DataManager.inputDataDirectory, timeString, 
+        if loadData:
+            var_data = DataManager.GetTimestepData(DataManager.inputDataDirectory, timeString, 
                                                variableName=variableName, zInterpolate = zInterpolate)
+            return var_data
+
+        else:
+            return DataManager.inputDataDirectory,None
         
     elif variableName not in ModelData.varList:
         Processed_string = "PROCESSED_" if "PROCESSED_" in variableName else ""
