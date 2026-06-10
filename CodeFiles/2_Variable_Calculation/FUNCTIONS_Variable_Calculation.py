@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[4]:
+# In[1]:
 
 
 # ============================================================
@@ -10,7 +10,8 @@
 
 import os
 
-def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate = None, printstatement=False):
+def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate = None, printstatement=False,
+                loadData=True):
 
     ###########################################################################
     
@@ -68,12 +69,9 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
             dataName = "EulerianEntrainment"
             dataFolder = dataName
 
-        elif variableName in ['qv_prime','qcqi_prime','RH_vapor_prime',
-                              'winterp_prime','VMF_g_prime','VMF_c_prime',
-                              'HMC_prime',
-                              'theta_v_prime','theta_e_prime','MSE_prime']:
+        elif variableName in ['qv_mean','theta_v_mean','theta_e_mean','RH_vapor_mean','HMC_mean']:
             dataType = "CalculateMoreVariables"
-            dataName = "VariablePerturbations"
+            dataName = "CalculateMeans"
             dataFolder = dataName
 
         elif variableName in [f'{Processed_string}Entrainment{DivideMassFlux_string}_g',f'{Processed_string}Entrainment{DivideMassFlux_string}_c',
@@ -100,9 +98,12 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
             os.path.join(DataManager.inputDirectory, "..", dataType,
                          f"Simulation_{ModelData.simulationNumber}_{DataManager.res}_{DataManager.t_res}_{DataManager.Nz_str}nz", dataFolder)
                         )
-        var_data = DataManager.GetTimestepData(inputDataDirectory, timeString, 
-                                               variableName=variableName, dataName=dataName, printstatement=printstatement)
-    return var_data
+        if loadData:
+            var_data = DataManager.GetTimestepData(inputDataDirectory, timeString, 
+                                                   variableName=variableName, dataName=dataName, printstatement=printstatement)
+            return var_data
+        else:
+            return inputDataDirectory,dataName
 
 
 # In[3]:
