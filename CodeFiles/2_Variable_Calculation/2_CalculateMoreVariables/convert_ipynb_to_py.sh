@@ -10,7 +10,9 @@ NOTEBOOKS=(
     # "Moist_Static_Energy"
     # "Convergence"
     # "MoistureConvergence"
-    "UpdraftArea"
+    # "UpdraftArea"
+    "CalculateMeans"
+    
     # "TimeSeries"
 )
 

@@ -56,3 +56,8 @@ python -u VARS_Lagrangian_Array.py $SLURM_ARRAY_TASK_ID \
 mkdir -p job_out/BUDGET_VARS_Lagrangian_Array
 python -u BUDGET_VARS_Lagrangian_Array.py $SLURM_ARRAY_TASK_ID \
     > job_out/BUDGET_VARS_Lagrangian_Array/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+
+# FIVE
+mkdir -p job_out/UPDRAFT_AREA_Lagrangian_Array
+python -u UPDRAFT_AREA_Lagrangian_Array.py $SLURM_ARRAY_TASK_ID \
+    > job_out/UPDRAFT_AREA_Lagrangian_Array/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
