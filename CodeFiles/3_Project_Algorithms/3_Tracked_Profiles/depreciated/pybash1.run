@@ -5,7 +5,7 @@
 
 ##SBATCH --partition=shared
 
-#SBATCH --time=00-06:00:00
+#SBATCH --time=1-00:00:00
 ##SBATCH --ntasks=1
 #SBATCH --nodes=1 
 #SBATCH  --tasks-per-node=1  
@@ -36,15 +36,30 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 
 # ONE
 mkdir -p job_out/Variables
-python -u Tracked_Ascent_Trajectories.py Variables $SLURM_ARRAY_TASK_ID \
+python -u Tracked_Profiles_Plotting_TZContours.py Variables $SLURM_ARRAY_TASK_ID \
     > job_out/Variables/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # TWO
-mkdir -p job_out/UpdraftArea
-python -u Tracked_Ascent_Trajectories.py UpdraftArea $SLURM_ARRAY_TASK_ID \
-    > job_out/UpdraftArea/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+#mkdir -p job_out/Budgets
+#python -u Tracked_Profiles_Plotting_TZContours.py Budgets #$SLURM_ARRAY_TASK_ID \
+#    > job_out/Budgets/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
-# TWO
+# THREE
+#mkdir -p job_out/UpdraftArea
+#python -u Tracked_Profiles_Plotting_TZContours.py UpdraftArea #$SLURM_ARRAY_TASK_ID \
+#    > job_out/UpdraftArea/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+
+# FOUR
 mkdir -p job_out/Entrainment
-python -u Tracked_Ascent_Trajectories.py Entrainment $SLURM_ARRAY_TASK_ID \
+python -u Tracked_Profiles_Plotting_TZContours.py Entrainment $SLURM_ARRAY_TASK_ID \
     > job_out/Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+
+# FIVE
+mkdir -p job_out/PROCESSED_Entrainment
+python -u Tracked_Profiles_Plotting_TZContours.py PROCESSED_Entrainment $SLURM_ARRAY_TASK_ID \
+    > job_out/PROCESSED_Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+
+# SIX
+mkdir -p job_out/PROCESSED_Entrainment_DivideMassFlux
+python -u Tracked_Profiles_Plotting_TZContours.py PROCESSED_Entrainment_DivideMassFlux $SLURM_ARRAY_TASK_ID \
+    > job_out/PROCESSED_Entrainment_DivideMassFlux/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
