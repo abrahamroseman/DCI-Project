@@ -35,6 +35,9 @@ class ModelData_Class:
         self.Np = self.GetCoordinateParcel()
         self.timeStrings = self.GetTimeStrings(self.time)
 
+        self.time_hrs = np.arange(self.Ntime)*self.dt/3600+6
+        [self.kms, self.mins] = self.GetIndexMeasurements()
+
         # Load Variable Names
         self.varList = self.GetVariableNames()
 
@@ -115,6 +118,11 @@ class ModelData_Class:
         dy = (self.yh[1].item() - self.yh[0].item()) * 1000
         dx = (self.xh[1].item() - self.xh[0].item()) * 1000
         return dt, dz, dy, dx
+
+    def GetIndexMeasurements(self):
+        kms=int(1/(self.dx/1e3))
+        mins=1/(self.dt/60)
+        return kms, mins
 
     def GetTimeStrings(self, times):
         """Convert CM1 time array (nanoseconds) to formatted strings."""
