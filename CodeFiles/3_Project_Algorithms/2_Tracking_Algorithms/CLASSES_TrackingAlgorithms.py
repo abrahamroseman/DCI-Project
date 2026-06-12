@@ -325,7 +325,7 @@ class TrackedParcel_Loading_Class:
         return Dictionary
 
     @staticmethod
-    def GetTrackedParcelArrays(Dictionary):
+    def GetTrackedParcelArrays(Dictionary,verbose=True):
         """
         Extract all tracked parcel arrays (CL, nonCL, turbulentCL SBF, ColdPool,Thermal) from Dictionary.
     
@@ -368,31 +368,34 @@ class TrackedParcel_Loading_Class:
         }
     
         # concise summary
-        print(f"CL: ALL={len(trackedArrays['CL']['ALL'])}, SHALLOW={len(trackedArrays['CL']['SHALLOW'])}, DEEP={len(trackedArrays['CL']['DEEP'])}")
-        print(f"nonCL: ALL={len(trackedArrays['nonCL']['ALL'])}, SHALLOW={len(trackedArrays['nonCL']['SHALLOW'])}, DEEP={len(trackedArrays['nonCL']['DEEP'])}")
-        print(f"SBF: ALL={len(trackedArrays['SBF']['ALL'])}, SHALLOW={len(trackedArrays['SBF']['SHALLOW'])}, DEEP={len(trackedArrays['SBF']['DEEP'])}")
-        print(f"ColdPool: ALL={len(trackedArrays['ColdPool']['ALL'])}, SHALLOW={len(trackedArrays['ColdPool']['SHALLOW'])}, DEEP={len(trackedArrays['ColdPool']['DEEP'])}")
-        print(f"Thermal: ALL={len(trackedArrays['Thermal']['ALL'])}, SHALLOW={len(trackedArrays['Thermal']['SHALLOW'])}, DEEP={len(trackedArrays['Thermal']['DEEP'])}")
+        if verbose:
+            print(f"CL: ALL={len(trackedArrays['CL']['ALL'])}, SHALLOW={len(trackedArrays['CL']['SHALLOW'])}, DEEP={len(trackedArrays['CL']['DEEP'])}")
+            print(f"nonCL: ALL={len(trackedArrays['nonCL']['ALL'])}, SHALLOW={len(trackedArrays['nonCL']['SHALLOW'])}, DEEP={len(trackedArrays['nonCL']['DEEP'])}")
+            print(f"SBF: ALL={len(trackedArrays['SBF']['ALL'])}, SHALLOW={len(trackedArrays['SBF']['SHALLOW'])}, DEEP={len(trackedArrays['SBF']['DEEP'])}")
+            print(f"ColdPool: ALL={len(trackedArrays['ColdPool']['ALL'])}, SHALLOW={len(trackedArrays['ColdPool']['SHALLOW'])}, DEEP={len(trackedArrays['ColdPool']['DEEP'])}")
+            print(f"Thermal: ALL={len(trackedArrays['Thermal']['ALL'])}, SHALLOW={len(trackedArrays['Thermal']['SHALLOW'])}, DEEP={len(trackedArrays['Thermal']['DEEP'])}")
     
         return trackedArrays
     
     
     #Reading In Final Results from SubsetParcels
     @staticmethod
-    def LoadingSubsetParcelData(ModelData,DataManager,Results_InputOutput_Class,Apply_FilterOutPriorAscent=False):
+    def LoadingSubsetParcelData(ModelData,DataManager,Results_InputOutput_Class,
+                                Apply_FilterOutPriorAscent=False,verbose=True):
     
         #Loading Tracked Parcel Data
         Dictionary = TrackedParcel_Loading_Class.LoadFinalData(ModelData,DataManager,Results_InputOutput_Class,
                                                               Apply_FilterOutPriorAscent=Apply_FilterOutPriorAscent)
-        trackedArrays = TrackedParcel_Loading_Class.GetTrackedParcelArrays(Dictionary)
+        trackedArrays = TrackedParcel_Loading_Class.GetTrackedParcelArrays(Dictionary,verbose=verbose)
         
         #cloudbase
         all_cloudbase = Results_InputOutput_Class.LoadAllCloudBase_Combined(ModelData,DataManager)["all_cloudbase"]
     
         mean_all_cloudbase = np.nanmean(all_cloudbase)
         min_all_cloudbase = np.nanmin(all_cloudbase)
-        print(f"Mean Cloudbase is: {mean_all_cloudbase:.2f} km\n")
-        print(f"Min Cloudbase is: {min_all_cloudbase:.2f} km\n")
+        if verbose:
+            print(f"Mean Cloudbase is: {mean_all_cloudbase:.2f} km\n")
+            print(f"Min Cloudbase is: {min_all_cloudbase:.2f} km\n")
 
         #LFC and Cloudbase
         #lfc and lcl
@@ -403,10 +406,11 @@ class TrackedParcel_Loading_Class:
         MeanLCL=np.nanmean(LCL_profile)
         MinLFC=np.nanmin(LFC_profile)
         MinLCL=np.nanmin(LCL_profile)
-        print(f"Mean LFC is: {MeanLFC:.2f} km\n")
-        print(f"Mean LCL is: {MeanLCL:.2f} km\n")
-        print(f"Min LFC is: {MinLFC:.2f} km\n")
-        print(f"Min LCL is: {MinLCL:.2f} km\n")
+        if verbose:
+            print(f"Mean LFC is: {MeanLFC:.2f} km\n")
+            print(f"Mean LCL is: {MeanLCL:.2f} km\n")
+            print(f"Min LFC is: {MinLFC:.2f} km\n")
+            print(f"Min LCL is: {MinLCL:.2f} km\n")
         
     
         #combining all level data into dictionary
