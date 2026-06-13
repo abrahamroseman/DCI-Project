@@ -120,7 +120,7 @@ class ModelData_Class:
         return dt, dz, dy, dx
 
     def GetIndexMeasurements(self):
-        kms=int(1/(self.dx/1e3))
+        kms=np.argmax(self.xh-self.xh[0] >= 1)
         mins=1/(self.dt/60)
         return kms, mins
 
