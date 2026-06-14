@@ -376,7 +376,8 @@ import os
 import h5py
 
 class DataManager_Class:
-    def __init__(self, mainDirectory, scratchDirectory,ModelData,dataType, dataName, dtype, make_dirs=True, codeSection = "Variable_Calculation"):
+    def __init__(self, mainDirectory, scratchDirectory,ModelData,dataType, dataName, 
+                 dtype, make_dirs=True, codeSection = "Variable_Calculation", verbose=True):
         self.mainDirectory = mainDirectory
         self.scratchDirectory = scratchDirectory
         self.dataType = dataType
@@ -388,6 +389,7 @@ class DataManager_Class:
         self.dataName = dataName
         self.dtype = dtype
         self.make_dirs = make_dirs
+        self.verbose = verbose
 
         # Initialize directories on creation
         self.inputDirectory = self.GetInputDirectory(mainDirectory, scratchDirectory)
@@ -397,7 +399,8 @@ class DataManager_Class:
         self.outputDataDirectory = self.MakeOutputDataDirectory(self.outputDirectory)
 
         # Print summary
-        self.Summary()
+        if self.verbose:
+            self.Summary()
 
     # ============================================================
     # ========== Functions ==========
