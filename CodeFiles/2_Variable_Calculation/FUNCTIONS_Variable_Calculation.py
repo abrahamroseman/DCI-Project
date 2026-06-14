@@ -26,7 +26,9 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
         
     elif variableName not in ModelData.varList:
         Processed_string = "PROCESSED_" if "PROCESSED_" in variableName else ""
-        DivideMassFlux_string = "_DivideMassFlux" if "_DivideMassFlux" in variableName else ""
+        DivideMassFlux_string = ("_DivideMassFluxMean" if "_DivideMassFluxMean" in variableName else
+                                 "_DivideMassFlux"     if "_DivideMassFlux"     in variableName else
+                                 "")
         
         if variableName in ["A_g","A_c","qcqi"]:
             dataType = "CalculateMoreVariables"
@@ -74,7 +76,8 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
             dataName = "EulerianEntrainment"
             dataFolder = dataName
 
-        elif variableName in ['qv_mean','theta_v_mean','theta_e_mean','RH_vapor_mean','HMC_mean']:
+        elif variableName in ['qv_mean','theta_v_mean','theta_e_mean','RH_vapor_mean','HMC_mean',
+                              'VMF_g_mean','VMF_c_mean']:
             dataType = "CalculateMoreVariables"
             dataName = "CalculateMeans"
             dataFolder = dataName
@@ -83,15 +86,15 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
                               f'{Processed_string}TransferEntrainment{DivideMassFlux_string}_g',
                               f'{Processed_string}TransferEntrainment{DivideMassFlux_string}_c']:
             dataType = "EntrainmentCalculation"
-            dataName = f"{Processed_string}Entrainment{DivideMassFlux_string}"
-            dataFolder = f"EntrainmentCalculation{DivideMassFlux_string}"
+            dataName = f"{Processed_string}Entrainment{DivideMassFlux_string}".replace("DivideMassFluxMean", "DivideMassFlux")
+            dataFolder = f"EntrainmentCalculation{DivideMassFlux_string}".replace("DivideMassFluxMean", "DivideMassFlux")
     
         elif variableName in [f'{Processed_string}Detrainment{DivideMassFlux_string}_g',f'{Processed_string}Detrainment{DivideMassFlux_string}_c',
                               f'{Processed_string}TransferDetrainment{DivideMassFlux_string}_g',
                               f'{Processed_string}TransferDetrainment{DivideMassFlux_string}_c']:
             dataType = "EntrainmentCalculation"
-            dataName = f"{Processed_string}Detrainment{DivideMassFlux_string}"
-            dataFolder = f"EntrainmentCalculation{DivideMassFlux_string}"
+            dataName = f"{Processed_string}Detrainment{DivideMassFlux_string}".replace("DivideMassFluxMean", "DivideMassFlux")
+            dataFolder = f"EntrainmentCalculation{DivideMassFlux_string}".replace("DivideMassFluxMean", "DivideMassFlux")
 
         elif variableName in [f'{Processed_string}MassFlux_g',f'{Processed_string}MassFlux_c']:
             dataType = "EntrainmentCalculation"
@@ -123,7 +126,9 @@ import os
 def CallLagrangianArray(ModelData, DataManager, timeString, variableName, 
                         printstatement=False,loadData=True):
     Processed_string = "PROCESSED_" if "PROCESSED_" in variableName else ""
-    DivideMassFlux_string = "_DivideMassFlux" if "_DivideMassFlux" in variableName else ""
+    DivideMassFlux_string = ("_DivideMassFluxMean" if "_DivideMassFluxMean" in variableName else
+                             "_DivideMassFlux"     if "_DivideMassFlux"     in variableName else
+                             "")
 
     if variableName in ["A_g","A_c","z","x","Z","Y","X","W","QCQI"]:
         dataType = "LagrangianArrays"
