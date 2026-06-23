@@ -384,44 +384,74 @@ def OpenMultipleSingleTimes_LagrangianArray_JobArray(directory, ModelData, start
 import os
 import pickle
 
-def LoadOrRun_SingleVariable(function, DataManager, fileName="CloudTopCalculations.pkl",
-                             calculatedData=None, args=None, kwargs=None):
-    """
-    Loads data from DataManager.outputDataDirectory if it exists.
-    Otherwise, runs the provided function and saves the output.
-    """
-    # Construct the full file path
-    filepath = os.path.join(DataManager.outputDataDirectory, fileName)
+# def LoadOrRun_SingleVariable(function, DataManager, fileName="CloudTopCalculations.pkl",
+#                              calculatedData=None, args=None, kwargs=None):
+#     """
+#     Loads data from DataManager.outputDataDirectory if it exists.
+#     Otherwise, runs the provided function and saves the output.
+#     """
+#     # Construct the full file path
+#     filepath = os.path.join(DataManager.outputDataDirectory, fileName)
     
-    # Check if the file already exists
-    if os.path.exists(filepath):
-        print(f"Loading cached data from: {filepath}")
-        with open(filepath, 'rb') as file:
-            data = pickle.load(file)
-        return data
-    else:
-        print(f"Data from {filepath} not found. Running calculation...")
-        # Run the target function
-        data = function(*(args or ()), **(kwargs or {})) if calculatedData is None else calculatedData
+#     # Check if the file already exists
+#     if os.path.exists(filepath):
+#         print(f"Loading cached data from: {filepath}")
+#         with open(filepath, 'rb') as file:
+#             data = pickle.load(file)
+#         return data
+#     else:
+#         print(f"Data from {filepath} not found. Running calculation...")
+#         # Run the target function
+#         data = function(*(args or ()), **(kwargs or {})) if calculatedData is None else calculatedData
         
-        # Ensure the output directory exists
-        os.makedirs(DataManager.outputDataDirectory, exist_ok=True)
+#         # Ensure the output directory exists
+#         os.makedirs(DataManager.outputDataDirectory, exist_ok=True)
         
-        # Save the result for future use
-        print(f"Saving computed data to: {filepath}")
-        with open(filepath, 'wb') as file:
-            pickle.dump(data, file)
+#         # Save the result for future use
+#         print(f"Saving computed data to: {filepath}")
+#         with open(filepath, 'wb') as file:
+#             pickle.dump(data, file)
             
-        return data
+#         return data
 
-def LoadOrRun_SingleVariable_Independent(function, file_directory, fileName="filename.pkl",
-                                         calculatedData=None, args=None, kwargs=None):
+# def LoadOrRun_SingleVariable_Independent(function, file_directory, fileName="filename.pkl",
+#                                          calculatedData=None, args=None, kwargs=None):
+#     """
+#     Loads data from "file_directory" if it exists.
+#     Otherwise, runs the provided function and saves the output.
+#     """
+#     # Construct the full file path
+#     filepath = os.path.join(file_directory, fileName)
+    
+#     # Check if the file already exists
+#     if os.path.exists(filepath):
+#         print(f"Loading cached data from: {filepath}")
+#         with open(filepath, 'rb') as file:
+#             data = pickle.load(file)
+#         return data
+#     else:
+#         print(f"Data from {filepath} not found. Running calculation...")
+#         # Run the target function
+#         data = function(*(args or ()), **(kwargs or {})) if calculatedData is None else calculatedData
+        
+#         # Ensure the output directory exists
+#         os.makedirs(file_directory, exist_ok=True)
+        
+#         # Save the result for future use
+#         print(f"Saving computed data to: {filepath}")
+#         with open(filepath, 'wb') as file:
+#             pickle.dump(data, file)
+            
+#         return data
+
+def LoadOrRun(function, fileDirectory=".", fileName="filename.pkl",
+              calculatedData=None, args=None, kwargs=None):
     """
-    Loads data from "file_directory" if it exists.
+    Loads data from "fileDirectory" if it exists.
     Otherwise, runs the provided function and saves the output.
     """
     # Construct the full file path
-    filepath = os.path.join(file_directory, fileName)
+    filepath = os.path.join(fileDirectory, fileName)
     
     # Check if the file already exists
     if os.path.exists(filepath):
@@ -435,7 +465,7 @@ def LoadOrRun_SingleVariable_Independent(function, file_directory, fileName="fil
         data = function(*(args or ()), **(kwargs or {})) if calculatedData is None else calculatedData
         
         # Ensure the output directory exists
-        os.makedirs(file_directory, exist_ok=True)
+        os.makedirs(fileDirectory, exist_ok=True)
         
         # Save the result for future use
         print(f"Saving computed data to: {filepath}")
