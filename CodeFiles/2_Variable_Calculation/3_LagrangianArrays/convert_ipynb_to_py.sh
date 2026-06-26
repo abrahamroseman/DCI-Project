@@ -8,7 +8,9 @@ NOTEBOOKS=(
     # "Lagrangian_Binary_Array"
     # "BUDGET_VARS_Lagrangian_Array"
     # "UPDRAFT_AREA_Lagrangian_Array"
-    "Lagrangian_Entrainment_Lagrangian_Array"
+    # "Lagrangian_Entrainment_Lagrangian_Array"
+
+    "Eulerian_Entrainment_Lagrangian_Array"
 )
 
 # Optional: Load your environment if jupyter isn't in your base path
