@@ -41,10 +41,7 @@ mkdir -p job_out/Lagrangian_Entrainment_Lagrangian_Array
 python -u Lagrangian_Entrainment_Lagrangian_Array.py $SLURM_ARRAY_TASK_ID \
     > job_out/Lagrangian_Entrainment_Lagrangian_Array/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
-mkdir -p job_out/Lagrangian_Entrainment_Lagrangian_Array-Copy1
-python -u Lagrangian_Entrainment_Lagrangian_Array-Copy1.py $SLURM_ARRAY_TASK_ID \
-    > job_out/Lagrangian_Entrainment_Lagrangian_Array-Copy1/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
-
-mkdir -p job_out/Lagrangian_Entrainment_Lagrangian_Array-Copy2
-python -u Lagrangian_Entrainment_Lagrangian_Array-Copy2.py $SLURM_ARRAY_TASK_ID \
-    > job_out/Lagrangian_Entrainment_Lagrangian_Array-Copy2/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+# TWO
+mkdir -p job_out/Lagrangian_Entrainment_Lagrangian_Array_DMF
+python -u Lagrangian_Entrainment_Lagrangian_Array_DMF.py $SLURM_ARRAY_TASK_ID \
+    > job_out/Lagrangian_Entrainment_Lagrangian_Array_DMF/py-${SLURM_ARRAY_TASK_ID}.out 2>&1

@@ -38,3 +38,8 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 mkdir -p job_out/Lagrangian_Entrainment_Plotting
 #jupyter nbconvert --to script Lagrangian_Entrainment_Plotting.ipynb
 python -u Lagrangian_Entrainment_Plotting.py
+
+# TWO
+mkdir -p job_out/Lagrangian_Entrainment_Plotting_DMF
+#jupyter nbconvert --to script Lagrangian_Entrainment_Plotting_DMF.ipynb
+python -u Lagrangian_Entrainment_Plotting_DMF.py
