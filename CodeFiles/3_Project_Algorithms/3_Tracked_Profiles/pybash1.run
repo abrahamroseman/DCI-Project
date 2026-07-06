@@ -35,9 +35,9 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 # --- RUNNING PYTHON ---
 
 # ONE
-mkdir -p job_out/Variables
-python -u Tracked_Ascent_Trajectories.py Variables $SLURM_ARRAY_TASK_ID \
-    > job_out/Variables/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+#mkdir -p job_out/Variables
+#python -u Tracked_Ascent_Trajectories.py Variables $SLURM_ARRAY_TASK_ID \
+#    > job_out/Variables/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # TWO
 mkdir -p job_out/UpdraftArea
@@ -45,11 +45,6 @@ python -u Tracked_Ascent_Trajectories.py UpdraftArea $SLURM_ARRAY_TASK_ID \
     > job_out/UpdraftArea/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
 
 # THREE
-mkdir -p job_out/Entrainment
-python -u Tracked_Ascent_Trajectories.py Entrainment $SLURM_ARRAY_TASK_ID \
-    > job_out/Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
-
-# FOUR
-mkdir -p job_out/ResidenceTime
-python -u Tracked_Ascent_Trajectories.py ResidenceTime $SLURM_ARRAY_TASK_ID \
-    > job_out/ResidenceTime/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+#mkdir -p job_out/Entrainment
+#python -u Tracked_Ascent_Trajectories.py Entrainment $SLURM_ARRAY_TASK_ID \
+#    > job_out/Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
