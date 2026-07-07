@@ -1,7 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=python
-#SBATCH --array=1-132 #%+number after to limit number of of runs at a time
-##SBATCH --array=1-220 #%+number after to limit number of of runs at a time
+##SBATCH --array=1-5 #%+number after to limit number of of runs at a time
+##SBATCH --array=1-10 #%+number after to limit number of of runs at a time
+#SBATCH --array=1-30 #%+number after to limit number of of runs at a time
 #SBATCH --account=torri
 #SBATCH --partition=torri
 
@@ -37,6 +38,6 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 # --- RUNNING PYTHON ---
 
 # ONE
-mkdir -p job_out/EntrainmentTrackback
-python -u EntrainmentTrackback.py $SLURM_ARRAY_TASK_ID \
-    > job_out/EntrainmentTrackback/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+mkdir -p job_out/EulerianReconstruction
+python -u EulerianReconstruction.py $SLURM_ARRAY_TASK_ID \
+    > job_out/EulerianReconstruction/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
