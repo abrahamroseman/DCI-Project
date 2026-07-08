@@ -148,7 +148,7 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName,
                            "HMC", "CONVERGENCE",
                            "THETA","THETA_v", "THETA_e",
                            "BUOYANCY","BUOYANCY2",
-                           "MSE"]:
+                           "MSE"]: #QC
         dataType = "LagrangianArrays"
         dataName = "VARS"       
         dataFolder = dataName
