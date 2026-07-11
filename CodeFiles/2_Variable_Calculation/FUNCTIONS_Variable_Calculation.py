@@ -50,7 +50,7 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
             dataType = "CalculateMoreVariables"
             dataName = "Buoyancy"
             dataFolder = dataName
-        elif variableName in ["theta_e", "RH_vapor", "RH_ice"]:
+        elif variableName in ["T", "theta_e", "RH_vapor", "RH_ice"]:
             dataType = "CalculateMoreVariables"
             dataName = "Equivalent_Potential_Temperature"
             dataFolder = dataName
@@ -114,7 +114,7 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
             return inputDataDirectory,dataName
 
 
-# In[3]:
+# In[1]:
 
 
 # ============================================================
@@ -142,13 +142,13 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName,
         dataType = "LagrangianArrays"
         dataName = f"{Processed_string}Lagrangian_Binary_Array"
         dataFolder = dataName
-    elif variableName in  ["QV", "QCQI",
-                           "RH_vapor",
+    elif variableName in  ["QC","QCQI",
+                           "QV","RH_vapor",
                            "VMF_g", "VMF_c",
                            "HMC", "CONVERGENCE",
-                           "THETA","THETA_v", "THETA_e",
+                           "T","THETA","THETA_v", "THETA_e",
                            "BUOYANCY","BUOYANCY2",
-                           "MSE"]: #QC
+                           "MSE"]:
         dataType = "LagrangianArrays"
         dataName = "VARS"       
         dataFolder = dataName
