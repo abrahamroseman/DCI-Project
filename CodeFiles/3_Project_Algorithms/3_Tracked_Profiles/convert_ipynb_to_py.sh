@@ -8,7 +8,8 @@ NOTEBOOKS=(
     # "Tracked_Profiles_Plotting_TZContours"
     # "Tracked_Ascent_Trajectories"
     # "EulerianReconstruction"
-    "EntrainmentTrackback"
+    # "EntrainmentTrackback_V1"
+    "EntrainmentTrackback_V2"
 )
 
 # Optional: Load your environment if jupyter isn't in your base path
