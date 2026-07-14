@@ -3,7 +3,7 @@
 # --- LIST YOUR NOTEBOOKS HERE ---
 # Only include the names, no extension needed
 NOTEBOOKS=(
-    # "Entrainment_Preprocessing"
+    "Entrainment_Preprocessing"
     # "Lagrangian_MassFlux"
     "Lagrangian_Entrainment"
     # "Lagrangian_Entrainment_Plotting"
