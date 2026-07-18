@@ -386,7 +386,7 @@ import pickle
 
 def LoadOrRun(function, fileDirectory=".", fileName="filename.pkl",
               calculatedData=None, args=None, kwargs=None,
-              forceRecalculate=True):
+              forceRecalculate=False):
     """
     Loads data from "fileDirectory" if it exists.
     Otherwise, runs the provided function and saves the output.
