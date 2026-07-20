@@ -62,6 +62,10 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
             dataType = "CalculateMoreVariables"
             dataName = "MoistureConvergence"
             dataFolder = dataName
+        elif variableName in ["TKE"]:
+            dataType = "CalculateMoreVariables"
+            dataName = "TKE"
+            dataFolder = dataName
         elif variableName in ['updraftArea_g','updraftArea_c',
                               'updraftEdgeDistance_g','updraftEdgeDistance_c']:
             dataType = "CalculateMoreVariables"
@@ -151,6 +155,10 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName,
                            "MSE"]:
         dataType = "LagrangianArrays"
         dataName = "VARS"       
+        dataFolder = dataName
+    elif variableName in  ["TKE"]:
+        dataType = "LagrangianArrays"
+        dataName = "VARS2"       
         dataFolder = dataName
     elif variableName in ["QV_prime","QCQI_prime","RH_vapor_prime",
                            "W_prime","VMF_g_prime",'VMF_c_prime',
