@@ -5,7 +5,7 @@
 
 ##SBATCH --partition=shared
 
-#SBATCH --time=00-03:00:00
+#SBATCH --time=01-00:00:00
 ##SBATCH --ntasks=1
 #SBATCH --nodes=1 
 #SBATCH  --tasks-per-node=1  
@@ -35,16 +35,6 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 # --- RUNNING PYTHON ---
 
 # ONE
-mkdir -p job_out/Variables
-python -u Tracked_Ascent_Trajectories.py Variables $SLURM_ARRAY_TASK_ID \
-    > job_out/Variables/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
-
-# TWO
-#mkdir -p job_out/UpdraftArea
-#python -u Tracked_Ascent_Trajectories.py UpdraftArea $SLURM_ARRAY_TASK_ID \
-#    > job_out/UpdraftArea/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
-
-# THREE
-mkdir -p job_out/Entrainment
-python -u Tracked_Ascent_Trajectories.py Entrainment $SLURM_ARRAY_TASK_ID \
-    > job_out/Entrainment/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+mkdir -p job_out/TKE
+python -u Tracked_Ascent_Trajectories.py TKE $SLURM_ARRAY_TASK_ID \
+    > job_out/TKE/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
