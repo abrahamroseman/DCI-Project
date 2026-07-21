@@ -65,9 +65,9 @@ class ModelData_Class:
         elif self.simulationNumber == 5:
             Directory = os.path.join(self.mainDirectory, 'Model/cm1r20.3/run/MODEL_OUTPUT/Simulation_Five/')
             res, t_res, Np_str, Nz_str = '1km', '1min', '50e6', '95'
-        # elif self.simulationNumber == 6:
-        #     Directory = os.path.join(self.mainDirectory, 'Model/cm1r20.3/run/MODEL_OUTPUT/Simulation_Six/')
-        #     res, t_res, Np_str, Nz_str = '0.25km', '1min', '50e6', '95'
+        elif self.simulationNumber == 6:
+            Directory = os.path.join(self.mainDirectory, 'Model/cm1r20.3/run/MODEL_OUTPUT/Simulation_Six/')
+            res, t_res, Np_str, Nz_str = '250m', '1min', '50e6', '95'
         else:
             raise ValueError("Invalid simulationNumber (must be 1, 2, or 3).")
 
