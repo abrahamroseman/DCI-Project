@@ -413,19 +413,19 @@ class DataManager_Class:
     # ============================================================
 
     def GetInputDirectory(self, mainDirectory, scratchDirectory):
-        if self.res == '1km':
+        if self.res in ['1km','250m']:
             inputDirectory = os.path.join(mainDirectory, 'Code', 'OUTPUT', 'Variable_Calculation', 'TimeSplitModelData')
-        if self.res == '250m':
+        if self.res == 'NaN':
             inputDirectory = os.path.join(scratchDirectory, 'OUTPUT', 'Variable_Calculation', 'TimeSplitModelData')
         return inputDirectory
 
     def GetOutputDirectory(self, mainDirectory, scratchDirectory, 
                            codeSection):
-        if self.res == '1km':
+        if self.res in ['1km','250m']:
             outputDirectory = os.path.join(mainDirectory, 'Code', 'OUTPUT', codeSection, self.dataType)
             if self.make_dirs:
                 os.makedirs(outputDirectory, exist_ok=True)
-        if self.res == '250m':
+        if self.res == 'NaN':
             outputDirectory = os.path.join(scratchDirectory, 'OUTPUT', codeSection, self.dataType)
             if self.make_dirs:
                 os.makedirs(outputDirectory, exist_ok=True)
