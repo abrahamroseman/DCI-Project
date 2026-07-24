@@ -40,6 +40,7 @@ class ModelData_Class:
 
         # Load Variable Names
         self.varList = self.GetVariableNames()
+        [self.selectedVarList,self.dropVars] = self.SubsetDataVars(data=None)
 
         # Print summary
         self.Summary()
@@ -209,14 +210,16 @@ class ModelData_Class:
             if verbose: print(f"Opened dataset: {self.dataDirectory}")
         return data
 
-    def OpenData_SingleTime(self, t, decode_timedelta=True, verbose=False):
+    def OpenData_SingleTime(self, t, decode_timedelta=True,verbose=False):
         """
         Opens full data netcdf file
         Depreciated for simulations that is output timestep by timestep
         Instead use DataManager.GetTimestepData from the DataManager_Class class
         """
         all_files = self.GetAllTimestepFilePaths(self.dataDirectory)
-        data = xr.open_dataset(all_files[t], decode_timedelta=decode_timedelta)
+        data = xr.open_dataset(all_files[t], decode_timedelta=decode_timedelta,
+                               cache=False,mask_and_scale=False,decode_cf=False,
+                               drop_variables=self.dropVars) #memory fix
         if verbose: print(f"Opened dataset: {all_files[t]}")
         return data
 
@@ -227,11 +230,12 @@ class ModelData_Class:
         #EXAMPLE: ds = ModelData.OpenParcel()
         #         ...
         #         del ds
-        parcel = xr.open_dataset(self.parcelDirectory, decode_timedelta=decode_timedelta)
+        parcel = xr.open_dataset(self.parcelDirectory, decode_timedelta=decode_timedelta, 
+                                 cache=False,mask_and_scale=False,decode_cf=False) #memory fix
         print(f"Opened dataset: {self.parcelDirectory}")
         return parcel
 
-    def SubsetDataVars(self, data):
+    def SubsetDataVars(self, data=None):
         varList = ["thflux", "qvflux", "tsk", "cape", 
                    "cin", "lcl", "lfc", "th",
                    "prs", "rho", "qv", "qc",
@@ -249,12 +253,16 @@ class ModelData_Class:
                     "wb_hturb", "wb_vturb", "wb_pgrad", "wb_rdamp", "wb_buoy",]
     
         # Filter only available variables in the dataset
-        available_vars = [v for v in varList if v in data.variables]
+        selectedVarList = [v for v in varList if v in self.varList]
+        dropVars = [v for v in self.varList if v not in selectedVarList]
     
-        if not available_vars:
+        if not selectedVarList:
             raise ValueError("None of the requested variables were found in the dataset.")
-    
-        return data[available_vars]
+
+        if data is not None:
+            return data[selectedVarList]
+        else:
+            return [selectedVarList,dropVars]
 
     def GetVariable(self, varName, isel=None):
         #EXAMPLE: w = ModelData.GetVariable('winterp', isel={'time': slice(0,2), 'zh': 0, 'yh': 0, 'xh': 0}) #example getting a variable
@@ -296,8 +304,6 @@ class ModelData_Class:
         print(f" Parcel file:    {self.parcelDirectory}")
         print(f" Time steps:     {len(self.time)}")
         print("=========================","\n")
-
-#EXAMPLE: ModelData = ModelData_Class(mainDirectory, scratchDirectory, simulationNumber=1)
 
 
 # In[3]:
@@ -575,4 +581,27 @@ class DataManager_Class:
         print("=========================","\n")
 
 # EXAMPLE: DataManager = DataManager_Class(mainDirectory, scratchDirectory, ModelData.res, ModelData.t_res, ModelData.Nz_str, dataName="Eulerian_Binary_Array", dtype='bool')
+
+
+# In[ ]:
+
+
+# MemoryTracker_Class
+# ============================================================
+
+#Libraries
+import os
+import psutil
+
+class MemoryTracker_Class:
+    def __init__(self):
+        self.scriptProcess = self._get_script_process()
+
+    def _get_script_process(self):
+        return psutil.Process(os.getpid())
+
+    def GetMemGB(self):
+        currentMemory = self.scriptProcess.memory_info().rss / 1e9
+        print(f'Current Memory: {currentMemory:.2f} GB')
+        return currentMemory
 
