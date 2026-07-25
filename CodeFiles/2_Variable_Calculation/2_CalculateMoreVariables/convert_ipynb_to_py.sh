@@ -3,18 +3,18 @@
 # --- LIST YOUR NOTEBOOKS HERE ---
 # Only include the names, no extension needed
 NOTEBOOKS=(
-    # "Eulerian_Binary_Array"
-    # "Eulerian_VMF"
-    # "Equivalent_Potential_Temperature"
-    # "Density_Potential_Temperature"
-    # "Moist_Static_Energy"
-    # "Convergence"
-    # "MoistureConvergence"
-    # "Buoyancy"
+    "Eulerian_Binary_Array"
+    "Eulerian_VMF"
+    "Equivalent_Potential_Temperature"
+    "Density_Potential_Temperature"
+    "Moist_Static_Energy"
+    "Convergence"
+    "MoistureConvergence"
+    "Buoyancy"
     "TKE"
-    # "UpdraftArea"
+    "UpdraftArea"
 
-    "CalculateMeans"
+    # "CalculateMeans"
     
     # "TimeSeries"
 )
