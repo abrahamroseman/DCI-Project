@@ -38,6 +38,11 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 # --- RUNNING PYTHON ---
 
 # ONE
-mkdir -p job_out/CalculateMeans
-python -u CalculateMeans.py $SLURM_ARRAY_TASK_ID \
-    > job_out/CalculateMeans/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+#mkdir -p job_out/CalculateMeans
+#python -u CalculateMeans.py $SLURM_ARRAY_TASK_ID \
+#    > job_out/CalculateMeans/py-${SLURM_ARRAY_TASK_ID}.out 2>&1
+
+# TWO
+mkdir -p job_out/TimeSeries
+python -u TimeSeries.py $SLURM_ARRAY_TASK_ID \
+    > job_out/TimeSeries/py-${SLURM_ARRAY_TASK_ID}.out 2>&1

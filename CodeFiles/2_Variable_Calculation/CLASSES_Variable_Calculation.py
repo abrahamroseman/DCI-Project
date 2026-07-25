@@ -318,7 +318,8 @@ import numpy as np
 class SlurmJobArray_Class:
     def __init__(self, total_elements, 
                  num_jobs, UsingJobArray,
-                 custom_job_id=None):
+                 custom_job_id=None,
+                 verbose=True):
         self.total_elements = total_elements
         self.num_jobs = num_jobs
         self.UsingJobArray = UsingJobArray
@@ -339,7 +340,7 @@ class SlurmJobArray_Class:
         self.start_job, self.end_job = self._get_job_range(self.job_id)
 
         # Print summary
-        self.Summary()
+        if verbose: self.Summary()
 
     # ------------------------------------------------------------
     def _get_job_range(self, job_id):

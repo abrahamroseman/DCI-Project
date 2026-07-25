@@ -4,7 +4,6 @@
 # In[1]:
 
 
-# ============================================================
 # CallVariable_Function
 # ============================================================
 
@@ -121,7 +120,6 @@ def CallVariable(ModelData, DataManager, timeString, variableName, zInterpolate 
 # In[1]:
 
 
-# ============================================================
 # CallLagrangianArray_Function
 # ============================================================
 
@@ -230,7 +228,6 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName,
 # In[ ]:
 
 
-# ============================================================
 # Get_LagrangianArrays_Function
 # ============================================================
 
@@ -257,7 +254,6 @@ def Get_LagrangianArrays(ModelData, DataManager, t, dataType="VARS", dataName="V
 # In[1]:
 
 
-# ============================================================
 # OpenMultipleSingleTimes_LagrangianArray_FUNCTION
 # ============================================================
 
@@ -385,8 +381,7 @@ def OpenMultipleSingleTimes_LagrangianArray_JobArray(directory, ModelData, start
 # In[ ]:
 
 
-# ============================================================
-# LoadOrRun_SingleVariable
+# LoadOrRun
 # ============================================================
 
 import os
@@ -394,7 +389,8 @@ import pickle
 
 def LoadOrRun(function, fileDirectory=".", fileName="filename.pkl",
               calculatedData=None, args=None, kwargs=None,
-              forceRecalculate=False):
+              forceRecalculate=False,
+              verbose=True):
     """
     Loads data from "fileDirectory" if it exists.
     Otherwise, runs the provided function and saves the output.
@@ -404,12 +400,12 @@ def LoadOrRun(function, fileDirectory=".", fileName="filename.pkl",
     
     # Check if the file already exists
     if os.path.exists(filepath) and not forceRecalculate:
-        print(f"Loading cached data from: {filepath}")
+        if verbose: print(f"Loading cached data from: {filepath}")
         with open(filepath, 'rb') as file:
             data = pickle.load(file)
         return data
     else:
-        print(f"Data from {filepath} not found. Running calculation...")
+        if verbose: print(f"Data from {filepath} not found. Running calculation...")
         # Run the target function
         data = function(*(args or ()), **(kwargs or {})) if calculatedData is None else calculatedData
         
@@ -417,7 +413,7 @@ def LoadOrRun(function, fileDirectory=".", fileName="filename.pkl",
         os.makedirs(fileDirectory, exist_ok=True)
         
         # Save the result for future use
-        print(f"Saving computed data to: {filepath}")
+        if verbose: print(f"Saving computed data to: {filepath}")
         with open(filepath, 'wb') as file:
             pickle.dump(data, file)
             
