@@ -3,20 +3,8 @@
 # --- LIST YOUR NOTEBOOKS HERE ---
 # Only include the names, no extension needed
 NOTEBOOKS=(
-    "Eulerian_Binary_Array"
-    "Eulerian_VMF"
-    "Equivalent_Potential_Temperature"
-    "Density_Potential_Temperature"
-    "Moist_Static_Energy"
-    "Convergence"
-    "MoistureConvergence"
-    "Buoyancy"
-    "TKE"
-    "UpdraftArea"
-
-    # "CalculateMeans"
-    
-    # "TimeSeries"
+    "CLASSES_Variable_Calculation"
+    "FUNCTIONS_Variable_Calculation"
 )
 
 # Optional: Load your environment if jupyter isn't in your base path
