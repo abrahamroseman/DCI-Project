@@ -10,7 +10,7 @@
 #SBATCH --nodes=1 
 #SBATCH  --tasks-per-node=1  
 #SBATCH --cpus-per-task=1 #Each node has 47 CPUs
-#SBATCH --mem=32G #GBTotal 180GB per node (180G/30 = 6G) #0 for full node memory
+#SBATCH --mem=0 #32G #GBTotal 180GB per node (180G/30 = 6G) #0 for full node memory
 ##SBATCH --constraint=“ib_hdr” # will allow a mix of HDR200 and HDR100 nodes
 ##SBATCH --constraint=“ib_hdr100” # explicitly only allow HDR100 nodes
 ##SBATCH --distribution=“*:*:*” # Set the distribution to defaults if doing sbatch from interactive session
@@ -36,5 +36,5 @@ export PYTHONUNBUFFERED=TRUE #allows print statements during run
 
 # ONE
 mkdir -p job_out/Lagrangian_Entrainment_Plotting-Copy1
-#jupyter nbconvert --to script Lagrangian_Entrainment_Plotting-Copy1.ipynb
+jupyter nbconvert --to script Lagrangian_Entrainment_Plotting-Copy1.ipynb
 python -u Lagrangian_Entrainment_Plotting-Copy1.py
