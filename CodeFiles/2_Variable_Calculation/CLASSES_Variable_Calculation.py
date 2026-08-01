@@ -442,6 +442,28 @@ class DataManager_Class:
             for var_name, arr in outputDictionary.items():
                 f.create_dataset(var_name, data=arr, dtype=dtype, compression="gzip")
         print(f"Saved timestep to output file: {out_file}","\n")
+    
+    def LoadOutputTimestep(self, outputDataDirectory, timeString,
+                           dtype=None, dataName=None,
+                           verbose=False):
+        if dtype is None:
+            dtype = self.dtype
+        if dataName is None:
+            dataName = self.dataName
+    
+        in_file = os.path.join(
+            outputDataDirectory,
+            f"{dataName}_{self.res}_{self.t_res}_{self.Nz_str}nz_{timeString}.h5"
+        )
+    
+        outputDictionary = {}
+        with h5py.File(in_file, 'r') as f:
+            for var_name in f.keys():
+                outputDictionary[var_name] = f[var_name][()].astype(dtype)
+    
+        if verbose: print(f"Loaded timestep from output file: {in_file}", "\n")
+    
+        return outputDictionary
 
     def SaveOutputTimestep_V2(self, outputDataDirectory, timeString, outputDictionary,
                            dtype=None, dataName=None):
