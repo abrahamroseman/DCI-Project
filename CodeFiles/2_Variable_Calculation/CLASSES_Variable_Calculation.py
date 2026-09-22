@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[4]:
+# In[ ]:
 
 
 # ModelData_Class
@@ -248,6 +248,8 @@ class ModelData_Class:
         
         varList += ["qvb_hadv", "qvb_vadv", "qvb_hidiff", "qvb_vidiff", 
                     "qvb_hturb", "qvb_vturb", "qvb_mp",]
+
+        varList += ["qt_evar","qt_evac"]
         
         varList += ["wb_hadv", "wb_vadv", "wb_hidiff", "wb_vidiff",
                     "wb_hturb", "wb_vturb", "wb_pgrad", "wb_rdamp", "wb_buoy",]
