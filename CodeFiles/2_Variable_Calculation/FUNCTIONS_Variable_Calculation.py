@@ -154,7 +154,7 @@ def CallLagrangianArray(ModelData, DataManager, timeString, variableName,
         dataType = "LagrangianArrays"
         dataName = "VARS"       
         dataFolder = dataName
-    elif variableName in  ["TKE"]:
+    elif variableName in  ["TKE","QR","QT_EVAR"]:
         dataType = "LagrangianArrays"
         dataName = "VARS2"       
         dataFolder = dataName
